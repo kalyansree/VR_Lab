@@ -55,7 +55,7 @@ public class GrabObject : MonoBehaviour {
         switch (mHandState)
         {
             case State.TOUCHING:
-                if (mTempJoint == null && OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger, Controller) >= 0.5f)
+                if (mTempJoint == null && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, Controller) >= 0.5f)
                 {
                     mHeldObject.velocity = Vector3.zero;
                     mTempJoint = mHeldObject.gameObject.AddComponent<FixedJoint>();
@@ -64,7 +64,7 @@ public class GrabObject : MonoBehaviour {
                 }
                 break;
             case State.HOLDING:
-                if (mTempJoint != null && OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger, Controller) < 0.5f)
+                if (mTempJoint != null && OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, Controller) < 0.5f)
                 {
                     Object.DestroyImmediate(mTempJoint);
                     mTempJoint = null;
@@ -78,7 +78,7 @@ public class GrabObject : MonoBehaviour {
     private void throwObject()
     {
         mHeldObject.velocity = OVRInput.GetLocalControllerVelocity(Controller);
-        mHeldObject.angularVelocity = OVRInput.GetLocalControllerAngularVelocity(Controller).eulerAngles * Mathf.Deg2Rad;
+        mHeldObject.angularVelocity = OVRInput.GetLocalControllerAngularVelocity(Controller) * Mathf.Deg2Rad;
         mHeldObject.maxAngularVelocity = mHeldObject.angularVelocity.magnitude;
     }
 }
