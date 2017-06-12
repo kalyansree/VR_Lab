@@ -12,7 +12,7 @@ public class HandPosition : MonoBehaviour {
         LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
         lineRenderer.widthMultiplier = 0.001f;
-        lineRenderer.numPositions = 2;
+        lineRenderer.positionCount = 2;
 
         float alpha = 1.0f;
         Gradient gradient = new Gradient();
