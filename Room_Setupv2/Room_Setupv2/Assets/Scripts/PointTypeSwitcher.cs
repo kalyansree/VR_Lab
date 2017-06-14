@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 public class PointTypeSwitcher : MonoBehaviour {
-    public Component script;
     private void Start()
     {
         int buttonNo = 0;
