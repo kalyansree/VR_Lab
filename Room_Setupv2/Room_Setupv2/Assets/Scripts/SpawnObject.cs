@@ -1,88 +1,126 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vectrosity;
 
 public class SpawnObject : MonoBehaviour { 
     private GameObject originSphere;
     private Vector3 origin;
     private Vector3 dest;
     private bool originSet = false;
-    void Start()
-    {
-        LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
-        initLine(lineRenderer);
+    private bool isColliding = false; //whether the hand is close to another point that has been placed
+    private VectorLine myLine;
+    private int numPoints = 0;
+    private GameObject currCollidingObj; 
+    
+    [Tooltip("If true, will allow user to drag to create a line between two points. If false, will only place point at origin point (Should be false for Input and Output type points.")]
+    public bool allowDrag;
+    [Tooltip("GameObject of the Domain Cube")]
+    public GameObject domain;
 
+
+    
+
+    private void Start()
+    {
+        myLine = ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine;
     }
-    // Update is called once per frame
+
+
     void Update()
     {
-        var distToCube = Vector3.Distance(GameObject.Find("Domain").GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
+        var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
         if (OVRInput.GetDown(OVRInput.Button.One) && distToCube == 0) //Places the initial sphere
         {
-            originSet = true;
-            originSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            originSphere.transform.position = gameObject.transform.position;
-            originSphere.transform.rotation = gameObject.transform.rotation;
-            originSphere.transform.localScale = gameObject.transform.localScale;
-            Renderer rend = originSphere.GetComponent<Renderer>();
-            if (rend != null)
+            if (isColliding && allowDrag)
             {
-                rend.material = gameObject.GetComponent<Renderer>().material;
+                originSphere = currCollidingObj;
             }
-            originSphere.transform.SetParent(GameObject.Find("Domain").transform, true);
+            else
+            {
+                originSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                originSphere.transform.position = gameObject.transform.position;
+                originSphere.transform.rotation = gameObject.transform.rotation;
+                originSphere.transform.localScale = gameObject.transform.lossyScale;
+                originSphere.tag = "Point";
+                Renderer rend = originSphere.GetComponent<Renderer>();
+                if (rend != null)
+                {
+                    rend.material = gameObject.GetComponent<Renderer>().material;
+                }
+                originSphere.transform.SetParent(domain.transform, true);
+            }
+            //line stuff
+            if(allowDrag)
+            {
+                originSet = true;
+                myLine.points3.Add(originSphere.transform.position);
+                myLine.points3.Add(originSphere.transform.position);
+                numPoints = myLine.points3.Count;
+            }
+
         }
-        if (OVRInput.Get(OVRInput.Button.One) && originSet)
+        if (OVRInput.Get(OVRInput.Button.One) && originSet && allowDrag)
         {
-            LineRenderer lineRenderer = GetComponent<LineRenderer>();
             origin = originSphere.transform.position;
             dest = gameObject.transform.position;
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
-                lineRenderer.SetPosition(0, origin);
-                lineRenderer.SetPosition(1, dest);
+                myLine.points3[numPoints - 2] = origin;
+                myLine.points3[numPoints - 1] = dest;
             }
         }
 
-        if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
+        if (OVRInput.GetUp(OVRInput.Button.One) && originSet && allowDrag)
         {
             originSet = false;
-            GameObject destSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            destSphere.transform.position = gameObject.transform.position;
-            destSphere.transform.rotation = gameObject.transform.rotation;
-            destSphere.transform.localScale = gameObject.transform.localScale;
-            Renderer rend = destSphere.GetComponent<Renderer>();
-            if (rend != null)
+            GameObject destSphere;
+            if (isColliding)
             {
-                rend.material = gameObject.GetComponent<Renderer>().material;
+                destSphere = currCollidingObj;
             }
-            destSphere.transform.SetParent(GameObject.Find("Domain").transform, true);
+            else
+            {
+                destSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                destSphere.transform.position = gameObject.transform.position;
+                destSphere.transform.rotation = gameObject.transform.rotation;
+                destSphere.tag = "Point";
+                destSphere.transform.localScale = gameObject.transform.lossyScale;
+                Renderer rend = destSphere.GetComponent<Renderer>();
+                if (rend != null)
+                {
+                    rend.material = gameObject.GetComponent<Renderer>().material;
+                }
+                destSphere.transform.SetParent(domain.transform, true);
+            }
 
-            //line
-            
-            LineRenderer lineRenderer = GameObject.Find("Domain").AddComponent<LineRenderer>();
-            initLine(lineRenderer);
-            lineRenderer.SetPosition(0, origin);
-            lineRenderer.SetPosition(1, dest);
-            lineRenderer.useWorldSpace = false;
+            //add to our list of line coordinates
+            domain.GetComponent<InitLines>().transformList.Add(originSphere.transform);
+            domain.GetComponent<InitLines>().transformList.Add(destSphere.transform);
         }
-
-
     }
-    LineRenderer initLine(LineRenderer lineRenderer)
-    {
-        Color c1 = Color.yellow;
-        Color c2 = Color.red;
-        lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
-        lineRenderer.widthMultiplier = 0.001f;
-        lineRenderer.positionCount = 2;
 
-        float alpha = 1.0f;
-        Gradient gradient = new Gradient();
-        gradient.SetKeys(
-            new GradientColorKey[] { new GradientColorKey(c1, 0.0f), new GradientColorKey(c2, 1.0f) },
-            new GradientAlphaKey[] { new GradientAlphaKey(alpha, 0.0f), new GradientAlphaKey(alpha, 1.0f) }
-            );
-        lineRenderer.colorGradient = gradient;
-        return lineRenderer;
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Point") && allowDrag) //make sure it is a placed point
+        {
+            isColliding = true;
+            currCollidingObj = other.gameObject;
+            Color color = ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color;
+            color.a = 1;
+            ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color = color;
+        }
+        
+            
+    }
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Point") && allowDrag) //make sure it is a placed point
+        {
+            isColliding = false;
+            Color color = ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color;
+            color.a = 0.353F;
+            ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color = color;
+        }
     }
 }
