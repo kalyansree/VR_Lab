@@ -17,6 +17,20 @@ public class SpawnObject : MonoBehaviour {
     [Tooltip("GameObject of the Domain Cube")]
     public GameObject domain;
 
+    [Tooltip("Determines whether this game object should be restricted to the boundary of the domain or not")]
+    public bool restrictToBoundary;
+
+    [Tooltip("Granularity of grid, where 1 is where the whole cube is one grid")]
+    private float gridGranularity = 0.01F;
+
+    [Tooltip("ArrayList that contains the coordinates to the closest point to place on the domain")]
+    private ArrayList closestPoint;
+
+    void Start()
+    {
+        closestPoint = new ArrayList();
+        closestPoint.Capacity = 3;
+    }
 
     void Update()
     {
@@ -108,5 +122,12 @@ public class SpawnObject : MonoBehaviour {
             color.a = 0.353F;
             ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color = color;
         }
+    }
+
+    void getClosestPoint()
+    {
+
+        //TODO
+        gameObject.transform.position;
     }
 }
