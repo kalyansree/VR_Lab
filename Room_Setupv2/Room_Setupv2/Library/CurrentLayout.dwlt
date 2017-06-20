@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 5}
-  m_MinSize: {x: 950, y: 392}
+  m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_MinSize: {x: 204, y: 342}
   m_MaxSize: {x: 4004, y: 8042}
   vertical: 1
-  controlID: 83
+  controlID: 92
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -162,10 +162,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 681, y: 342}
-  m_MaxSize: {x: 12006, y: 8042}
+  m_MinSize: {x: 683, y: 342}
+  m_MaxSize: {x: 12008, y: 8042}
   vertical: 0
-  controlID: 82
+  controlID: 91
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -320,21 +320,21 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 6e50f5ff1e51f5ffb453f5ff16aef6ffd6aef6ff6cb1f6ffdcfbffff00000000f02c0000f62c0000542d00007e2d0000ac2d0000f02d00000e2e00001e2e00001e600000246000004a610000
+    m_ExpandedIDs: deacffff92adffff28b0ffffdcfbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: OculusSDK
-      m_OriginalName: OculusSDK
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 24606
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 4}
     m_SearchString: 
@@ -425,7 +425,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 87}
     m_SelectedIDs: 68280000
     m_LastClickedID: 10344
-    m_ExpandedIDs: 000000005e270000c82700002a2800003c2800000c290000382900006e2900008e2900003a2a0000822a0000c82a0000f42e000000ca9a3bffffff7f
+    m_ExpandedIDs: 000000005e270000c82700002a2800003c2800000c290000382900006e2900008e2900003a2a0000822a0000c82a0000f42e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -643,7 +643,7 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: 0.04208015, y: 0.25200674, z: -0.010969235, w: 0.9667479}
     speed: 2
-    m_Value: {x: 0.042080153, y: 0.25200677, z: -0.010969236, w: 0.96674794}
+    m_Value: {x: -0.04208015, y: -0.25200674, z: 0.010969235, w: -0.9667479}
   m_Size:
     m_Target: 9.162162
     speed: 2
