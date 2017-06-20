@@ -26,8 +26,12 @@ public class SpawnObject : MonoBehaviour {
             if (isColliding && allowDrag)
             {
                 originSphere = currCollidingObj;
+                originSet = true;
+                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
+                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
+                numPoints = ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Count;
             }
-            else
+            else if(!allowDrag)
             {
                 originSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 originSphere.transform.position = gameObject.transform.position;
@@ -41,16 +45,6 @@ public class SpawnObject : MonoBehaviour {
                 }
                 originSphere.transform.SetParent(domain.transform, true);
             }
-            //line stuff
-            if(allowDrag)
-            {
-                originSet = true;
-                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
-                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
-                numPoints = ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Count;
-                //print(numPoints);
-            }
-
         }
         if (OVRInput.Get(OVRInput.Button.One) && originSet && allowDrag)
         {
