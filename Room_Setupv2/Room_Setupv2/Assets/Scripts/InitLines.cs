@@ -4,10 +4,10 @@ using UnityEngine;
 using Vectrosity;
 
 public class InitLines : MonoBehaviour {
-    [Tooltip("GameObject of containing Camera (CenterEyeAnchor)")]
+    [Tooltip("GameObject containing Camera (CenterEyeAnchor)")]
     public Camera myCamera;
 
-    public VectorLine mainLine;
+    public VectorLine mainLine; //RightController scripts add on to mainLine
     public List<Transform> transformList;
 
     // Use this for initialization
@@ -32,8 +32,8 @@ public class InitLines : MonoBehaviour {
         int i = 0;
         foreach (Transform transform in transformList)
         {
-                mainLine.points3[i] = transform.position;
-                i++;            
+            mainLine.points3[i] = transform.position;
+            i++;
         }
     }
 }

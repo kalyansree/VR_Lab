@@ -9,7 +9,6 @@ public class SpawnObject : MonoBehaviour {
     private Vector3 dest;
     private bool originSet = false;
     private bool isColliding = false; //whether the hand is close to another point that has been placed
-    private VectorLine myLine;
     private int numPoints = 0;
     private GameObject currCollidingObj; 
     
@@ -17,14 +16,6 @@ public class SpawnObject : MonoBehaviour {
     public bool allowDrag;
     [Tooltip("GameObject of the Domain Cube")]
     public GameObject domain;
-
-
-    
-
-    private void Start()
-    {
-        myLine = ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine;
-    }
 
 
     void Update()
@@ -54,9 +45,10 @@ public class SpawnObject : MonoBehaviour {
             if(allowDrag)
             {
                 originSet = true;
-                myLine.points3.Add(originSphere.transform.position);
-                myLine.points3.Add(originSphere.transform.position);
-                numPoints = myLine.points3.Count;
+                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
+                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
+                numPoints = ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Count;
+                //print(numPoints);
             }
 
         }
@@ -66,8 +58,8 @@ public class SpawnObject : MonoBehaviour {
             dest = gameObject.transform.position;
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
-                myLine.points3[numPoints - 2] = origin;
-                myLine.points3[numPoints - 1] = dest;
+                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[numPoints - 2] = origin;
+                ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[numPoints - 1] = dest;
             }
         }
 
