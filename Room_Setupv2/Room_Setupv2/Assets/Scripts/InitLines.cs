@@ -8,7 +8,7 @@ public class InitLines : MonoBehaviour {
     public Camera myCamera;
 
     public VectorLine mainLine; //RightController scripts add on to mainLine
-    public List<Transform> transformList;
+    public List<Transform> lineTransformList;
 
     // Use this for initialization
     void Start () {
@@ -24,13 +24,13 @@ public class InitLines : MonoBehaviour {
         mainLine = new VectorLine("MainLine", new List<Vector3>(), 4.0f);
         mainLine.Draw3DAuto();
 
-        transformList = new List<Transform>();
+        lineTransformList = new List<Transform>();
     }
 
     void LateUpdate()
     {
         int i = 0;
-        foreach (Transform transform in transformList)
+        foreach (Transform transform in lineTransformList)
         {
             mainLine.points3[i] = transform.position;
             i++;

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 public class PointTypeSwitcher : MonoBehaviour {
+
+    public List<Transform> allTransformList;
     private void Start()
     {
+        allTransformList = new List<Transform>();
         int buttonNo = 0;
         int i = 0;
         foreach (Transform joint in transform)

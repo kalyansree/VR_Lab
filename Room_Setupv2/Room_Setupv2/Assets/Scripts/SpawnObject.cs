@@ -7,8 +7,8 @@ public class SpawnObject : MonoBehaviour {
     private GameObject originSphere;
     private Vector3 origin;
     private Vector3 dest;
-    private bool originSet = false;
-    private bool isColliding = false; //whether the hand is close to another point that has been placed
+    private bool originSet;
+    private bool isColliding; //whether the preview is colliding to another point that has been placed
     private int numPoints = 0;
     private GameObject currCollidingObj; 
     
@@ -21,23 +21,81 @@ public class SpawnObject : MonoBehaviour {
     public bool restrictToBoundary;
 
     [Tooltip("Granularity of grid, where 1 is where the whole cube is one grid")]
-    private float gridGranularity = 0.01F;
+    private float gridGranularity;
 
     [Tooltip("ArrayList that contains the coordinates to the closest point to place on the domain")]
-    private ArrayList closestPoint;
+    private Vector3 closestPoint;
+
+    [Tooltip("GameObject of Right Controller")]
+    public GameObject RightController;
+
+    public GameObject preview;
+
+    private bool allowPlacing;
+
+    public GameObject PointTypeSwitcher;
 
     void Start()
     {
-        closestPoint = new ArrayList();
-        closestPoint.Capacity = 3;
+        //set up sphere to be used as a preview for where the point will be placed in the cube
+        preview.SetActive(false); //disable until we need it
+        gridGranularity = (float)(1m / 20m);
+        originSet = false;
+        isColliding = false;
+        allowPlacing = false;
+        
     }
-
     void Update()
     {
         var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
-        if (OVRInput.GetDown(OVRInput.Button.One) && distToCube == 0) //Places the initial sphere
+        //We show the preview once the controller is close enough to the cube and we aren't colliding with an existing sphere
+        if (distToCube < 0.1 && (!restrictToBoundary || restrictToBoundary && distToCube > 0))
         {
-            if (isColliding && allowDrag)
+            getClosestPoint();
+            preview.transform.position = closestPoint;
+            preview.transform.localScale = gameObject.transform.lossyScale;
+            preview.SetActive(true);
+            allowPlacing = true;
+        }
+        else
+        {
+            preview.SetActive(false);
+            allowPlacing = false;
+            return;
+        }
+        isColliding = false;
+        //check if our preview is colliding with a placed sphere
+        foreach (Transform transform in ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList)
+        {
+            //print(dist);
+            if (transform.position == closestPoint && distToCube < 0.1)
+            {
+                preview.SetActive(false);
+                isColliding = true;
+                currCollidingObj = transform.gameObject;
+                if(allowDrag)
+                {
+                    Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
+                    color.a = 1;
+                    ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+                }
+                else
+                {
+                    allowPlacing = false; //we dont want to allow placing if there is already a point there and we are not allowed to drag
+                }
+            }
+            else
+            {
+                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
+                color.a = 0.353F;
+                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+            }
+        }
+
+        if (OVRInput.GetDown(OVRInput.Button.One) && allowPlacing) //Places the initial sphere
+        {
+            
+            if (isColliding  && allowDrag)
             {
                 originSphere = currCollidingObj;
                 originSet = true;
@@ -48,8 +106,7 @@ public class SpawnObject : MonoBehaviour {
             else if(!allowDrag)
             {
                 originSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                originSphere.transform.position = gameObject.transform.position;
-                originSphere.transform.rotation = gameObject.transform.rotation;
+                originSphere.transform.position = closestPoint;
                 originSphere.transform.localScale = gameObject.transform.lossyScale;
                 originSphere.tag = "Point";
                 Renderer rend = originSphere.GetComponent<Renderer>();
@@ -58,12 +115,16 @@ public class SpawnObject : MonoBehaviour {
                     rend.material = gameObject.GetComponent<Renderer>().material;
                 }
                 originSphere.transform.SetParent(domain.transform, true);
+                ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Add(originSphere.transform);
             }
         }
         if (OVRInput.Get(OVRInput.Button.One) && originSet && allowDrag)
         {
             origin = originSphere.transform.position;
-            dest = gameObject.transform.position;
+            if (!allowPlacing)
+                dest = gameObject.transform.position;
+            else
+                dest = closestPoint;
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
                 ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[numPoints - 2] = origin;
@@ -81,53 +142,50 @@ public class SpawnObject : MonoBehaviour {
             }
             else
             {
-                destSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                destSphere.transform.position = gameObject.transform.position;
-                destSphere.transform.rotation = gameObject.transform.rotation;
-                destSphere.tag = "Point";
-                destSphere.transform.localScale = gameObject.transform.lossyScale;
-                Renderer rend = destSphere.GetComponent<Renderer>();
-                if (rend != null)
+                if (!allowPlacing) //if we aren't allowed to place, we shouldn't
                 {
-                    rend.material = gameObject.GetComponent<Renderer>().material;
+                    ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);
+                    ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);
+
+                    return;
                 }
-                destSphere.transform.SetParent(domain.transform, true);
+                else
+                {
+                    destSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    destSphere.transform.position = closestPoint;
+                    destSphere.tag = "Point";
+                    destSphere.transform.localScale = gameObject.transform.lossyScale;
+                    Renderer rend = destSphere.GetComponent<Renderer>();
+                    if (rend != null)
+                    {
+                        rend.material = gameObject.GetComponent<Renderer>().material;
+                    }
+                    destSphere.transform.SetParent(domain.transform, true);
+                    ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Add(destSphere.transform);
+                }
             }
 
             //add to our list of line coordinates
-            domain.GetComponent<InitLines>().transformList.Add(originSphere.transform);
-            domain.GetComponent<InitLines>().transformList.Add(destSphere.transform);
-        }
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.CompareTag("Point") && allowDrag) //make sure it is a placed point
-        {
-            isColliding = true;
-            currCollidingObj = other.gameObject;
-            Color color = ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color;
-            color.a = 1;
-            ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color = color;
-        }
-        
-            
-    }
-    void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.CompareTag("Point") && allowDrag) //make sure it is a placed point
-        {
-            isColliding = false;
-            Color color = ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color;
-            color.a = 0.353F;
-            ((Renderer)other.gameObject.GetComponent<Renderer>()).material.color = color;
+            domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
+            domain.GetComponent<InitLines>().lineTransformList.Add(destSphere.transform);
         }
     }
 
     void getClosestPoint()
     {
+        float tileSize = domain.transform.localScale.x * gridGranularity;
+        Vector3 vectorToLoc = gameObject.transform.position - domain.transform.position;
+        vectorToLoc = domain.transform.InverseTransformDirection(vectorToLoc);
+        Vector3 relativePos = new Vector3();
+        relativePos.x = Mathf.Round(vectorToLoc.x / tileSize) * tileSize;
+        relativePos.y = Mathf.Round(vectorToLoc.y / tileSize) * tileSize;
+        relativePos.z = Mathf.Round(vectorToLoc.z / tileSize) * tileSize;
 
-        //TODO
-        gameObject.transform.position;
+        relativePos = domain.transform.TransformDirection(relativePos);
+        closestPoint = relativePos + domain.transform.position;
+        if (Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(closestPoint), closestPoint) > 0)
+        {
+            closestPoint = domain.GetComponent<Collider>().ClosestPoint(closestPoint);
+        }
     }
 }
