@@ -39,6 +39,7 @@ public class SpawnObject : MonoBehaviour {
     private float gridGranularity;
 
     //Vector3 that contains the coordinates to the closest point on the grid system to the gameObject (sphere on right controller)
+    //Is set by getClosestPoint() function
     private Vector3 closestPoint;
 
     //Indicates whether the sphere is allowed to be placed. 
@@ -129,22 +130,13 @@ public class SpawnObject : MonoBehaviour {
             }
             else if(!allowDrag)
             {
-                originSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                originSphere.transform.position = closestPoint;
-                originSphere.transform.localScale = gameObject.transform.lossyScale;
-                originSphere.tag = "Point";
-                Renderer rend = originSphere.GetComponent<Renderer>();
-                if (rend != null)
-                {
-                    rend.material = gameObject.GetComponent<Renderer>().material;
-                }
-                originSphere.transform.SetParent(domain.transform, true);
-                ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Add(originSphere.transform);
+                originSphere = createPoint();
             }
         }
         if (OVRInput.Get(OVRInput.Button.One) && originSet && allowDrag)
         {
             origin = originSphere.transform.position;
+            //if we're not allowed to place, just show the line drawing towards the player's sphere, not the preview sphere
             if (!allowPlacing)
                 dest = gameObject.transform.position;
             else
@@ -170,22 +162,11 @@ public class SpawnObject : MonoBehaviour {
                 {
                     ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);
                     ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);
-
                     return;
                 }
                 else
                 {
-                    destSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                    destSphere.transform.position = closestPoint;
-                    destSphere.tag = "Point";
-                    destSphere.transform.localScale = gameObject.transform.lossyScale;
-                    Renderer rend = destSphere.GetComponent<Renderer>();
-                    if (rend != null)
-                    {
-                        rend.material = gameObject.GetComponent<Renderer>().material;
-                    }
-                    destSphere.transform.SetParent(domain.transform, true);
-                    ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Add(destSphere.transform);
+                    destSphere = createPoint();                    
                 }
             }
 
@@ -211,5 +192,21 @@ public class SpawnObject : MonoBehaviour {
         {
             closestPoint = domain.GetComponent<Collider>().ClosestPoint(closestPoint);
         }
+    }
+
+    GameObject createPoint()
+    {
+        GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        newObj.transform.position = closestPoint;
+        newObj.transform.localScale = gameObject.transform.lossyScale;
+        newObj.tag = "Point";
+        Renderer rend = newObj.GetComponent<Renderer>();
+        if (rend != null)
+        {
+            rend.material = gameObject.GetComponent<Renderer>().material;
+        }
+        ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Add(newObj.transform);
+        newObj.transform.SetParent(domain.transform, true);
+        return newObj;
     }
 }
