@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
+ * Not really being used for anything now, but was used before as a way to see the distance between controllers
+ */
 public class HandPosition : MonoBehaviour {
     public Color c1 = Color.yellow;
     public Color c2 = Color.red;

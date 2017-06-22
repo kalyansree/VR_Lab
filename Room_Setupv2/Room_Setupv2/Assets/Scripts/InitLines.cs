@@ -2,15 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
-
+/*
+ * This script is attached to the Domain Game Object and handles most of the Vectrosity work
+ * It sets up a Wireframe for the Domain, as well as some code to update the position of all the Vectrosity line endpoints
+ */
 public class InitLines : MonoBehaviour {
+    //--- PRIVATE VARIABLES ---//
+
+    //--- PUBLIC VARIABLES ---//
     [Tooltip("GameObject containing Camera (CenterEyeAnchor)")]
     public Camera myCamera;
 
-    public VectorLine mainLine; //RightController scripts add on to mainLine
+    [Tooltip("VectorLine object for main joints from Vectrosity library, is modified by the SpawnObject scripts on the spheres under the Right Controller")]
+    public VectorLine mainLine; 
+
+    [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
     public List<Transform> lineTransformList;
 
-    // Use this for initialization
+    
     void Start () {
         VectorLine.SetCamera3D(myCamera);
         //Wireframe of cube
@@ -20,7 +29,7 @@ public class InitLines : MonoBehaviour {
         line.Draw3DAuto();
         line.drawTransform = gameObject.transform;
 
-        //main line
+        
         mainLine = new VectorLine("MainLine", new List<Vector3>(), 4.0f);
         mainLine.Draw3DAuto();
 

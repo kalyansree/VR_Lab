@@ -2,48 +2,72 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
-
+/*
+ * This script is applied to all of the different types of Sphere objects attached to the right controller.
+ * It controls how and when the spheres are allowed to be placed.
+ * Note that each type of sphere has its own instance of this class, so don't assume that all spheres are looking at the same instances of these variables/objects. 
+ * Use static variables if all spheres need to see the same object or value. 
+ */
 public class SpawnObject : MonoBehaviour { 
+
+    //--- PRIVATE VARIABLES --//
+
+    //Reference to where the first sphere was placed in a drag movement
     private GameObject originSphere;
+
+    //Location of the Origin Sphere
     private Vector3 origin;
+
+    //Location of the Destination Sphere
     private Vector3 dest;
+
+    //Indicates whether the origin sphere has been placed
     private bool originSet;
-    private bool isColliding; //whether the preview is colliding to another point that has been placed
-    private int numPoints = 0;
-    private GameObject currCollidingObj; 
-    
+
+    //Indicates whether the preview sphere is colliding with an existing sphere
+    private bool isColliding;
+
+    //Will be set to the object currently colliding with the preview if any
+    private GameObject currCollidingObj;
+
+    //Is the number of points inside mainLine in InitLines.cs
+    //Note that this is not the same as the number of points that have been placed. Vectrosity creates two points for all line segments, even if they are the same point
+    private static int numPoints;
+
+    //Granularity of grid
+    //e.g 0.25 means the cube will have four grid lines (including edges) running down each dimension of the cube 
+    private float gridGranularity;
+
+    //Vector3 that contains the coordinates to the closest point on the grid system to the gameObject (sphere on right controller)
+    private Vector3 closestPoint;
+
+    //Indicates whether the sphere is allowed to be placed. 
+    //Not 100% reliable, should always double check conditions for placing.
+    private bool allowPlacing;
+
+    //--- PUBLIC VARIABLES ---//
     [Tooltip("If true, will allow user to drag to create a line between two points. If false, will only place point at origin point (Should be false for Input and Output type points.")]
     public bool allowDrag;
     [Tooltip("GameObject of the Domain Cube")]
     public GameObject domain;
 
-    [Tooltip("Determines whether this game object should be restricted to the boundary of the domain or not")]
+    [Tooltip("Determines whether this sphere should be restricted to the boundary of the domain or not")]
     public bool restrictToBoundary;
-
-    [Tooltip("Granularity of grid, where 1 is where the whole cube is one grid")]
-    private float gridGranularity;
-
-    [Tooltip("ArrayList that contains the coordinates to the closest point to place on the domain")]
-    private Vector3 closestPoint;
 
     [Tooltip("GameObject of Right Controller")]
     public GameObject RightController;
-
+    [Tooltip("GameObject of Preview Sphere")]
     public GameObject preview;
-
-    private bool allowPlacing;
-
+    [Tooltip("GameObject of PointTypeSwitcher")]
     public GameObject PointTypeSwitcher;
 
     void Start()
     {
-        //set up sphere to be used as a preview for where the point will be placed in the cube
         preview.SetActive(false); //disable until we need it
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
-        allowPlacing = false;
-        
+        allowPlacing = false;        
     }
     void Update()
     {
