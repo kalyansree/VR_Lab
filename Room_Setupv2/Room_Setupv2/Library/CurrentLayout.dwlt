@@ -318,23 +318,23 @@ MonoBehaviour:
     height: 926
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 6447fdff
-    m_LastClickedID: -178332
-    m_ExpandedIDs: c2b0ffffd8fbffff000000006a2e00009a2f0000
+    m_SelectedIDs: 52330000
+    m_LastClickedID: 13138
+    m_ExpandedIDs: eed0ffffbad7ffffd8fbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Cube
-      m_OriginalName: Cube
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: -58228
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 4}
     m_SearchString: 
@@ -413,19 +413,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Meshes
+    - Assets/Scenes
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Meshes
+  - Assets/Scenes
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2
   m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 38290000
-    m_LastClickedID: 10552
-    m_ExpandedIDs: 0000000068270000dc27000040280000522800002a290000582900008e290000ae290000a22a0000ee2a0000e834000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 69}
+    m_SelectedIDs: 902a0000
+    m_LastClickedID: 10896
+    m_ExpandedIDs: 0000000068270000dc27000040280000522800002a290000582900008e290000ae2900005a2a0000a22a0000ee2a0000742d000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -453,7 +453,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000068270000dc27000040280000522800002a290000582900008e290000ae290000a22a0000ee2a0000e8340000
+    m_ExpandedIDs: 0000000068270000dc27000040280000522800002a290000582900008e290000ae290000a22a0000ee2a0000742d0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -611,14 +611,14 @@ MonoBehaviour:
     width: 1111
     height: 589
   m_SceneLighting: 1
-  lastFramingTime: 2483.84818795297
+  lastFramingTime: 56.9012800255778
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -0.63279486, y: -11.818387, z: 11.270468}
+    m_Target: {x: -2.177073, y: 0.065967545, z: 19.60135}
     speed: 2
-    m_Value: {x: -0.63279486, y: -11.818387, z: 11.270468}
+    m_Value: {x: -2.177073, y: 0.065967545, z: 19.60135}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -641,13 +641,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.3979768, y: -0.027261598, z: 0.01183278, w: 0.916914}
+    m_Target: {x: -0.0014965213, y: -0.04561323, z: -0.00006820863, w: 0.99895805}
     speed: 2
-    m_Value: {x: 0.3979768, y: -0.027261598, z: 0.01183278, w: 0.916914}
+    m_Value: {x: -0.0014965213, y: -0.04561323, z: -0.00006820863, w: 0.99895805}
   m_Size:
-    m_Target: 18.293783
+    m_Target: 22
     speed: 2
-    m_Value: 18.293783
+    m_Value: 22
   m_Ortho:
     m_Target: 0
     speed: 2
