@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Parabox.CSG;
-using UnityEditor;
 
 public class TestCSG : MonoBehaviour {
 
@@ -41,19 +40,6 @@ public GameObject Sphere2;
         final.transform.position = composite.transform.position;
         composite.SetActive(false);
         composite2.SetActive(false);
-        //GameObject prefab = PrefabUtility.CreatePrefab("Assets/Meshes/Hemisphere.prefab", composite, ReplacePrefabOptions.ReplaceNameBased);
-        //SaveMesh(composite.GetComponent<MeshFilter>().mesh, "HemisphereFinal");
-        //Object prefab = PrefabUtility.CreateEmptyPrefab("Assets/Meshes/hemisphere.prefab");
-        //PrefabUtility.ReplacePrefab(composite, prefab, ReplacePrefabOptions.ConnectToPrefab);
 
-    }
-
-    public static void SaveMesh(Mesh mesh, string name)
-    {
-        string path = "Assets/Meshes/" + name + ".asset";
-        print(path);
-
-        AssetDatabase.CreateAsset(mesh, path);
-        AssetDatabase.SaveAssets();
     }
 }
