@@ -11,6 +11,7 @@ using VRTK;
 public class PointTypeSwitcher : MonoBehaviour {
 
     public List<Transform> allTransformList;
+
     private void Start()
     {
         allTransformList = new List<Transform>();
@@ -40,14 +41,14 @@ public class PointTypeSwitcher : MonoBehaviour {
         //print(buttonNo);
         if (buttonNo == 4)
         {
-            GameObject.Find("RightController").GetComponent<VRTK_Pointer>().enabled = true;
-            GameObject.Find("RightController").GetComponent<VRTK_StraightPointerRenderer>().enabled = true;
+            transform.parent.GetComponent<VRTK_Pointer>().enabled = true;
+            transform.parent.GetComponent<VRTK_StraightPointerRenderer>().enabled = true;
         }
             
         else
         {
-            GameObject.Find("RightController").GetComponent<VRTK_Pointer>().enabled = false;
-            GameObject.Find("RightController").GetComponent<VRTK_StraightPointerRenderer>().enabled = false;
+            transform.parent.GetComponent<VRTK_Pointer>().enabled = false;
+            transform.parent.GetComponent<VRTK_StraightPointerRenderer>().enabled = false;
         }
     }
 }

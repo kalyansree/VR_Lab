@@ -26,10 +26,9 @@ public class InitLines : MonoBehaviour {
         VectorLine line = new VectorLine("Wireframe", new List<Vector3>(), 1.0f, LineType.Discrete);
         Mesh cubeMesh = ((MeshFilter)gameObject.GetComponent("MeshFilter")).mesh;
         line.MakeWireframe(cubeMesh);
-        line.Draw3DAuto();
         line.drawTransform = gameObject.transform;
+        line.Draw3DAuto();
 
-        
         mainLine = new VectorLine("MainLine", new List<Vector3>(), 4.0f);
         mainLine.Draw3DAuto();
 
