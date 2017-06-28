@@ -11,6 +11,7 @@ using VRTK;
 public class PointTypeSwitcher : MonoBehaviour {
 
     public List<Transform> allTransformList;
+    public GameObject domain;
 
     private void Start()
     {
@@ -51,4 +52,57 @@ public class PointTypeSwitcher : MonoBehaviour {
             transform.parent.GetComponent<VRTK_StraightPointerRenderer>().enabled = false;
         }
     }
+    void Update()
+    {
+        if(OVRInput.GetDown(OVRInput.Button.Start))
+        {
+            string message = ConvertToString(allTransformList, true);
+            print(message);
+            message = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
+            print(message);
+
+
+            //TODO: Send data as client to Matlab
+        }
+    }
+
+    public string ConvertToString(List<Transform> transformList, bool includeType)
+    {
+        int maxChars = transformList.Count * 3 * 10;
+        char[] message = new char[maxChars];
+        int i = 0;
+        foreach(Transform transform in transformList)
+        {
+            Vector3 translate = transform.localPosition;
+            translate.x += 0.5F;
+            translate.y += 0.5F;
+            translate.z += 0.5F;
+
+            string substring = translate.ToString("F4");
+            foreach(char c in substring)
+            {
+                message[i] = c;
+                i++;
+            }
+            if(includeType)
+            {
+                if (transform.gameObject.CompareTag("Input"))
+                    message[i] = 'I';
+                else if (transform.gameObject.CompareTag("Output"))
+                    message[i] = 'O';
+                else if (transform.gameObject.CompareTag("Intermediate"))
+                    message[i] = 'T';
+                else if (transform.gameObject.CompareTag("Fixed"))
+                    message[i] = 'F';
+                i++;
+            }
+
+            message[i] = ' ';
+            i++;
+        }
+        string finalMessage = new string(message);
+        return finalMessage;
+        
+    }
 }
+

@@ -199,7 +199,7 @@ public class SpawnObject : MonoBehaviour {
         GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         newObj.transform.position = closestPoint;
         newObj.transform.localScale = gameObject.transform.lossyScale;
-        newObj.tag = "Point";
+        newObj.tag = gameObject.tag;
         Renderer rend = newObj.GetComponent<Renderer>();
         if (rend != null)
         {

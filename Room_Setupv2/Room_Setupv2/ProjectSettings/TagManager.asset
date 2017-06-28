@@ -15,6 +15,10 @@ TagManager:
   - light
   - Point
   - HandPoint
+  - Input
+  - Output
+  - Intermediate
+  - Fixed
   layers:
   - Default
   - TransparentFX
