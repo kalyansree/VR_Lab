@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
+using System.Net;
+using System.Net.Sockets;
+using System.Linq;
+using System;
+using System.IO;
+using System.Text;
+
 /*
  * This script is applied the the PointTypeSwitcher Game Object.
  * It handles switching between the different types of points/spheres.
@@ -12,6 +19,11 @@ public class PointTypeSwitcher : MonoBehaviour {
 
     public List<Transform> allTransformList;
     public GameObject domain;
+    private bool messageSet;
+    //Networking
+    TcpListener listener;
+    StreamWriter theWriter;
+    String msg;
 
     private void Start()
     {
@@ -26,6 +38,12 @@ public class PointTypeSwitcher : MonoBehaviour {
                 joint.gameObject.SetActive(false);
             i++;
         }
+
+
+        //Networking
+        listener = new TcpListener(55001);
+        listener.Start();
+        print("is listening");
     }
     public void SwitchTo(int buttonNo)
     {
@@ -59,17 +77,21 @@ public class PointTypeSwitcher : MonoBehaviour {
             string message = ConvertToString(allTransformList, true);
             print(message);
             message = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
-            print(message);
+            messageSet = true;
+        }
 
-
-            //TODO: Send data as client to Matlab
+        if (testConnection() && messageSet)
+        {
+            SendData(message);
+            messageSet = false;
         }
     }
 
     public string ConvertToString(List<Transform> transformList, bool includeType)
     {
-        int maxChars = transformList.Count * 3 * 10;
+        int maxChars = transformList.Count * 3 * 11;
         char[] message = new char[maxChars];
+        int index = 0;
         int i = 0;
         foreach(Transform transform in transformList)
         {
@@ -77,7 +99,7 @@ public class PointTypeSwitcher : MonoBehaviour {
             translate.x += 0.5F;
             translate.y += 0.5F;
             translate.z += 0.5F;
-
+            message[i++] = index++;
             string substring = translate.ToString("F4");
             foreach(char c in substring)
             {
@@ -103,6 +125,31 @@ public class PointTypeSwitcher : MonoBehaviour {
         string finalMessage = new string(message);
         return finalMessage;
         
+    }
+
+    public void SendData(string data)
+    {
+        while (!listener.Pending())
+        {
+            //wait
+        }
+        print("socket comes");
+        TcpClient client = listener.AcceptTcpClient();
+        NetworkStream ns = client.GetStream();
+        StreamReader reader = new StreamReader(ns);
+        theWriter = new StreamWriter(ns);
+        theWriter.AutoFlush = true;
+        theWriter.WriteLine(data);
+        Debug.Log("socket is sent");
+    }
+
+    public bool testConnection()
+    {
+        if (!listener.Pending())
+        {
+            return false;
+        }
+        return true;
     }
 }
 
