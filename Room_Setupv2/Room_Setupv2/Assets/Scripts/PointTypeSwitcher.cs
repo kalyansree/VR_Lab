@@ -74,57 +74,64 @@ public class PointTypeSwitcher : MonoBehaviour {
     {
         if(OVRInput.GetDown(OVRInput.Button.Start))
         {
-            string message = ConvertToString(allTransformList, true);
-            print(message);
-            message = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
-            messageSet = true;
+            msg = ConvertToString(allTransformList, true);
+            print(msg);
+            msg = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
+            print(msg);
+            //messageSet = true;
         }
 
         if (testConnection() && messageSet)
         {
-            SendData(message);
+            SendData(msg);
             messageSet = false;
         }
     }
 
-    public string ConvertToString(List<Transform> transformList, bool includeType)
+    public string ConvertToString(List<Transform> transformList, bool vertexList)
     {
-        int maxChars = transformList.Count * 3 * 11;
-        char[] message = new char[maxChars];
-        int index = 0;
-        int i = 0;
-        foreach(Transform transform in transformList)
-        {
-            Vector3 translate = transform.localPosition;
-            translate.x += 0.5F;
-            translate.y += 0.5F;
-            translate.z += 0.5F;
-            message[i++] = index++;
-            string substring = translate.ToString("F4");
-            foreach(char c in substring)
-            {
-                message[i] = c;
-                i++;
-            }
-            if(includeType)
-            {
-                if (transform.gameObject.CompareTag("Input"))
-                    message[i] = 'I';
-                else if (transform.gameObject.CompareTag("Output"))
-                    message[i] = 'O';
-                else if (transform.gameObject.CompareTag("Intermediate"))
-                    message[i] = 'T';
-                else if (transform.gameObject.CompareTag("Fixed"))
-                    message[i] = 'F';
-                i++;
-            }
 
-            message[i] = ' ';
-            i++;
+        StringBuilder sb = new StringBuilder();
+        if (vertexList) //aka first string
+        { 
+            int index = 1;
+            foreach (Transform transform in transformList)
+            {
+                Vector3 translate = transform.localPosition;
+                translate.x += 0.5F;
+                translate.y += 0.5F;
+                translate.z += 0.5F;
+                sb.Append(index++);
+                index++;
+                string substring = translate.ToString("F4");
+                sb.Append(substring);
+                if (transform.gameObject.CompareTag("Input"))
+                    sb.Append("I ");
+                else if (transform.gameObject.CompareTag("Output"))
+                    sb.Append("O ");
+                else if (transform.gameObject.CompareTag("Intermediate"))
+                    sb.Append("T ");
+                else if (transform.gameObject.CompareTag("Fixed"))
+                    sb.Append("F ");
+            }
+            return sb.ToString();
         }
-        string finalMessage = new string(message);
-        return finalMessage;
-        
+        else //second string
+        {
+            foreach (Transform transform in transformList)
+            {
+                for(int i = 0; i < allTransformList.Count; i++)
+                {
+                    if(transform.position == allTransformList[i].position)
+                    {
+                        sb.Append(i+1);
+                        break;
+                    }
+                }
+                sb.Append(' ');
+            }
+            return sb.ToString();
+        }
     }
 
     public void SendData(string data)
