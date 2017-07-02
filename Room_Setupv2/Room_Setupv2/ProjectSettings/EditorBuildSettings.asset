@@ -102,11 +102,11 @@ EditorBuildSettings:
     path: Assets/VRTK/Examples/032_Controller_CustomControllerModel.unity
     guid: fd1c18cbbdbe8b24d817b74094e6f49b
   - enabled: 0
-    path: Assets/VRTK/Examples/033_CameraRig_TeleportingInNavMesh.unity
-    guid: 520989f91a00b3540b4c4ecefab0f80a
-  - enabled: 0
     path: Assets/VRTK/Examples/034_Controls_InteractingWithUnityUI.unity
     guid: 2ce499512664316478fc7632f4bb4674
+  - enabled: 0
+    path: Assets/VRTK/Examples/033_CameraRig_TeleportingInNavMesh.unity
+    guid: 520989f91a00b3540b4c4ecefab0f80a
   - enabled: 0
     path: Assets/VRTK/Examples/035_Controller_OpacityAndHighlighting.unity
     guid: 1b1e814fc06685244a71c5e03ac47047
@@ -137,7 +137,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/VRTK/Examples/044_CameraRig_RestrictedTeleportZones.unity
     guid: bd7af403def3edb458ff7277c7838194
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Room.unity
     guid: 95a00bdab1b186144a4df7be05be1da4
   - enabled: 0

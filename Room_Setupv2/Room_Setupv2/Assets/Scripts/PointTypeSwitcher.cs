@@ -19,11 +19,13 @@ public class PointTypeSwitcher : MonoBehaviour {
 
     public List<Transform> allTransformList;
     public GameObject domain;
+    public Canvas canvas;
     private bool messageSet;
     //Networking
     TcpListener listener;
     StreamWriter theWriter;
-    String msg;
+    String msg1;
+    String msg2;
 
     private void Start()
     {
@@ -57,33 +59,23 @@ public class PointTypeSwitcher : MonoBehaviour {
                 joint.gameObject.SetActive(false);
             i++;
         }
-        //print(buttonNo);
-        if (buttonNo == 4)
-        {
-            transform.parent.GetComponent<VRTK_Pointer>().enabled = true;
-            transform.parent.GetComponent<VRTK_StraightPointerRenderer>().enabled = true;
-        }
-            
-        else
-        {
-            transform.parent.GetComponent<VRTK_Pointer>().enabled = false;
-            transform.parent.GetComponent<VRTK_StraightPointerRenderer>().enabled = false;
-        }
     }
+    public void Submit()
+    {
+        msg1 = ConvertToString(allTransformList, true);
+        print(msg1);
+        msg2 = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
+        print(msg2);
+        messageSet = true;
+        canvas.transform.Find("PendingText").gameObject.SetActive(true);
+    }
+
     void Update()
     {
-        if(OVRInput.GetDown(OVRInput.Button.Start))
-        {
-            msg = ConvertToString(allTransformList, true);
-            print(msg);
-            msg = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
-            print(msg);
-            //messageSet = true;
-        }
-
         if (testConnection() && messageSet)
         {
-            SendData(msg);
+            SendData(msg1);
+            SendData(msg2);
             messageSet = false;
         }
     }
@@ -136,10 +128,6 @@ public class PointTypeSwitcher : MonoBehaviour {
 
     public void SendData(string data)
     {
-        while (!listener.Pending())
-        {
-            //wait
-        }
         print("socket comes");
         TcpClient client = listener.AcceptTcpClient();
         NetworkStream ns = client.GetStream();
@@ -148,6 +136,8 @@ public class PointTypeSwitcher : MonoBehaviour {
         theWriter.AutoFlush = true;
         theWriter.WriteLine(data);
         Debug.Log("socket is sent");
+        canvas.transform.Find("PendingText").gameObject.SetActive(false);
+        canvas.transform.Find("SentText").gameObject.SetActive (true);
     }
 
     public bool testConnection()
