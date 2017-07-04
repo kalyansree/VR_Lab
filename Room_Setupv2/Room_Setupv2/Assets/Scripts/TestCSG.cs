@@ -5,41 +5,64 @@ using Parabox.CSG;
 
 public class TestCSG : MonoBehaviour {
 
-// Initialize two new meshes in the scene
-public GameObject Sphere1;
-public GameObject Sphere2;
 
 
 
     void Start () {
+        Vector3 RotationVec = new Vector3(0, 60, 0);
+        GameObject composite = CreateHemisphere();
+        GameObject composite2 = CreateHemisphere(Rotation: Quaternion.Euler(RotationVec));
 
-        // Perform boolean operation
-        Mesh m = CSG.Intersect(Sphere1, Sphere2);
+        GameObject final = GetIntersection(composite, composite2);
 
-        // Create a gameObject to render the result
+        //composite.SetActive(false);
+        //composite2.SetActive(false);
+
+
+    }
+
+    public GameObject CreateHemisphere(Vector3 Position = default(Vector3), Quaternion Rotation = default(Quaternion), Vector3? Scale = null)
+    {
+        GameObject Sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        GameObject Pivot = new GameObject();
+        Sphere.transform.position = Position;
+        Cube.transform.position = Position + new Vector3(0.5F,0,0);
+        Pivot.transform.position = Position;
+        Sphere.transform.parent = Pivot.transform;
+        Cube.transform.parent = Pivot.transform;
+        Pivot.transform.rotation = Rotation;
+
+        Mesh m = CSG.Intersect(Sphere, Cube);
         GameObject composite = new GameObject("Hemisphere");
         composite.AddComponent<MeshFilter>().sharedMesh = m;
-        composite.AddComponent<MeshRenderer>().sharedMaterial = Sphere1.GetComponent<MeshRenderer>().material;
-        composite.transform.position = Sphere1.transform.position;
+        composite.AddComponent<MeshRenderer>().sharedMaterial = Sphere.GetComponent<MeshRenderer>().material;
 
-        GameObject composite2 = new GameObject("Hemisphere");
-        composite2.AddComponent<MeshFilter>().sharedMesh = m;
-        composite2.AddComponent<MeshRenderer>().sharedMaterial = Sphere1.GetComponent<MeshRenderer>().material;
-        composite2.transform.position = Sphere1.transform.position;
-        var rotationVector = composite2.transform.rotation.eulerAngles;
-        rotationVector.y += 60;
-        composite2.transform.rotation = Quaternion.Euler(rotationVector);
-        composite2.transform.localScale = composite2.transform.localScale * 1.3F;
-        Sphere1.SetActive(false);
-        Sphere2.SetActive(false);
+        if (Scale == null)
+            composite.transform.localScale = new Vector3(1, 1, 1);
+        else
+            composite.transform.localScale = (Vector3)Scale;
 
-        Mesh n = CSG.Intersect(composite, composite2);
+        Destroy(Sphere);
+        Destroy(Cube);
+        Destroy(Pivot);
+
+        return composite;
+    }
+
+    public GameObject GetIntersection(GameObject Hemi1, GameObject Hemi2)
+    {
+        if(Hemi1.transform.localScale == Hemi2.transform.localScale)
+        {
+            Hemi1.transform.localScale *= 1.3F;
+        }
+        Mesh n = CSG.Intersect(Hemi1, Hemi2);
         GameObject final = new GameObject("Final");
         final.AddComponent<MeshFilter>().sharedMesh = n;
-        final.AddComponent<MeshRenderer>().sharedMaterial = composite.GetComponent<MeshRenderer>().material;
-        final.transform.position = composite.transform.position;
-        composite.SetActive(false);
-        composite2.SetActive(false);
+        final.AddComponent<MeshRenderer>().sharedMaterial = Hemi1.GetComponent<MeshRenderer>().material;
 
+        Destroy(Hemi1);
+        Destroy(Hemi2);
+        return final;
     }
 }

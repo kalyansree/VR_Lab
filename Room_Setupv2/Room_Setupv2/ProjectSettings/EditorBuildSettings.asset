@@ -137,7 +137,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/VRTK/Examples/044_CameraRig_RestrictedTeleportZones.unity
     guid: bd7af403def3edb458ff7277c7838194
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Room.unity
     guid: 95a00bdab1b186144a4df7be05be1da4
   - enabled: 0
