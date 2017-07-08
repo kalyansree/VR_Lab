@@ -22,8 +22,13 @@ public class PointTypeSwitcher : MonoBehaviour {
     public Canvas canvas;
     private bool messageSet;
     //Networking
-    TcpListener listener;
+    internal Boolean socketReady = false;
+    TcpClient mySocket;
+    NetworkStream theStream;
     StreamWriter theWriter;
+    StreamReader theReader;
+    String Host = "localhost";
+    Int32 Port = 55000;
     String msg1;
     String msg2;
 
@@ -40,12 +45,6 @@ public class PointTypeSwitcher : MonoBehaviour {
                 joint.gameObject.SetActive(false);
             i++;
         }
-
-
-        //Networking
-        listener = new TcpListener(55001);
-        listener.Start();
-        print("is listening");
     }
     public void SwitchTo(int buttonNo)
     {
@@ -62,6 +61,8 @@ public class PointTypeSwitcher : MonoBehaviour {
     }
     public void Submit()
     {
+        setupSocket();
+        Debug.Log("socket is set up");
         msg1 = ConvertToString(allTransformList, true);
         print(msg1);
         msg2 = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
@@ -72,7 +73,7 @@ public class PointTypeSwitcher : MonoBehaviour {
 
     void Update()
     {
-        if (testConnection() && messageSet)
+        if (messageSet)
         {
             SendData(msg1);
             SendData(msg2);
@@ -94,7 +95,6 @@ public class PointTypeSwitcher : MonoBehaviour {
                 translate.y += 0.5F;
                 translate.z += 0.5F;
                 sb.Append(index++);
-                index++;
                 string substring = translate.ToString("F4");
                 sb.Append(substring);
                 if (transform.gameObject.CompareTag("Input"))
@@ -128,25 +128,27 @@ public class PointTypeSwitcher : MonoBehaviour {
 
     public void SendData(string data)
     {
-        print("socket comes");
-        TcpClient client = listener.AcceptTcpClient();
-        NetworkStream ns = client.GetStream();
-        StreamReader reader = new StreamReader(ns);
-        theWriter = new StreamWriter(ns);
-        theWriter.AutoFlush = true;
-        theWriter.WriteLine(data);
-        Debug.Log("socket is sent");
+        theWriter.Write(data);
+        theWriter.Write('|');
         canvas.transform.Find("PendingText").gameObject.SetActive(false);
         canvas.transform.Find("SentText").gameObject.SetActive (true);
     }
 
-    public bool testConnection()
+    public void setupSocket()
     {
-        if (!listener.Pending())
+        try
         {
-            return false;
+            mySocket = new TcpClient(Host, Port);
+            theStream = mySocket.GetStream();
+            theWriter = new StreamWriter(theStream);
+            socketReady = true;
+            theWriter.AutoFlush = true;
+            Debug.Log("socket is sent");
         }
-        return true;
+        catch (Exception e)
+        {
+            Debug.Log("Socket error: " + e);   
+        }
     }
 }
 
