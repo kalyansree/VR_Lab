@@ -21,6 +21,7 @@ public class PointTypeSwitcher : MonoBehaviour {
     public GameObject domain;
     public Canvas canvas;
     private bool messageSet;
+    public int activeSphere;
     //Networking
     internal Boolean socketReady = false;
     TcpClient mySocket;
@@ -37,6 +38,7 @@ public class PointTypeSwitcher : MonoBehaviour {
         allTransformList = new List<Transform>();
         int buttonNo = 0;
         int i = 0;
+        activeSphere = 0;
         foreach (Transform joint in transform)
         {
             if (i == buttonNo)
@@ -58,6 +60,7 @@ public class PointTypeSwitcher : MonoBehaviour {
                 joint.gameObject.SetActive(false);
             i++;
         }
+        activeSphere = buttonNo;
     }
     public void Submit()
     {
@@ -149,6 +152,22 @@ public class PointTypeSwitcher : MonoBehaviour {
         {
             Debug.Log("Socket error: " + e);   
         }
+    }
+    public void toggleActiveSphereFixedDir(int dir)
+    {
+        FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
+        fd.toggleDirection(dir);
+    }
+    private void fixActiveSphereDir(int dir)
+    {
+        FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
+        fd.fixDirection(dir);
+    }
+
+    private void unfixActiveSphereDir(int dir)
+    {
+        FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
+        fd.unfixDirection(dir);
     }
 }
 

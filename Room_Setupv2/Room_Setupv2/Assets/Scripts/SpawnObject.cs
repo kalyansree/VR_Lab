@@ -49,11 +49,15 @@ public class SpawnObject : MonoBehaviour {
     //--- PUBLIC VARIABLES ---//
     [Tooltip("If true, will allow user to drag to create a line between two points. If false, will only place point at origin point (Should be false for Input and Output type points.")]
     public bool allowDrag;
-    [Tooltip("GameObject of the Domain Cube")]
-    public GameObject domain;
 
     [Tooltip("Determines whether this sphere should be restricted to the boundary of the domain or not")]
     public bool restrictToBoundary;
+
+    [Tooltip("Determines whether this sphere should be restricted to inside the domain or not")]
+    public bool restrictToInside;
+
+    [Tooltip("GameObject of the Domain Cube")]
+    public GameObject domain;
 
     [Tooltip("GameObject of Right Controller")]
     public GameObject RightController;
@@ -73,20 +77,34 @@ public class SpawnObject : MonoBehaviour {
     void Update()
     {
         var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
-        //We show the preview once the controller is close enough to the cube and we aren't colliding with an existing sphere
-        if (distToCube < 0.1 && (!restrictToBoundary || restrictToBoundary && distToCube > 0))
-        {
+        
+        if (distToCube < 0.1 && (!restrictToBoundary || (restrictToBoundary && distToCube > 0) && (!restrictToInside || (restrictToInside && distToCube == 0))))
+        {            
             getClosestPoint();
             preview.transform.position = closestPoint;
             preview.transform.localScale = gameObject.transform.lossyScale;
-            preview.SetActive(true);
-            allowPlacing = true;
+            Vector3 pos = domain.transform.InverseTransformPoint(preview.transform.position);
+            double xPos = System.Math.Round(pos.x,3);
+            double yPos = System.Math.Round(pos.y, 3);
+            double zPos = System.Math.Round(pos.z, 3);
+
+            bool onBoundary = xPos == -0.5F || yPos == -0.5F || zPos == -0.5F || xPos == 0.5F || yPos == 0.5F || zPos == 0.5F;
+
+            if (restrictToInside && onBoundary)
+            {
+                preview.SetActive(false);
+                allowPlacing = false;
+            }
+            else
+            {
+                preview.SetActive(true);
+                allowPlacing = true;
+            }
         }
         else
         {
             preview.SetActive(false);
             allowPlacing = false;
-            return;
         }
         isColliding = false;
         //check if our preview is colliding with a placed sphere
@@ -103,6 +121,7 @@ public class SpawnObject : MonoBehaviour {
                     Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
                     color.a = 1;
                     ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+                    allowPlacing = true;
                 }
                 else
                 {
@@ -119,16 +138,20 @@ public class SpawnObject : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.Button.One) && allowPlacing) //Places the initial sphere
         {
-            
-            if (isColliding  && allowDrag)
+
+            if (allowDrag)
             {
-                originSphere = currCollidingObj;
+                if (isColliding)
+                    originSphere = currCollidingObj;
+                else
+                    originSphere = createPoint();
                 originSet = true;
                 ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
                 ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
                 numPoints = ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Count;
+
             }
-            else if(!allowDrag)
+            else
             {
                 originSphere = createPoint();
             }
@@ -188,7 +211,7 @@ public class SpawnObject : MonoBehaviour {
 
         relativePos = domain.transform.TransformDirection(relativePos);
         closestPoint = relativePos + domain.transform.position;
-        if (Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(closestPoint), closestPoint) > 0)
+        if (Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(closestPoint), closestPoint) > 0) // only triggers when the point is outside the collider
         {
             closestPoint = domain.GetComponent<Collider>().ClosestPoint(closestPoint);
         }
@@ -207,6 +230,8 @@ public class SpawnObject : MonoBehaviour {
         }
         ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Add(newObj.transform);
         newObj.transform.SetParent(domain.transform, true);
+        //print(newObj.transform.localPosition);
+        //print(newObj.transform.position);
         return newObj;
     }
 }

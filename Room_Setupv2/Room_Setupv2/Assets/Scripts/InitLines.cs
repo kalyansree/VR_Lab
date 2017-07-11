@@ -40,8 +40,11 @@ public class InitLines : MonoBehaviour {
         int i = 0;
         foreach (Transform transform in lineTransformList)
         {
-            mainLine.points3[i] = transform.position;
-            i++;
+            if(transform.CompareTag("Input") || transform.CompareTag("Output") || transform.CompareTag("Intermediate") || transform.CompareTag("Fixed"))
+            {
+                mainLine.points3[i] = transform.position;
+                i++;
+            }
         }
     }
 }
