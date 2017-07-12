@@ -101,13 +101,13 @@ public class PointTypeSwitcher : MonoBehaviour {
                 string substring = translate.ToString("F4");
                 sb.Append(substring);
                 if (transform.gameObject.CompareTag("Input"))
-                    sb.Append("I ");
+                    sb.Append("I;");
                 else if (transform.gameObject.CompareTag("Output"))
-                    sb.Append("O ");
+                    sb.Append("O;");
                 else if (transform.gameObject.CompareTag("Intermediate"))
-                    sb.Append("T ");
+                    sb.Append("T;");
                 else if (transform.gameObject.CompareTag("Fixed"))
-                    sb.Append("F ");
+                    sb.Append("F;");
             }
             return sb.ToString();
         }
