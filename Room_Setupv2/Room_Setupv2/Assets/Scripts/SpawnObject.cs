@@ -78,7 +78,7 @@ public class SpawnObject : MonoBehaviour {
     {
         var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
         
-        if (distToCube < 0.1 && (!restrictToBoundary || (restrictToBoundary && distToCube > 0) && (!restrictToInside || (restrictToInside && distToCube == 0))))
+        if (distToCube < 0.1)
         {            
             getClosestPoint();
             preview.transform.position = closestPoint;
@@ -90,7 +90,7 @@ public class SpawnObject : MonoBehaviour {
 
             bool onBoundary = xPos == -0.5F || yPos == -0.5F || zPos == -0.5F || xPos == 0.5F || yPos == 0.5F || zPos == 0.5F;
 
-            if (restrictToInside && onBoundary)
+            if ((restrictToInside && onBoundary) || (restrictToBoundary && !onBoundary))
             {
                 preview.SetActive(false);
                 allowPlacing = false;
