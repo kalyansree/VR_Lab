@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using VRTK;
 using System.Net;
 using System.Net.Sockets;
@@ -21,7 +22,7 @@ public class PointTypeSwitcher : MonoBehaviour {
     public GameObject domain;
     public Canvas canvas;
     private bool messageSet;
-    public int activeSphere;
+    int activeSphere;
     //Networking
     internal Boolean socketReady = false;
     TcpClient mySocket;
@@ -55,7 +56,17 @@ public class PointTypeSwitcher : MonoBehaviour {
         foreach (Transform joint in transform)
         {
             if (i == buttonNo)
+            {
                 joint.gameObject.SetActive(true);
+                FixedDirections fd = joint.gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
+                if(i == 3) //fixed
+                {
+                    fd.fixedX = true;
+                    fd.fixedY = true;
+                    fd.fixedZ = true;
+                }
+                fd.reapplyColor();
+            }
             else
                 joint.gameObject.SetActive(false);
             i++;
@@ -157,17 +168,7 @@ public class PointTypeSwitcher : MonoBehaviour {
     {
         FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
         fd.toggleDirection(dir);
-    }
-    private void fixActiveSphereDir(int dir)
-    {
-        FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
-        fd.fixDirection(dir);
-    }
 
-    private void unfixActiveSphereDir(int dir)
-    {
-        FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
-        fd.unfixDirection(dir);
     }
 }
 
