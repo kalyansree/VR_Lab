@@ -1,10 +1,24 @@
-function [nodes] = getNodeCoordArray(str) 
+function [nodes, I, O, F, T] = getNodeCoordArray(str) 
     strings = strsplit(str, ';');
     cellSize = size(strings)-1;
     nodes = zeros(cellSize(2), 4);
+    I = [];
+    O = [];
+    F = [];
+    T = [];
     for i=1:(cellSize(2))
         tempString = strings{i};
         nodes(i,1) = str2double(tempString(1));
+        typeString = tempString(length(tempString));
+        if(strcmp(typeString, 'I'))
+            I = [I i];
+        elseif(strcmp(typeString, 'O'))
+            O = [O i];
+        elseif(strcmp(typeString, 'T'))
+            T = [T i];
+        elseif(strcmp(typeString, 'F'))
+            F = [F i];
+        end
         nodes(i,2:4) = getCoordsFromString(tempString);
     end
 end
