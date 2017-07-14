@@ -6700,8 +6700,9 @@ MonoBehaviour:
     m_trigger: 0
     m_physicsMaterial: {fileID: 0}
     m_alignOddWidthToPixels: 0
-  arrowTexture: {fileID: 2800000, guid: b552d06a4330f47a08d09897dddcbd35, type: 3}
-  lineTexture: {fileID: 2800000, guid: ccb667c9be88d47a0a9e144ff764abbb, type: 3}
+  frontTex: {fileID: 2800000, guid: 8f9c1207d3f3548eebdc8adf6ab8c561, type: 3}
+  lineTex: {fileID: 2800000, guid: ccb667c9be88d47a0a9e144ff764abbb, type: 3}
+  backTex: {fileID: 2800000, guid: b552d06a4330f47a08d09897dddcbd35, type: 3}
   myCamera: {fileID: 369225325}
   lineTransformList: []
   domain: {fileID: 848136301}
