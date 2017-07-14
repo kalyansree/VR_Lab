@@ -10,5 +10,5 @@ fclose(tcpip);
 [node, I, O, F, T] = getNodeCoordArray(vertString);
 elem = getElementArray(edgeString);
 
-[ u ] = mat_unity( node, I, O, F, T, elem );
+%[ u ] = mat_unity( node, I, O, F, T, elem );%
 

@@ -63,8 +63,8 @@ public class SpawnObject : MonoBehaviour {
     public GameObject RightController;
     [Tooltip("GameObject of Preview Sphere")]
     public GameObject preview;
-    [Tooltip("GameObject of PointTypeSwitcher")]
-    public GameObject PointTypeSwitcher;
+    [Tooltip("GameObject of Networking")]
+    public GameObject Networking;
 
     void Start()
     {
@@ -108,7 +108,7 @@ public class SpawnObject : MonoBehaviour {
         }
         isColliding = false;
         //check if our preview is colliding with a placed sphere
-        foreach (Transform transform in ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList)
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
         {
             //print(dist);
             if (transform.position == closestPoint && distToCube < 0.1)
@@ -228,7 +228,7 @@ public class SpawnObject : MonoBehaviour {
         {
             rend.material = gameObject.GetComponent<Renderer>().material;
         }
-        ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Add(newObj.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Add(newObj.transform);
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);

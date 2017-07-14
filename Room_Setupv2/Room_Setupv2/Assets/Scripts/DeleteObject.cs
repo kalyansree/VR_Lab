@@ -51,8 +51,8 @@ public class DeleteObject : MonoBehaviour
     public GameObject RightController;
     [Tooltip("GameObject of Preview Sphere")]
     public GameObject preview;
-    [Tooltip("GameObject of PointTypeSwitcher")]
-    public GameObject PointTypeSwitcher;
+    [Tooltip("GameObject of Networking")]
+    public GameObject Networking;
     [Tooltip("GameObject of CenterEyeAnchor")]
     public GameObject myCamera;
 
@@ -90,7 +90,7 @@ public class DeleteObject : MonoBehaviour
         }
         isColliding = false;
         //check if our preview is colliding with a placed sphere
-        foreach (Transform transform in ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList)
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
         {
             //print(dist);
             if (transform.position == closestPoint && distToCube < 0.1)
@@ -184,8 +184,8 @@ public class DeleteObject : MonoBehaviour
     {
         if (originSet == false)
             return;
-        int index = ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.IndexOf(originSphere.transform);
-        ((PointTypeSwitcher)PointTypeSwitcher.GetComponent(typeof(PointTypeSwitcher))).allTransformList.Remove(originSphere.transform);
+        int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
 
         for (int i = 0; i < ((InitLines)domain.GetComponent(typeof(InitLines))).lineTransformList.Count; i++)
         {
