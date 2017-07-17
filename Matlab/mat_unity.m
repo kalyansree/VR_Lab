@@ -145,23 +145,23 @@ BC1 = [ 0 0 0 0 0 0; 1 NaN 0 NaN NaN NaN; NaN NaN NaN NaN NaN NaN; NaN NaN NaN N
 
 [u1,R1,K1,SE1] = fem_3d(Be,He,Le,Y,t,ncon,NELEM,NNODE,F,dispID1,dispVal1);
 dim = 3; 
-[Cglobal1,Felem1]=LoadFlow_general(NNODE,NELEM,K1,BC1',R1,dim);
+% [Cglobal1,Felem1]=LoadFlow_general(NNODE,NELEM,K1,BC1',R1,dim);
 
-FT1 = Felem1(1:3,:); MT1 = Felem1(4:6,:); 
-
-for i = 1:NNODE
-    qu1(i) = FT1(1,i)/norm(FT1(:,i)); 
-    qv1(i) = FT1(2,i)/norm(FT1(:,i)); 
-    qw1(i) = FT1(3,i)/norm(FT1(:,i));    
-end
+% FT1 = Felem1(1:3,:); MT1 = Felem1(4:6,:); 
+% 
+% for i = 1:NNODE
+%     qu1(i) = FT1(1,i)/norm(FT1(:,i)); 
+%     qv1(i) = FT1(2,i)/norm(FT1(:,i)); 
+%     qw1(i) = FT1(3,i)/norm(FT1(:,i));    
+% end
 
 
 for j = 1
     figure(j)
     u = [u1];
-    qu = [qu1'];
-    qv = [qv1']; 
-    qw = [qw1']; 
+%     qu = [qu1'];
+%     qv = [qv1']; 
+%     qw = [qw1']; 
     for i = 1:NELEM,
         id1 = ncon(i,1);
         id2 = ncon(i,2);
@@ -174,7 +174,7 @@ for j = 1
     for i=1:NNODE,
         text(nx(i),ny(i),nz(i),num2str(i),'Color','red','FontSize',14);hold on;
     end
-    quiver3(nx,ny,nz,qu(:,j),qv(:,j),qw(:,j),'color','r','LineWidth',2,'MarkerSize',10,'MaxHeadSize',1.5,'AutoScale','on');hold on
+%     quiver3(nx,ny,nz,qu(:,j),qv(:,j),qw(:,j),'color','r','LineWidth',2,'MarkerSize',10,'MaxHeadSize',1.5,'AutoScale','on');hold on
     xlabel('x');
     ylabel('y');
     zlabel('z');

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using Vectrosity;
 
@@ -12,6 +13,15 @@ public class DrawForceVector : MonoBehaviour {
     public Camera myCamera;
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
     public List<Transform> lineTransformList;
+
+
+
+    public Vector3 dir_angles;
+
+    Text text1;
+    //Text text2;
+
+
 
 
     //--- PRIVATE VARIABLES --//
@@ -65,6 +75,17 @@ public class DrawForceVector : MonoBehaviour {
         forceLine.endCap = "Arrow";
         forceLine.Draw3DAuto();
 
+
+
+        //dir_angles = forceLine.transform.localRotation.eulerAngles;
+
+        //text = GameObject.Find("Next Text 0").GetComponent<Text>();
+
+        text1 = GameObject.Find("Direction_Angles1").GetComponent<Text>();
+
+
+
+
         preview.SetActive(false); //disable until we need it
         gridGranularity = (float)(1m / 20m);
         originSet = false;
@@ -105,7 +126,10 @@ public class DrawForceVector : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
-            originSphere = createPoint();
+            if (isColliding)
+                originSphere = currCollidingObj;
+            else
+                originSphere = createPoint();
             originSet = true;
             forceLine.points3.Add(originSphere.transform.position);
             forceLine.points3.Add(originSphere.transform.position);
@@ -122,6 +146,9 @@ public class DrawForceVector : MonoBehaviour {
             {
                 forceLine.points3[numPoints - 2] = dest;
                 forceLine.points3[numPoints - 1] = origin;
+                Vector3 dest_local = domain.transform.InverseTransformPoint(dest);
+                Vector3 origin_local = domain.transform.InverseTransformPoint(origin);
+                dir_angles = dest_local - origin_local;
             }
         }
 
@@ -135,18 +162,26 @@ public class DrawForceVector : MonoBehaviour {
             }
             else
             {
-                forceLine.points3.RemoveAt(--numPoints);
-                forceLine.points3.RemoveAt(--numPoints);
-                int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
-                ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
-                Destroy(domain.transform.GetChild(index).gameObject);
-                return;
+                destSphere = createPoint();
             }
 
             //add to our list of line coordinates
             lineTransformList.Add(destSphere.transform);
             lineTransformList.Add(originSphere.transform);
         }
+
+
+
+        //dir_angles = forceLine.transform.localRotation.eulerAngles;
+        if(dir_angles.magnitude > 1)
+        {
+            dir_angles.Normalize();
+        }
+        text1.text = dir_angles.magnitude + "\n" + dir_angles.x + "\n" + dir_angles.y + "\n" + dir_angles.z + "\n" ;
+
+
+
+
     }
 
     void getClosestPoint()
