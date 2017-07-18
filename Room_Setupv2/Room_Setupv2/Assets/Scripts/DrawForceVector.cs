@@ -68,6 +68,8 @@ public class DrawForceVector : MonoBehaviour {
     [Tooltip("GameObject of Networking")]
     public GameObject Networking;
 
+    private bool createdOrigin;
+
     // Use this for initialization
     void Start () {
         VectorLine.SetCamera3D(myCamera);
@@ -131,7 +133,11 @@ public class DrawForceVector : MonoBehaviour {
             if (isColliding)
                 originSphere = currCollidingObj;
             else
+            {
                 originSphere = createPoint();
+                createdOrigin = true;
+            }
+
             originSet = true;
             forceLine.points3.Add(originSphere.transform.position);
             forceLine.points3.Add(originSphere.transform.position);
@@ -165,6 +171,16 @@ public class DrawForceVector : MonoBehaviour {
             if (isColliding)
             {
                 destSphere = currCollidingObj;
+            }
+            else if(createdOrigin)
+            {
+                forceLine.points3.RemoveAt(--numPoints);
+                forceLine.points3.RemoveAt(--numPoints);
+                int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
+                ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
+                Destroy(domain.transform.GetChild(index).gameObject);
+                createdOrigin = false;
+                return;
             }
             else
             {
