@@ -11,7 +11,7 @@ function finalString = getDeformedCoordString(node)
             end
             
         end
-        finalString = strcat(finalString, ')', {' '});
+        finalString = strcat(finalString, ');');
         
     end
     finalString = finalString{1};

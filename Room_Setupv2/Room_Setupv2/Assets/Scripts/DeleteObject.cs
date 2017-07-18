@@ -185,7 +185,7 @@ public class DeleteObject : MonoBehaviour
         if (originSet == false)
             return;
         int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
-        ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).removeFromList(originSphere);
 
         for (int i = 0; i < ((InitLines)domain.GetComponent(typeof(InitLines))).lineTransformList.Count; i++)
         {

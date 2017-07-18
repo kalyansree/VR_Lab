@@ -29,7 +29,10 @@ public class Networking : MonoBehaviour {
     public GameObject force;
     public Canvas submitCanvas;
 
+    private string errorMsg;
 
+    private int inputCount;
+    private int outputCount;
 
     // Use this for initialization
     void Start () {
@@ -44,12 +47,29 @@ public class Networking : MonoBehaviour {
             SendData(msg2);
             SendData(msg3);
             messageSet = false;
+            String retMsg = theReader.ReadToEnd();
+            print(retMsg);
         }
     }
 
     public void Submit()
     {
-        setupSocket();
+        if(!checkConditions())
+        {
+            submitCanvas.transform.Find("WarningText").GetComponent<Text>().text = errorMsg;
+            submitCanvas.transform.Find("WarningText").gameObject.SetActive(true);
+            submitCanvas.transform.Find("PendingText").gameObject.SetActive(false);
+            submitCanvas.transform.Find("SentText").gameObject.SetActive(false);
+            return;
+        }
+        if (!setupSocket())
+        {
+            submitCanvas.transform.Find("WarningText").GetComponent<Text>().text = errorMsg;
+            submitCanvas.transform.Find("WarningText").gameObject.SetActive(true);
+            submitCanvas.transform.Find("PendingText").gameObject.SetActive(false);
+            submitCanvas.transform.Find("SentText").gameObject.SetActive(false);
+            return;
+        }
         Debug.Log("socket is set up");
         msg1 = ConvertToString(allTransformList, true);
         msg2 = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
@@ -112,20 +132,72 @@ public class Networking : MonoBehaviour {
         submitCanvas.transform.Find("SentText").gameObject.SetActive(true);
     }
 
-    private void setupSocket()
+    private bool setupSocket()
     {
         try
         {
             mySocket = new TcpClient(Host, Port);
             theStream = mySocket.GetStream();
             theWriter = new StreamWriter(theStream);
+            theReader = new StreamReader(theStream);
+            theReader.BaseStream.ReadTimeout = 2000;
             socketReady = true;
             theWriter.AutoFlush = true;
             Debug.Log("socket is sent");
+            return true;
         }
         catch (Exception e)
         {
             Debug.Log("Socket error: " + e);
+            errorMsg = "Looks like we weren't able to connect to Matlab. Please double check that the Matlab Server is running.";
+            return false;
+        }
+    }
+
+    private bool checkConditions()
+    {
+        if(allTransformList.Count < 3 || inputCount <= 0 || outputCount <= 0)
+        {
+            errorMsg = "You do not have enough points! Make sure you have at least one input, one output, and one intermediate point.";
+            return false;
+        }
+        
+        if(domain.GetComponent<InitLines>().lineTransformList.Count < 3)
+        {
+            errorMsg = "There doesn't seem to be enough connections. Make sure there are at least two connection before submitting.";
+            return false;
+        }
+        if (force.GetComponent<DrawForceVector>().lineTransformList.Count !=  inputCount * 2)
+        {
+            errorMsg = "Make sure there is one force vector for every input node.";
+            return false;
+        }
+        return true;
+    }
+
+    public void addToList(GameObject obj)
+    {
+        allTransformList.Add(obj.transform);
+        if(obj.CompareTag("Input"))
+        {
+            inputCount += 1;
+        }
+        else if (obj.CompareTag("Output"))
+        {
+            outputCount += 1;
+        }
+    }
+
+    public void removeFromList(GameObject obj)
+    {
+        allTransformList.Remove(obj.transform);
+        if (obj.CompareTag("Input"))
+        {
+            inputCount -= 1;
+        }
+        else if (obj.CompareTag("Output"))
+        {
+            outputCount -= 1;
         }
     }
 }

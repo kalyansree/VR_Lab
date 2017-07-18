@@ -228,7 +228,7 @@ public class SpawnObject : MonoBehaviour {
         {
             rend.material = gameObject.GetComponent<Renderer>().material;
         }
-        ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Add(newObj.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).addToList(newObj);
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
