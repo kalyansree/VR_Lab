@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using Vectrosity;
+using System.Text;
 
 public class DrawForceVector : MonoBehaviour {
     public VectorLine forceLine;
@@ -13,10 +14,10 @@ public class DrawForceVector : MonoBehaviour {
     public Camera myCamera;
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
     public List<Transform> lineTransformList;
+    private List<Vector3> forceVectorList;
 
 
-
-    public Vector3 dir_angles;
+    public Vector3 forceVector;
 
     Text text1;
     //Text text2;
@@ -77,7 +78,7 @@ public class DrawForceVector : MonoBehaviour {
 
 
 
-        //dir_angles = forceLine.transform.localRotation.eulerAngles;
+        //forceVector = forceLine.transform.localRotation.eulerAngles;
 
         //text = GameObject.Find("Next Text 0").GetComponent<Text>();
 
@@ -92,6 +93,7 @@ public class DrawForceVector : MonoBehaviour {
         isColliding = false;
 
         lineTransformList = new List<Transform>();
+        forceVectorList = new List<Vector3>();
     }
 	
 	// Update is called once per frame
@@ -148,7 +150,11 @@ public class DrawForceVector : MonoBehaviour {
                 forceLine.points3[numPoints - 1] = origin;
                 Vector3 dest_local = domain.transform.InverseTransformPoint(dest);
                 Vector3 origin_local = domain.transform.InverseTransformPoint(origin);
-                dir_angles = dest_local - origin_local;
+                forceVector = dest_local - origin_local;
+                if (forceVector.magnitude > 1)
+                {
+                    forceVector.Normalize();
+                }
             }
         }
 
@@ -168,16 +174,14 @@ public class DrawForceVector : MonoBehaviour {
             //add to our list of line coordinates
             lineTransformList.Add(destSphere.transform);
             lineTransformList.Add(originSphere.transform);
+            forceVectorList.Add(forceVector); 
         }
 
 
 
-        //dir_angles = forceLine.transform.localRotation.eulerAngles;
-        if(dir_angles.magnitude > 1)
-        {
-            dir_angles.Normalize();
-        }
-        text1.text = dir_angles.magnitude + "\n" + dir_angles.x + "\n" + dir_angles.y + "\n" + dir_angles.z + "\n" ;
+        //forceVector = forceLine.transform.localRotation.eulerAngles;
+
+        text1.text = forceVector.magnitude + "\n" + forceVector.x + "\n" + forceVector.y + "\n" + forceVector.z + "\n" ;
 
 
 
@@ -225,4 +229,28 @@ public class DrawForceVector : MonoBehaviour {
                 i++;
         }
     }
+    override
+    public string ToString()
+    {
+        int forceVectorIndex = 0;
+        StringBuilder sb = new StringBuilder();
+        foreach(Transform transform in lineTransformList)
+        {
+            if(transform.gameObject.CompareTag("Input"))
+            {
+                int inputIndex = Networking.GetComponent<Networking>().allTransformList.IndexOf(transform);
+                sb.Append(inputIndex+1);
+                Quaternion temp = new Quaternion();
+                Vector3 currVector = forceVectorList[forceVectorIndex++];
+                temp.x = currVector.x;
+                temp.y = currVector.y;
+                temp.z = currVector.z;
+                temp.w = currVector.magnitude;
+                sb.Append(temp.ToString("F4"));
+                sb.Append(";");
+            }
+        }
+        return sb.ToString();
+    }
 }
+    

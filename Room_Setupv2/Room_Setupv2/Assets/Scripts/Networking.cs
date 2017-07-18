@@ -20,11 +20,13 @@ public class Networking : MonoBehaviour {
     Int32 Port = 55000;
     String msg1;
     String msg2;
+    String msg3;
     private bool messageSet;
     public List<Transform> allTransformList;
 
 
     public GameObject domain;
+    public GameObject force;
     public Canvas submitCanvas;
 
 
@@ -40,6 +42,7 @@ public class Networking : MonoBehaviour {
         {
             SendData(msg1);
             SendData(msg2);
+            SendData(msg3);
             messageSet = false;
         }
     }
@@ -49,9 +52,8 @@ public class Networking : MonoBehaviour {
         setupSocket();
         Debug.Log("socket is set up");
         msg1 = ConvertToString(allTransformList, true);
-        print(msg1);
         msg2 = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
-        print(msg2);
+        msg3 = force.GetComponent<DrawForceVector>().ToString();
         messageSet = true;
         submitCanvas.transform.Find("PendingText").gameObject.SetActive(true);
     }
@@ -103,6 +105,7 @@ public class Networking : MonoBehaviour {
 
     private void SendData(string data)
     {
+        print(data);
         theWriter.Write(data);
         theWriter.Write('|');
         submitCanvas.transform.Find("PendingText").gameObject.SetActive(false);

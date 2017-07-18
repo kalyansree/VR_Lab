@@ -2860,8 +2860,9 @@ GameObject:
   - component: {fileID: 731987060}
   - component: {fileID: 731987059}
   - component: {fileID: 731987058}
+  - component: {fileID: 731987061}
   m_Layer: 0
-  m_Name: Canvas
+  m_Name: RightHandCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2944,6 +2945,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &731987061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 731987056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bc306579ed6824a92e8b4ee17addf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCamera: {fileID: 369225325}
 --- !u!1 &736168978
 GameObject:
   m_ObjectHideFlags: 0
@@ -6881,7 +6894,7 @@ MonoBehaviour:
   backTex: {fileID: 2800000, guid: b552d06a4330f47a08d09897dddcbd35, type: 3}
   myCamera: {fileID: 369225325}
   lineTransformList: []
-  dir_angles: {x: 0, y: 0, z: 0}
+  forceVector: {x: 0, y: 0, z: 0}
   domain: {fileID: 848136301}
   RightController: {fileID: 1687697853}
   preview: {fileID: 1864835675}
@@ -7707,6 +7720,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allTransformList: []
   domain: {fileID: 848136301}
+  force: {fileID: 1770133888}
   submitCanvas: {fileID: 385968777}
 --- !u!4 &2095464904
 Transform:
