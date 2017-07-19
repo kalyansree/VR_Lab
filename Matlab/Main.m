@@ -13,7 +13,7 @@ fprintf('%s\n', forceString);
 elem = getElementArray(edgeString);
 
 %[ u ] = mat_unity( node, I, O, F, T, elem);%
-node(:,2:size(node,2)) = node(:,2:size(node,2)) + 0.1
+node(:,2:size(node,2)) = node(:,2:size(node,2)) + 0.1;
 retString = getDeformedCoordString(node);
 fwrite(tcpip,retString);
 fwrite(tcpip,'|');

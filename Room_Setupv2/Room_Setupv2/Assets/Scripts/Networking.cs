@@ -170,7 +170,7 @@ public class Networking : MonoBehaviour {
             errorMsg = "There doesn't seem to be enough connections. Make sure there are at least two connection before submitting.";
             return false;
         }
-        if (force.GetComponent<DrawForceVector>().lineTransformList.Count !=  inputCount * 2)
+        if (domain.GetComponent<InitLines>().forceLineTransformList.Count !=  inputCount * 2)
         {
             errorMsg = "Make sure there is one force vector for every input node.";
             return false;

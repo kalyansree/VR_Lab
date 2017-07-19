@@ -273,28 +273,28 @@ public class DeleteObject : MonoBehaviour
         int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
         ((Networking)Networking.GetComponent(typeof(Networking))).removeFromList(originSphere);
 
-        for (int i = 0; i < force.GetComponent<DrawForceVector>().lineTransformList.Count - 1; i++)
+        for (int i = 0; i < domain.GetComponent<InitLines>().forceLineTransformList.Count; i++)
         {
-            if (force.GetComponent<DrawForceVector>().lineTransformList[i].position == originSphere.transform.position)
+            if (domain.GetComponent<InitLines>().forceLineTransformList[i].position == originSphere.transform.position)
             {
                 if (i % 2 == 0)
                 {
-                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i + 1);
-                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i);
+                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i + 1);
+                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i);
 
-                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i + 1);
-                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i);
+                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i + 1);
+                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i);
 
                     i -= 1;
 
                 }
                 else
                 {
-                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i);
-                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i - 1);
+                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i);
+                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i - 1);
 
-                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i);
-                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i - 1);
+                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i);
+                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i - 1);
 
                     i -= 2;
                 }

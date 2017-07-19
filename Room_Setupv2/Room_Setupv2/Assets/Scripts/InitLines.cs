@@ -22,8 +22,15 @@ public class InitLines : MonoBehaviour {
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
     public List<Transform> lineTransformList;
 
-    
     public List<Transform> deformedLineTransformList;
+
+    public List<Transform> forceLineTransformList;
+    public List<Vector3> forceVectorList;
+
+    public VectorLine forceLine;
+    public Texture2D frontTex;
+    public Texture2D lineTex;
+    public Texture2D backTex;
 
 
     void Start () {
@@ -44,6 +51,14 @@ public class InitLines : MonoBehaviour {
         
         lineTransformList = new List<Transform>();
         deformedLineTransformList = new List<Transform>();
+
+        //Force Line
+        forceLineTransformList = new List<Transform>();
+        forceVectorList = new List<Vector3>();
+        forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
+        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
+        forceLine.endCap = "Arrow";
+        forceLine.Draw3DAuto();
     }
 
     void LateUpdate()
@@ -65,6 +80,12 @@ public class InitLines : MonoBehaviour {
                 mainLine.points3[i] = transform.position;
                 i++;
             }
+        }
+        i = 0;
+        foreach (Transform transform in forceLineTransformList)
+        {
+            forceLine.points3[i] = transform.position;
+            i++;
         }
     }
 }

@@ -6,24 +6,14 @@ using Vectrosity;
 using System.Text;
 
 public class DrawForceVector : MonoBehaviour {
-    public VectorLine forceLine;
-    public Texture2D frontTex;
-    public Texture2D lineTex;
-    public Texture2D backTex;
+
     [Tooltip("GameObject containing Camera (CenterEyeAnchor)")]
     public Camera myCamera;
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
-    public List<Transform> lineTransformList;
-    public List<Vector3> forceVectorList;
-
 
     public Vector3 forceVector;
 
-    Text text1;
-    //Text text2;
-
-
-
+    Text forceText;
 
     //--- PRIVATE VARIABLES --//
 
@@ -72,30 +62,11 @@ public class DrawForceVector : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        VectorLine.SetCamera3D(myCamera);
-        forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
-        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F,lineTex, frontTex, backTex);
-        forceLine.endCap = "Arrow";
-        forceLine.Draw3DAuto();
-
-
-
-        //forceVector = forceLine.transform.localRotation.eulerAngles;
-
-        //text = GameObject.Find("Next Text 0").GetComponent<Text>();
-
-        text1 = GameObject.Find("Direction_Angles1").GetComponent<Text>();
-
-
-
-
+        forceText = GameObject.Find("Direction_Angles1").GetComponent<Text>();
         preview.SetActive(false); //disable until we need it
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
-
-        lineTransformList = new List<Transform>();
-        forceVectorList = new List<Vector3>();
     }
 	
 	// Update is called once per frame
@@ -139,10 +110,10 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             originSet = true;
-            forceLine.points3.Add(originSphere.transform.position);
-            forceLine.points3.Add(originSphere.transform.position);
-            forceLine.SetColor(Color.red);
-            numPoints = forceLine.points3.Count;
+            domain.GetComponent<InitLines>().forceLine.points3.Add(originSphere.transform.position);
+            domain.GetComponent<InitLines>().forceLine.points3.Add(originSphere.transform.position);
+            domain.GetComponent<InitLines>().forceLine.SetColor(Color.red);
+            numPoints = domain.GetComponent<InitLines>().forceLine.points3.Count;
 
         }
 
@@ -152,8 +123,8 @@ public class DrawForceVector : MonoBehaviour {
             dest = closestPoint;
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
-                forceLine.points3[numPoints - 2] = dest;
-                forceLine.points3[numPoints - 1] = origin;
+                domain.GetComponent<InitLines>().forceLine.points3[numPoints - 2] = dest;
+                domain.GetComponent<InitLines>().forceLine.points3[numPoints - 1] = origin;
                 Vector3 dest_local = domain.transform.InverseTransformPoint(dest);
                 Vector3 origin_local = domain.transform.InverseTransformPoint(origin);
                 forceVector = dest_local - origin_local;
@@ -161,6 +132,7 @@ public class DrawForceVector : MonoBehaviour {
                 {
                     forceVector.Normalize();
                 }
+                forceText.text = forceVector.magnitude + "\n" + forceVector.x + "\n" + forceVector.y + "\n" + forceVector.z + "\n";
             }
         }
 
@@ -174,8 +146,8 @@ public class DrawForceVector : MonoBehaviour {
             }
             else if(createdOrigin)
             {
-                forceLine.points3.RemoveAt(--numPoints);
-                forceLine.points3.RemoveAt(--numPoints);
+                domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(--numPoints);
+                domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(--numPoints);
                 int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
                 ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
                 Destroy(domain.transform.GetChild(index).gameObject);
@@ -188,20 +160,10 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             //add to our list of line coordinates
-            lineTransformList.Add(destSphere.transform);
-            lineTransformList.Add(originSphere.transform);
-            forceVectorList.Add(forceVector); 
+            domain.GetComponent<InitLines>().forceLineTransformList.Add(destSphere.transform);
+            domain.GetComponent<InitLines>().forceLineTransformList.Add(originSphere.transform);
+            domain.GetComponent<InitLines>().forceVectorList.Add(forceVector); 
         }
-
-
-
-        //forceVector = forceLine.transform.localRotation.eulerAngles;
-
-        text1.text = forceVector.magnitude + "\n" + forceVector.x + "\n" + forceVector.y + "\n" + forceVector.z + "\n" ;
-
-
-
-
     }
 
     void getClosestPoint()
@@ -236,28 +198,19 @@ public class DrawForceVector : MonoBehaviour {
         return newObj;
     }
 
-    void LateUpdate()
-    {
-        int i = 0;
-        foreach (Transform transform in lineTransformList)
-        {
-                forceLine.points3[i] = transform.position;
-                i++;
-        }
-    }
     override
     public string ToString()
     {
         int forceVectorIndex = 0;
         StringBuilder sb = new StringBuilder();
-        foreach(Transform transform in lineTransformList)
+        foreach(Transform transform in domain.GetComponent<InitLines>().forceLineTransformList)
         {
             if(transform.gameObject.CompareTag("Input"))
             {
                 int inputIndex = Networking.GetComponent<Networking>().allTransformList.IndexOf(transform);
                 sb.Append(inputIndex+1);
                 Quaternion temp = new Quaternion();
-                Vector3 currVector = forceVectorList[forceVectorIndex++];
+                Vector3 currVector = domain.GetComponent<InitLines>().forceVectorList[forceVectorIndex++];
                 temp.x = currVector.x;
                 temp.y = currVector.y;
                 temp.z = currVector.z;
