@@ -175,13 +175,13 @@ public class SpawnObject : MonoBehaviour {
         {
             originSet = false;
             GameObject destSphere;
-            if (isColliding)
+            if (isColliding && origin != dest)
             {
                 destSphere = currCollidingObj;
             }
             else
             {
-                if (!allowPlacing) //if we aren't allowed to place, we shouldn't
+                if (!allowPlacing || origin == dest) //if we aren't allowed to place, we shouldn't
                 {
                     ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);
                     ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);

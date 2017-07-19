@@ -9,6 +9,7 @@ using System.Linq;
 using System;
 using System.IO;
 using System.Text;
+using Vectrosity;
 
 public class Networking : MonoBehaviour {
     internal Boolean socketReady = false;
@@ -23,6 +24,7 @@ public class Networking : MonoBehaviour {
     String msg3;
     private bool messageSet;
     public List<Transform> allTransformList;
+    public List<Transform> deformedTransformList;
 
 
     public GameObject domain;
@@ -37,6 +39,7 @@ public class Networking : MonoBehaviour {
     // Use this for initialization
     void Start () {
         allTransformList = new List<Transform>();
+        deformedTransformList = new List<Transform>();
     }
 	
 	// Update is called once per frame
@@ -48,7 +51,7 @@ public class Networking : MonoBehaviour {
             SendData(msg3);
             messageSet = false;
             String retMsg = theReader.ReadToEnd();
-            print(retMsg);
+            plotDeformedCoords(retMsg);
         }
     }
 
@@ -199,5 +202,48 @@ public class Networking : MonoBehaviour {
         {
             outputCount -= 1;
         }
+    }
+
+    private void plotDeformedCoords(string str)
+    {
+        string[] strArr = str.Split('|');
+        string[] coords = strArr[0].Split(';');
+        for(int i = 0; i < coords.Length-1; i++)
+        {
+            Vector3 newCoords = getLocalCoords(coords[i]);
+            GameObject newObj = GameObject.Instantiate(allTransformList[i].gameObject, domain.transform);
+            newObj.transform.localScale = allTransformList[i].localScale;
+            Color color = ((Renderer)newObj.GetComponent<Renderer>()).material.color;
+            color.a = 1F;
+            ((Renderer)newObj.GetComponent<Renderer>()).material.color = color;
+            deformedTransformList.Add(newObj.transform);
+            newObj.transform.localPosition = newCoords;
+        }
+        string[] indices = strArr[1].Split(' ');
+        //Modify lineTransformList
+        for (int i = 0; i < indices.Length - 1; i++)
+        {
+            if (string.Compare(indices[i], "") != 0)
+            {
+                domain.GetComponent<InitLines>().deformedLineTransformList.Insert(i,deformedTransformList[int.Parse(indices[i])-1]);
+                domain.GetComponent<InitLines>().deformedLine.points3.Add(deformedTransformList[int.Parse(indices[i]) - 1].position);
+            }
+            
+        }
+
+        domain.GetComponent<InitLines>().deformedLine.SetColor(Color.red);
+    }
+
+    private Vector3 getLocalCoords(string coordString)
+    {
+        Vector3 retVec = new Vector3();
+        int start = coordString.IndexOf('(');
+        int end = coordString.IndexOf(')');
+        string[] coords = (coordString.Substring(start + 1, end - start - 1)).Split(',');
+        retVec.x = float.Parse(coords[0]) - 0.5F;
+        retVec.y = float.Parse(coords[1]) - 0.5F;
+        retVec.z = float.Parse(coords[2]) - 0.5F;
+        return retVec;
+
     }
 }

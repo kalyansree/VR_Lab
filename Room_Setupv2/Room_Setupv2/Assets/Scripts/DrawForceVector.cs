@@ -14,7 +14,7 @@ public class DrawForceVector : MonoBehaviour {
     public Camera myCamera;
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
     public List<Transform> lineTransformList;
-    private List<Vector3> forceVectorList;
+    public List<Vector3> forceVectorList;
 
 
     public Vector3 forceVector;

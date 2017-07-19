@@ -14,12 +14,18 @@ public class InitLines : MonoBehaviour {
     public Camera myCamera;
 
     [Tooltip("VectorLine object for main joints from Vectrosity library, is modified by the SpawnObject scripts on the spheres under the Right Controller")]
-    public VectorLine mainLine; 
+    public VectorLine mainLine;
+
+
+    public VectorLine deformedLine;
 
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
     public List<Transform> lineTransformList;
 
     
+    public List<Transform> deformedLineTransformList;
+
+
     void Start () {
         VectorLine.SetCamera3D(myCamera);
         //Wireframe of cube
@@ -32,15 +38,29 @@ public class InitLines : MonoBehaviour {
         mainLine = new VectorLine("MainLine", new List<Vector3>(), 4.0f);
         mainLine.Draw3DAuto();
 
+
+        deformedLine = new VectorLine("MainLine", new List<Vector3>(), 10.0f);
+        deformedLine.Draw3DAuto();
+        
         lineTransformList = new List<Transform>();
+        deformedLineTransformList = new List<Transform>();
     }
 
     void LateUpdate()
     {
         int i = 0;
-        foreach (Transform transform in lineTransformList)
+        foreach (Transform transform in deformedLineTransformList)
         {
             if(transform.CompareTag("Input") || transform.CompareTag("Output") || transform.CompareTag("Intermediate") || transform.CompareTag("Fixed"))
+            {
+                deformedLine.points3[i] = transform.position;
+                i++;
+            }
+        }
+        i = 0;
+        foreach (Transform transform in lineTransformList)
+        {
+            if (transform.CompareTag("Input") || transform.CompareTag("Output") || transform.CompareTag("Intermediate") || transform.CompareTag("Fixed"))
             {
                 mainLine.points3[i] = transform.position;
                 i++;

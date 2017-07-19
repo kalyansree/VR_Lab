@@ -56,6 +56,8 @@ public class DeleteObject : MonoBehaviour
     [Tooltip("GameObject of CenterEyeAnchor")]
     public GameObject myCamera;
 
+    public GameObject force;
+
 
     void Start()
     {
@@ -74,26 +76,19 @@ public class DeleteObject : MonoBehaviour
         unHighlightLines();
         var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
         //We show the preview once the controller is close enough to the cube and we aren't colliding with an existing sphere
-        if (distToCube < 0.1)
-        {
-            getClosestPoint();
-            preview.transform.position = closestPoint;
-            preview.transform.localScale = gameObject.transform.lossyScale;
-            preview.SetActive(true);
-            allowPlacing = true;
-        }
-        else
-        {
-            preview.SetActive(false);
-            allowPlacing = false;
-            return;
-        }
+  
+        getClosestPoint();
+        preview.transform.position = closestPoint;
+        preview.transform.localScale = gameObject.transform.lossyScale;
+        preview.SetActive(true);
+        allowPlacing = true;
+        
         isColliding = false;
         //check if our preview is colliding with a placed sphere
         foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
         {
             //print(dist);
-            if (transform.position == closestPoint && distToCube < 0.1)
+            if (transform.position == closestPoint)
             {
                 preview.SetActive(false);
                 isColliding = true;
@@ -157,7 +152,14 @@ public class DeleteObject : MonoBehaviour
             }
             else if(isColliding)
             {
-                deletePoint();
+                if(currCollidingObj.CompareTag("Force"))
+                {
+                    deleteForcePoint();
+                }
+                else
+                {
+                    deletePoint();
+                }                
             }
             originSet = false;
         }
@@ -175,10 +177,6 @@ public class DeleteObject : MonoBehaviour
 
         relativePos = domain.transform.TransformDirection(relativePos);
         closestPoint = relativePos + domain.transform.position;
-        if (Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(closestPoint), closestPoint) > 0)
-        {
-            closestPoint = domain.GetComponent<Collider>().ClosestPoint(closestPoint);
-        }
     }
     void deletePoint()
     {
@@ -266,5 +264,42 @@ public class DeleteObject : MonoBehaviour
     {
         ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.SetColor(Color.white);
 
+    }
+
+    void deleteForcePoint()
+    {
+        if (originSet == false)
+            return;
+        int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).removeFromList(originSphere);
+
+        for (int i = 0; i < force.GetComponent<DrawForceVector>().lineTransformList.Count - 1; i++)
+        {
+            if (force.GetComponent<DrawForceVector>().lineTransformList[i].position == originSphere.transform.position)
+            {
+                if (i % 2 == 0)
+                {
+                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i + 1);
+                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i);
+
+                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i + 1);
+                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i);
+
+                    i -= 1;
+
+                }
+                else
+                {
+                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i);
+                    (force.GetComponent<DrawForceVector>()).lineTransformList.RemoveAt(i - 1);
+
+                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i);
+                    (force.GetComponent<DrawForceVector>()).forceLine.points3.RemoveAt(i - 1);
+
+                    i -= 2;
+                }
+            }
+        }
+        Destroy(domain.transform.GetChild(index).gameObject);
     }
 }
