@@ -19,6 +19,7 @@ TagManager:
   - Output
   - Intermediate
   - Fixed
+  - Force
   layers:
   - Default
   - TransparentFX
