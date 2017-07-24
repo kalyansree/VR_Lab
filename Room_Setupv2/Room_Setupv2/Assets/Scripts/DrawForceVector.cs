@@ -111,7 +111,11 @@ public class DrawForceVector : MonoBehaviour {
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
             if (isColliding)
+            {
                 originSphere = currCollidingObj;
+                createdOrigin = false;
+            }
+                
             else
             {
                 originSphere = createPoint();
