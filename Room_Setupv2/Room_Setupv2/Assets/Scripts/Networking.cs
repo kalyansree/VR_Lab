@@ -90,21 +90,27 @@ public class Networking : MonoBehaviour {
             int index = 1;
             foreach (Transform transform in transformList)
             {
-                Vector3 translate = transform.localPosition;
-                translate.x += 0.5F;
-                translate.y += 0.5F;
-                translate.z += 0.5F;
-                sb.Append(index++);
-                string substring = translate.ToString("F4");
-                sb.Append(substring);
-                if (transform.gameObject.CompareTag("Input"))
-                    sb.Append("I;");
-                else if (transform.gameObject.CompareTag("Output"))
-                    sb.Append("O;");
-                else if (transform.gameObject.CompareTag("Intermediate"))
-                    sb.Append("T;");
-                else if (transform.gameObject.CompareTag("Fixed"))
-                    sb.Append("F;");
+                if(transform.gameObject.CompareTag("Input") ||
+                    transform.gameObject.CompareTag("Output") ||
+                    transform.gameObject.CompareTag("Intermediate") ||
+                    transform.gameObject.CompareTag("Fixed"))
+                {
+                    Vector3 translate = transform.localPosition;
+                    translate.x += 0.5F;
+                    translate.y += 0.5F;
+                    translate.z += 0.5F;
+                    sb.Append(index++);
+                    string substring = translate.ToString("F4");
+                    sb.Append(substring);
+                    if (transform.gameObject.CompareTag("Input"))
+                        sb.Append("I;");
+                    else if (transform.gameObject.CompareTag("Output"))
+                        sb.Append("O;");
+                    else if (transform.gameObject.CompareTag("Intermediate"))
+                        sb.Append("T;");
+                    else if (transform.gameObject.CompareTag("Fixed"))
+                        sb.Append("F;");
+                }                
             }
             return sb.ToString();
         }
@@ -116,6 +122,7 @@ public class Networking : MonoBehaviour {
                 {
                     if (transform.position == allTransformList[i].position)
                     {
+
                         sb.Append(i + 1);
                         break;
                     }

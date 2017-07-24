@@ -8081,13 +8081,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Force Magnitude:
-
-    X-Component:
+  m_Text: 'X-Component:
 
     Y-Component:
 
-    Z-Component:'
+    Z-Component:
+
+    Force Magnitude:'
 --- !u!222 &2123527076
 CanvasRenderer:
   m_ObjectHideFlags: 0

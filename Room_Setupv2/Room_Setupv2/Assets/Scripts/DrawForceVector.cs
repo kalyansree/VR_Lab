@@ -121,6 +121,12 @@ public class DrawForceVector : MonoBehaviour {
         {
             origin = originSphere.transform.position;
             dest = closestPoint;
+
+
+            StringBuilder sb = new StringBuilder();
+
+
+
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
                 domain.GetComponent<InitLines>().forceLine.points3[numPoints - 2] = dest;
@@ -132,7 +138,7 @@ public class DrawForceVector : MonoBehaviour {
                 {
                     forceVector.Normalize();
                 }
-                forceText.text = forceVector.magnitude + "\n" + forceVector.x + "\n" + forceVector.y + "\n" + forceVector.z + "\n";
+                forceText.text = forceVector.x + "\n" + forceVector.y + "\n" + forceVector.z + "\n" + forceVector.magnitude + "\n"; 
             }
         }
 
@@ -191,7 +197,7 @@ public class DrawForceVector : MonoBehaviour {
         {
             rend.material = gameObject.GetComponent<Renderer>().material;
         }
-        ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Add(newObj.transform);
+        //((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Add(newObj.transform);
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
@@ -203,19 +209,21 @@ public class DrawForceVector : MonoBehaviour {
     {
         int forceVectorIndex = 0;
         StringBuilder sb = new StringBuilder();
-        foreach(Transform transform in domain.GetComponent<InitLines>().forceLineTransformList)
+        foreach (Transform transform in domain.GetComponent<InitLines>().forceLineTransformList)
         {
-            if(transform.gameObject.CompareTag("Input"))
+            if (transform.gameObject.CompareTag("Input"))
             {
                 int inputIndex = Networking.GetComponent<Networking>().allTransformList.IndexOf(transform);
-                sb.Append(inputIndex+1);
-                Quaternion temp = new Quaternion();
+                sb.Append(inputIndex + 1);
+                //Quaternion temp = new Quaternion();
                 Vector3 currVector = domain.GetComponent<InitLines>().forceVectorList[forceVectorIndex++];
-                temp.x = currVector.x;
-                temp.y = currVector.y;
-                temp.z = currVector.z;
-                temp.w = currVector.magnitude;
-                sb.Append(temp.ToString("F4"));
+                //temp.x = currVector.x;
+                //temp.y = currVector.y;
+                //temp.z = currVector.z;
+
+                //temp.w = currVector.magnitude;
+
+                sb.Append(currVector.ToString("F4")); //+ temp.ToString("!"));
                 sb.Append(";");
             }
         }
