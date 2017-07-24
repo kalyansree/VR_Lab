@@ -27,7 +27,7 @@ public class InitLines : MonoBehaviour {
     public List<Transform> forceLineTransformList;
     public List<Vector3> forceVectorList;
 
-    public VectorLine forceLine;
+    public List<VectorLine> forceLineList;
     public Texture2D frontTex;
     public Texture2D lineTex;
     public Texture2D backTex;
@@ -55,10 +55,11 @@ public class InitLines : MonoBehaviour {
         //Force Line
         forceLineTransformList = new List<Transform>();
         forceVectorList = new List<Vector3>();
-        forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
-        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
-        forceLine.endCap = "Arrow";
-        forceLine.Draw3DAuto();
+        forceLineList = new List<VectorLine>();
+        //forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
+        //VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
+        //forceLine.endCap = "Arrow";
+        //forceLine.Draw3DAuto();
     }
 
     void LateUpdate()
@@ -84,7 +85,7 @@ public class InitLines : MonoBehaviour {
         i = 0;
         foreach (Transform transform in forceLineTransformList)
         {
-            forceLine.points3[i] = transform.position;
+            forceLineList[Mathf.FloorToInt(i/2)].points3[i%2] = transform.position;
             i++;
         }
     }

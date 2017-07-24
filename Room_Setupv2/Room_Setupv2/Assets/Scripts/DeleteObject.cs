@@ -105,6 +105,26 @@ public class DeleteObject : MonoBehaviour
             }
         }
 
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList)
+        {
+            //print(dist);
+            if (transform.position == closestPoint)
+            {
+                preview.SetActive(false);
+                isColliding = true;
+                currCollidingObj = transform.gameObject;
+                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
+                color.a = 1;
+                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+            }
+            else
+            {
+                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
+                color.a = 0.353F;
+                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+            }
+        }
+
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
             if (isColliding)
@@ -139,7 +159,7 @@ public class DeleteObject : MonoBehaviour
             }
         }
 
-        if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
+        if (OVRInput.GetUp(OVRInput.Button.One)&& originSet)
         {
             
             GameObject destSphere;
@@ -182,7 +202,6 @@ public class DeleteObject : MonoBehaviour
     {
         if (originSet == false)
             return;
-        int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
         ((Networking)Networking.GetComponent(typeof(Networking))).removeFromList(originSphere);
 
         for (int i = 0; i < ((InitLines)domain.GetComponent(typeof(InitLines))).lineTransformList.Count; i++)
@@ -212,7 +231,13 @@ public class DeleteObject : MonoBehaviour
                 }
             }
         }
-        Destroy(domain.transform.GetChild(index).gameObject);
+        foreach (Transform childTransform in domain.transform)
+        {
+            if(childTransform.position == originSphere.transform.position)
+            {
+                Destroy(childTransform.gameObject);
+            }
+        }
 
     }
 
@@ -270,8 +295,7 @@ public class DeleteObject : MonoBehaviour
     {
         if (originSet == false)
             return;
-        int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
-        ((Networking)Networking.GetComponent(typeof(Networking))).removeFromList(originSphere);
+        ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(originSphere.transform);
 
         for (int i = 0; i < domain.GetComponent<InitLines>().forceLineTransformList.Count; i++)
         {
@@ -282,8 +306,9 @@ public class DeleteObject : MonoBehaviour
                     domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i + 1);
                     domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i);
 
-                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i + 1);
-                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i);
+                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(1);
+                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(0);
+                    domain.GetComponent<InitLines>().forceLineList.RemoveAt(Mathf.FloorToInt(i / 2));
 
                     i -= 1;
 
@@ -293,13 +318,20 @@ public class DeleteObject : MonoBehaviour
                     domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i);
                     domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i - 1);
 
-                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i);
-                    domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(i - 1);
+                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(1);
+                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(0);
+                    domain.GetComponent<InitLines>().forceLineList.RemoveAt(Mathf.FloorToInt(i / 2));
 
                     i -= 2;
                 }
             }
         }
-        Destroy(domain.transform.GetChild(index).gameObject);
+        foreach (Transform childTransform in domain.transform)
+        {
+            if (childTransform.position == originSphere.transform.position)
+            {
+                Destroy(childTransform.gameObject);
+            }
+        }
     }
 }

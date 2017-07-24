@@ -24,6 +24,7 @@ public class Networking : MonoBehaviour {
     String msg3;
     private bool messageSet;
     public List<Transform> allTransformList;
+    public List<Transform> forceTransformList;
     public List<Transform> deformedTransformList;
 
 
@@ -39,6 +40,7 @@ public class Networking : MonoBehaviour {
     // Use this for initialization
     void Start () {
         allTransformList = new List<Transform>();
+        forceTransformList = new List<Transform>();
         deformedTransformList = new List<Transform>();
     }
 	

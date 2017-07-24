@@ -37,7 +37,7 @@ public class DrawForceVector : MonoBehaviour {
 
     //Is the number of points inside mainLine in InitLines.cs
     //Note that this is not the same as the number of points that have been placed. Vectrosity creates two points for all line segments, even if they are the same point
-    private static int numPoints;
+    private static int numLines;
 
     //Granularity of grid
     //e.g 0.25 means the cube will have four grid lines (including edges) running down each dimension of the cube 
@@ -60,6 +60,10 @@ public class DrawForceVector : MonoBehaviour {
 
     private bool createdOrigin;
 
+
+    private Texture2D frontTex;
+    private Texture2D lineTex;
+    private Texture2D backTex;
     // Use this for initialization
     void Start () {
         forceText = GameObject.Find("Direction_Angles1").GetComponent<Text>();
@@ -67,6 +71,11 @@ public class DrawForceVector : MonoBehaviour {
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
+
+        frontTex = domain.GetComponent<InitLines>().frontTex;
+        lineTex = domain.GetComponent<InitLines>().lineTex;
+        backTex = domain.GetComponent<InitLines>().backTex;
+        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
     }
 	
 	// Update is called once per frame
@@ -110,10 +119,15 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             originSet = true;
-            domain.GetComponent<InitLines>().forceLine.points3.Add(originSphere.transform.position);
-            domain.GetComponent<InitLines>().forceLine.points3.Add(originSphere.transform.position);
-            domain.GetComponent<InitLines>().forceLine.SetColor(Color.red);
-            numPoints = domain.GetComponent<InitLines>().forceLine.points3.Count;
+            VectorLine forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
+            forceLine.endCap = "Arrow";
+            forceLine.Draw3DAuto();
+            forceLine.points3.Add(originSphere.transform.position);
+            forceLine.points3.Add(originSphere.transform.position);
+            forceLine.SetColor(Color.red);
+            domain.GetComponent<InitLines>().forceLineList.Add(forceLine);
+            
+            numLines = domain.GetComponent<InitLines>().forceLineList.Count;
 
         }
 
@@ -129,8 +143,8 @@ public class DrawForceVector : MonoBehaviour {
 
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
-                domain.GetComponent<InitLines>().forceLine.points3[numPoints - 2] = dest;
-                domain.GetComponent<InitLines>().forceLine.points3[numPoints - 1] = origin;
+                domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[0] = dest;
+                domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[1] = origin;
                 Vector3 dest_local = domain.transform.InverseTransformPoint(dest);
                 Vector3 origin_local = domain.transform.InverseTransformPoint(origin);
                 forceVector = dest_local - origin_local;
@@ -152,8 +166,7 @@ public class DrawForceVector : MonoBehaviour {
             }
             else if(createdOrigin)
             {
-                domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(--numPoints);
-                domain.GetComponent<InitLines>().forceLine.points3.RemoveAt(--numPoints);
+                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
                 int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
                 ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
                 Destroy(domain.transform.GetChild(index).gameObject);
@@ -197,7 +210,7 @@ public class DrawForceVector : MonoBehaviour {
         {
             rend.material = gameObject.GetComponent<Renderer>().material;
         }
-        //((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Add(newObj.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Add(newObj.transform);
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
