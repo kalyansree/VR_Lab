@@ -128,7 +128,7 @@ public class DrawForceVector : MonoBehaviour {
             forceLine.Draw3DAuto();
             forceLine.points3.Add(originSphere.transform.position);
             forceLine.points3.Add(originSphere.transform.position);
-            forceLine.SetColor(Color.red);
+            forceLine.SetColor(Color.blue);
             domain.GetComponent<InitLines>().forceLineList.Add(forceLine);
             
             numLines = domain.GetComponent<InitLines>().forceLineList.Count;
@@ -156,7 +156,8 @@ public class DrawForceVector : MonoBehaviour {
                 {
                     forceVector.Normalize();
                 }
-                forceText.text = forceVector.x + "\n" + forceVector.y + "\n" + forceVector.z + "\n" + forceVector.magnitude + "\n"; 
+                forceText.text = forceVector.x + "\n" + forceVector.y + "\n" + -forceVector.z + "\n" + forceVector.magnitude + "\n"; 
+
             }
         }
 
@@ -234,6 +235,8 @@ public class DrawForceVector : MonoBehaviour {
                 sb.Append(inputIndex + 1);
                 //Quaternion temp = new Quaternion();
                 Vector3 currVector = domain.GetComponent<InitLines>().forceVectorList[forceVectorIndex++];
+
+                currVector.z = -currVector.z;
                 //temp.x = currVector.x;
                 //temp.y = currVector.y;
                 //temp.z = currVector.z;

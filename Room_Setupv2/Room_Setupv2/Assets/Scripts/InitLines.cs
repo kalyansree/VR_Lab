@@ -25,6 +25,10 @@ public class InitLines : MonoBehaviour {
     public List<Transform> deformedLineTransformList;
 
     public List<Transform> forceLineTransformList;
+
+    public List<Vector3> coordLineVectorList_x;
+    public List<Vector3> coordLineVectorList_y;
+    public List<Vector3> coordLineVectorList_z;
     public List<Vector3> forceVectorList;
 
     public List<VectorLine> forceLineList;
@@ -32,11 +36,18 @@ public class InitLines : MonoBehaviour {
     public Texture2D lineTex;
     public Texture2D backTex;
 
+    private VectorLine coordLine_x;
+    private VectorLine coordLine_y;
+    private VectorLine coordLine_z;
+
+    public GameObject originPos;
+
 
     void Start () {
         VectorLine.SetCamera3D(myCamera);
         //Wireframe of cube
         VectorLine line = new VectorLine("Wireframe", new List<Vector3>(), 1.0f, LineType.Discrete);
+        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
         Mesh cubeMesh = ((MeshFilter)gameObject.GetComponent("MeshFilter")).mesh;
         line.MakeWireframe(cubeMesh);
         line.drawTransform = gameObject.transform;
@@ -46,9 +57,30 @@ public class InitLines : MonoBehaviour {
         mainLine.Draw3DAuto();
 
 
-        deformedLine = new VectorLine("MainLine", new List<Vector3>(), 10.0f);
+        deformedLine = new VectorLine("deformedLine", new List<Vector3>(), 10.0f);
         deformedLine.Draw3DAuto();
-        
+
+        coordLine_x = new VectorLine("coordLine", new List<Vector3>(), 2.0f);
+        coordLine_x.endCap = "Arrow";
+        coordLine_x.Draw3DAuto();
+
+        coordLine_y = new VectorLine("coordLine", new List<Vector3>(), 2.0f);
+        coordLine_y.endCap = "Arrow";
+        coordLine_y.Draw3DAuto();
+
+        coordLine_z = new VectorLine("coordLine", new List<Vector3>(), 2.0f);
+        coordLine_z.endCap = "Arrow";
+        coordLine_z.Draw3DAuto();
+
+        coordLineVectorList_x.Add(new Vector3(0 ,0 ,0));
+        coordLineVectorList_x.Add(new Vector3(0, 0, 0));
+
+        coordLineVectorList_y.Add(new Vector3(0, 0, 0));
+        coordLineVectorList_y.Add(new Vector3(0, 0, 0));
+
+        coordLineVectorList_z.Add(new Vector3(0, 0, 0));
+        coordLineVectorList_z.Add(new Vector3(0, 0, 0));
+
         lineTransformList = new List<Transform>();
         deformedLineTransformList = new List<Transform>();
 
@@ -60,6 +92,11 @@ public class InitLines : MonoBehaviour {
         //VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
         //forceLine.endCap = "Arrow";
         //forceLine.Draw3DAuto();
+    }
+
+    void Update()
+    {
+        
     }
 
     void LateUpdate()
@@ -86,6 +123,13 @@ public class InitLines : MonoBehaviour {
         foreach (Transform transform in forceLineTransformList)
         {
             forceLineList[Mathf.FloorToInt(i/2)].points3[i%2] = transform.position;
+            i++;
+        }
+
+        i = 0;
+        foreach (Transform transform in coordLineTransformList)
+        {
+            coordLine.points3[i] = transform.position;
             i++;
         }
     }

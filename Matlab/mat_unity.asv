@@ -1,10 +1,5 @@
-function [ u ] = mat_unity( node, Inp, Oup, Fix, T, elem, force, disp_scaling)
-x_cors = [0 1 1 0   0 0   1 1 0   0   1 1 1 1 0   0];
-y_cors = [0 0   1 1 0 0   0   1 1 0   0   0   1 1 1 1];
-z_cors = [0 0   0   0   0 1 1 1 1 1 1 0   0   1 1 0];
+function [ u ] = mat_unity( node, Inp, Oup, Fix, T, elem, force )
 
-plot3(x_cors,y_cors,z_cors,'b');
-hold on
 %%%%%%%%%%%% Meshing %%%%%%%%%%%%%%%%%
 NNODE = length(node(:,1)); % Number of nodes
 nx = node(:,2); % X coordinates

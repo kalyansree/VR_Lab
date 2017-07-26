@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
+using UnityEngine.UI;
 /*
  * This script is applied to all of the different types of Sphere objects attached to the right controller.
  * It controls how and when the spheres are allowed to be placed.
@@ -66,6 +67,8 @@ public class SpawnObject : MonoBehaviour {
     [Tooltip("GameObject of Networking")]
     public GameObject Networking;
 
+
+    public Text coordText;
     void Start()
     {
         preview.SetActive(false); //disable until we need it
@@ -197,6 +200,19 @@ public class SpawnObject : MonoBehaviour {
             domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().lineTransformList.Add(destSphere.transform);
         }
+
+        //canvas coordinates
+        if (preview.activeSelf)
+        {
+            Vector3 localCoord = domain.transform.InverseTransformPoint(closestPoint);
+            localCoord.x += 0.5F;
+            localCoord.y += 0.5F;
+            localCoord.z += 0.5F;
+            localCoord.z = -localCoord.z;
+            localCoord.z += 1.0F;
+            coordText.text = localCoord.ToString("F4");
+        }
+        
     }
 
     void getClosestPoint()

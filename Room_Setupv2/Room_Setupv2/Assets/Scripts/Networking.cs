@@ -101,6 +101,8 @@ public class Networking : MonoBehaviour {
                     translate.x += 0.5F;
                     translate.y += 0.5F;
                     translate.z += 0.5F;
+                    translate.z = -translate.z;
+                    translate.z += 1.0F;
                     sb.Append(index++);
                     string substring = translate.ToString("F4");
                     sb.Append(substring);
@@ -249,9 +251,13 @@ public class Networking : MonoBehaviour {
         int start = coordString.IndexOf('(');
         int end = coordString.IndexOf(')');
         string[] coords = (coordString.Substring(start + 1, end - start - 1)).Split(',');
+        
         retVec.x = float.Parse(coords[0]) - 0.5F;
         retVec.y = float.Parse(coords[1]) - 0.5F;
-        retVec.z = float.Parse(coords[2]) - 0.5F;
+        retVec.z = float.Parse(coords[2]);
+        retVec.z -= 1.0F;
+        retVec.z = -retVec.z;
+        retVec.z -= 0.5F;
         return retVec;
 
     }
