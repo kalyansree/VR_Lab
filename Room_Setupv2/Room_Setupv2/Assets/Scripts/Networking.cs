@@ -154,7 +154,7 @@ public class Networking : MonoBehaviour {
             theStream = mySocket.GetStream();
             theWriter = new StreamWriter(theStream);
             theReader = new StreamReader(theStream);
-            theReader.BaseStream.ReadTimeout = 2000;
+            theReader.BaseStream.ReadTimeout = 5000;
             socketReady = true;
             theWriter.AutoFlush = true;
             Debug.Log("socket is sent");

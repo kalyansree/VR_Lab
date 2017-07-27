@@ -62,16 +62,16 @@ public class InitLines : MonoBehaviour {
 
 
 
-        Vector3 origin = new Vector3(-0.5, -0.5, 0.5);
+        Vector3 origin = new Vector3(-0.5F, -0.5F, 0.5F);
 
-        coordLineVectorList_x.Add(new Vector3(origin));
-        coordLineVectorList_x.Add(new Vector3(0.5, -0.5, 0.5));
+        coordLineVectorList_x.Add(origin);
+        coordLineVectorList_x.Add(new Vector3(0.5F, -0.5F, 0.5F));
 
-        coordLineVectorList_y.Add(new Vector3(origin));
-        coordLineVectorList_y.Add(new Vector3(-0.5, 0.5, 0.5));
+        coordLineVectorList_y.Add(origin);
+        coordLineVectorList_y.Add(new Vector3(-0.5F, 0.5F, 0.5F));
 
-        coordLineVectorList_z.Add(new Vector3(origin));
-        coordLineVectorList_z.Add(new Vector3(-0.5, -0.5, -0.5));
+        coordLineVectorList_z.Add(origin);
+        coordLineVectorList_z.Add(new Vector3(-0.5F, -0.5F, -0.5F));
 
         coordLine_x = new VectorLine("coordLine", coordLineVectorList_x, 2.0f);
         coordLine_x.endCap = "Arrow";
