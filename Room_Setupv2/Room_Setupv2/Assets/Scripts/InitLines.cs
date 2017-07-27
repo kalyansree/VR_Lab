@@ -60,26 +60,30 @@ public class InitLines : MonoBehaviour {
         deformedLine = new VectorLine("deformedLine", new List<Vector3>(), 10.0f);
         deformedLine.Draw3DAuto();
 
-        coordLine_x = new VectorLine("coordLine", new List<Vector3>(), 2.0f);
+
+
+        Vector3 origin = new Vector3(-0.5, -0.5, 0.5);
+
+        coordLineVectorList_x.Add(new Vector3(origin));
+        coordLineVectorList_x.Add(new Vector3(0.5, -0.5, 0.5));
+
+        coordLineVectorList_y.Add(new Vector3(origin));
+        coordLineVectorList_y.Add(new Vector3(-0.5, 0.5, 0.5));
+
+        coordLineVectorList_z.Add(new Vector3(origin));
+        coordLineVectorList_z.Add(new Vector3(-0.5, -0.5, -0.5));
+
+        coordLine_x = new VectorLine("coordLine", coordLineVectorList_x, 2.0f);
         coordLine_x.endCap = "Arrow";
         coordLine_x.Draw3DAuto();
 
-        coordLine_y = new VectorLine("coordLine", new List<Vector3>(), 2.0f);
+        coordLine_y = new VectorLine("coordLine", coordLineVectorList_y, 2.0f);
         coordLine_y.endCap = "Arrow";
         coordLine_y.Draw3DAuto();
 
-        coordLine_z = new VectorLine("coordLine", new List<Vector3>(), 2.0f);
+        coordLine_z = new VectorLine("coordLine", coordLineVectorList_z, 2.0f);
         coordLine_z.endCap = "Arrow";
         coordLine_z.Draw3DAuto();
-
-        coordLineVectorList_x.Add(new Vector3(0 ,0 ,0));
-        coordLineVectorList_x.Add(new Vector3(0, 0, 0));
-
-        coordLineVectorList_y.Add(new Vector3(0, 0, 0));
-        coordLineVectorList_y.Add(new Vector3(0, 0, 0));
-
-        coordLineVectorList_z.Add(new Vector3(0, 0, 0));
-        coordLineVectorList_z.Add(new Vector3(0, 0, 0));
 
         lineTransformList = new List<Transform>();
         deformedLineTransformList = new List<Transform>();
@@ -126,11 +130,14 @@ public class InitLines : MonoBehaviour {
             i++;
         }
 
-        i = 0;
-        foreach (Transform transform in coordLineTransformList)
-        {
-            coordLine.points3[i] = transform.position;
-            i++;
-        }
+        //axis lines
+        coordLine_x.points3[0] = gameObject.transform.TransformPoint(coordLineVectorList_x[0]);
+        coordLine_x.points3[1] = gameObject.transform.TransformPoint(coordLineVectorList_x[1]);
+
+        coordLine_y.points3[0] = gameObject.transform.TransformPoint(coordLineVectorList_y[0]);
+        coordLine_y.points3[1] = gameObject.transform.TransformPoint(coordLineVectorList_y[1]);
+
+        coordLine_z.points3[0] = gameObject.transform.TransformPoint(coordLineVectorList_z[0]);
+        coordLine_z.points3[1] = gameObject.transform.TransformPoint(coordLineVectorList_z[1]);
     }
 }
