@@ -5,21 +5,25 @@ using Parabox.CSG;
 using Vectrosity;
 
 
-public class TestCSG : MonoBehaviour {
-    private GameObject hemisphere1;
-    private GameObject hemisphere2;
+public static class Hemisphere
+{
+    private static Mesh hemisphereMesh;
 
-    private GameObject final;
+    private static GameObject hemisphere1;
+    private static GameObject hemisphere2;
+    private static GameObject final;
 
-    public Material hemisphereMaterial1;
-    public Material hemisphereMaterial2;
-    public Material truncatedHemisphereMaterial;
-    private Mesh hemisphereMesh;
-    public Camera myCamera;
-    public GameObject target;
 
-    private bool updatePos;
-    void Start () {
+    public static Material hemisphereMaterial1;
+    public static Material hemisphereMaterial2;
+    public static Material truncatedHemisphereMaterial;
+    
+    public static Camera myCamera;
+    public static GameObject target;
+
+    private static bool updatePos;
+    void Start()
+    {
         VectorLine.SetCamera3D(myCamera);
         hemisphereMesh = CreateHemisphereMesh();
 
@@ -34,7 +38,7 @@ public class TestCSG : MonoBehaviour {
     }
     void Update()
     {
-        if(Input.GetKeyDown("space"))
+        if (Input.GetKeyDown("space"))
         {
             hemisphere1 = CreateHemisphere(hemisphereMaterial1, Position: new Vector3(1, 1, 1));
             //hemisphere1.SetActive(false);
@@ -49,14 +53,14 @@ public class TestCSG : MonoBehaviour {
             //updatePos = false;
         }
 
-        if(updatePos)
+        if (updatePos)
         {
             hemisphere1.transform.rotation = Quaternion.LookRotation(target.transform.position - hemisphere1.transform.position);
             Vector3 euler = hemisphere1.transform.rotation.eulerAngles;
             hemisphere1.transform.eulerAngles = new Vector3(euler.z, euler.y + 90F, euler.x);
         }
 
-        
+
 
     }
     public Mesh CreateHemisphereMesh()
@@ -96,7 +100,7 @@ public class TestCSG : MonoBehaviour {
     public GameObject GetIntersection(GameObject Hemi1, GameObject Hemi2, Material material)
     {
         Vector3 position;
-        if(Hemi1.transform.position != Hemi2.transform.position)
+        if (Hemi1.transform.position != Hemi2.transform.position)
         {
             throw new System.Exception("Hemispheres not in the same position!");
         }
@@ -193,7 +197,7 @@ public class TestCSG : MonoBehaviour {
         VectorLine hemisphereLine = new VectorLine("NewHemiLine", new List<Vector3>(), 2.0f, LineType.Discrete);
         GameObject VectorLineObj = GameObject.Find("NewHemiLine");
         hemisphereLine.Draw3DAuto();
-        
+
         List<GameObject> childList = createChildSpheres(Sphere, hemisphere, layerName);
         foreach (GameObject childSphere in childList)
         {
