@@ -7,63 +7,9 @@ using Vectrosity;
 
 public static class Hemisphere
 {
-    private static Mesh hemisphereMesh;
-
-    private static GameObject hemisphere1;
-    private static GameObject hemisphere2;
-    private static GameObject final;
-
-
-    public static Material hemisphereMaterial1;
-    public static Material hemisphereMaterial2;
-    public static Material truncatedHemisphereMaterial;
-    
-    public static Camera myCamera;
-    public static GameObject target;
-
-    private static bool updatePos;
-    void Start()
-    {
-        VectorLine.SetCamera3D(myCamera);
-        hemisphereMesh = CreateHemisphereMesh();
-
-        //hemisphere1.SetActive(false);
-        //hemisphere2 = CreateHemisphere(Rotation: Quaternion.LookRotation(RotationVec,  RotationVec));
-        //composite.SetActive(true);
-        //hemisphere2.SetActive(false);
-
-
-
-
-    }
-    void Update()
-    {
-        if (Input.GetKeyDown("space"))
-        {
-            hemisphere1 = CreateHemisphere(hemisphereMaterial1, Position: new Vector3(1, 1, 1));
-            //hemisphere1.SetActive(false);
-            Vector3 RotationVec = new Vector3(0, 1, 0);
-            hemisphere2 = CreateHemisphere(hemisphereMaterial2, Position: new Vector3(1, 1, 1));
-            //hemisphere2.SetActive(false)
-            updatePos = true;
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            final = GetIntersection(hemisphere1, hemisphere2, truncatedHemisphereMaterial);
-            //updatePos = false;
-        }
-
-        if (updatePos)
-        {
-            hemisphere1.transform.rotation = Quaternion.LookRotation(target.transform.position - hemisphere1.transform.position);
-            Vector3 euler = hemisphere1.transform.rotation.eulerAngles;
-            hemisphere1.transform.eulerAngles = new Vector3(euler.z, euler.y + 90F, euler.x);
-        }
-
-
-
-    }
-    public Mesh CreateHemisphereMesh()
+    private static Mesh hemisphereMesh = CreateHemisphereMesh();
+ 
+    private static Mesh CreateHemisphereMesh()
     {
         GameObject Sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         GameObject Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -71,59 +17,71 @@ public static class Hemisphere
         Sphere.transform.position = new Vector3(0, 0, 0);
         Cube.transform.position = new Vector3(1, 0, 0);
 
-        Destroy(Sphere);
-        Destroy(Cube);
+        GameObject.Destroy(Sphere);
+        GameObject.Destroy(Cube);
         Mesh m = CSG.Intersect(Sphere, Cube);
         m.name = "Hemisphere Mesh";
         return m;
     }
-    public GameObject CreateHemisphere(Material material, Vector3 Position = default(Vector3), Quaternion Rotation = default(Quaternion), Vector3? Scale = null)
+
+    public static GameObject CreateHemisphere(Material material, Vector3 Position, Vector3 Target, bool oppositeDir, Vector3? Scale = null)
     {
-        GameObject composite = new GameObject("Hemisphere");
-        composite.AddComponent<MeshFilter>().sharedMesh = hemisphereMesh;
-        composite.AddComponent<MeshRenderer>().sharedMaterial = material;
+        GameObject hemisphereGameObject = new GameObject("Hemisphere");
+        hemisphereGameObject.AddComponent<MeshFilter>().sharedMesh = hemisphereMesh;
+        hemisphereGameObject.AddComponent<MeshRenderer>().sharedMaterial = material;
         if (Scale == null)
-            composite.transform.localScale = new Vector3(1, 1, 1);
+            hemisphereGameObject.transform.localScale = new Vector3(1, 1, 1);
         else
-            composite.transform.localScale = (Vector3)Scale;
-        composite.AddComponent<MeshCollider>();
-        composite.GetComponent<MeshCollider>().sharedMesh = hemisphereMesh;
-        composite.layer = LayerMask.NameToLayer("hemisphere");
-        composite.transform.rotation = Rotation;
-        composite.transform.position = Position;
-        GameObject VectorLineObj = DrawHemisphereLines(composite, "hemisphere");
-        VectorLineObj.transform.parent = composite.transform;
+            hemisphereGameObject.transform.localScale = (Vector3)Scale;
+        hemisphereGameObject.AddComponent<MeshCollider>();
+        hemisphereGameObject.GetComponent<MeshCollider>().sharedMesh = hemisphereMesh;
+        hemisphereGameObject.layer = LayerMask.NameToLayer("hemisphere");
+        
+        if(oppositeDir)
+        {
+            hemisphereGameObject.transform.rotation = Quaternion.LookRotation(Position - Target);
+        }
+        else
+        {
+            hemisphereGameObject.transform.rotation = Quaternion.LookRotation(Target - Position);
+        }
+        Vector3 euler = hemisphereGameObject.transform.rotation.eulerAngles;
+        hemisphereGameObject.transform.eulerAngles = new Vector3(euler.z, euler.y + 90F, euler.x);
+
+        hemisphereGameObject.transform.position = Position;
+        GameObject VectorLineObj = DrawHemisphereLines(hemisphereGameObject, "hemisphere");
+        VectorLineObj.transform.parent = hemisphereGameObject.transform;
         VectorLineObj.name = "HemiLine";
-        return composite;
+        return hemisphereGameObject;
     }
 
-    public GameObject GetIntersection(GameObject Hemi1, GameObject Hemi2, Material material)
+    public static GameObject GetIntersection(GameObject hemisphere1, GameObject hemisphere2, Material material, bool disableHemispheres)
     {
         Vector3 position;
-        if (Hemi1.transform.position != Hemi2.transform.position)
+        if (hemisphere1.transform.position != hemisphere2.transform.position)
         {
             throw new System.Exception("Hemispheres not in the same position!");
         }
         else
         {
-            position = Hemi1.transform.position;
-            Hemi1.transform.position = new Vector3(0, 0, 0);
-            Hemi2.transform.position = new Vector3(0, 0, 0);
+            position = hemisphere1.transform.position;
+            hemisphere1.transform.position = new Vector3(0, 0, 0);
+            hemisphere2.transform.position = new Vector3(0, 0, 0);
         }
-        if (Hemi1.transform.localScale == Hemi2.transform.localScale)
+        if (hemisphere1.transform.localScale == hemisphere2.transform.localScale)
         {
-            Hemi1.transform.localScale *= 2F;
+            hemisphere1.transform.localScale *= 1.05F;
         }
-        Mesh n = CSG.Intersect(Hemi1, Hemi2);
+        Mesh n = CSG.Intersect(hemisphere1, hemisphere2);
         n.name = "Truncated Sphere";
         GameObject final = new GameObject("Final");
         final.AddComponent<MeshFilter>().sharedMesh = n;
         final.AddComponent<MeshRenderer>().sharedMaterial = material;
         final.AddComponent<MeshCollider>();
         final.GetComponent<MeshCollider>().sharedMesh = n;
-        Hemi1.transform.localScale *= 0.5F;
-        Hemi1.transform.position = position;
-        Hemi2.transform.position = position;
+        hemisphere1.transform.localScale /= 1.05F;
+        hemisphere1.transform.position = position;
+        hemisphere2.transform.position = position;
         final.transform.position = position;
         final.layer = LayerMask.NameToLayer("final");
 
@@ -131,11 +89,16 @@ public static class Hemisphere
         VectorLineObj.transform.parent = final.transform;
         VectorLineObj.name = "HemiLine";
 
+        if(disableHemispheres)
+        {
+            hemisphere1.gameObject.SetActive(false);
+            hemisphere2.gameObject.SetActive(false);
+        }
 
         return final;
     }
 
-    public List<GameObject> createChildSpheres(GameObject origin, GameObject hemisphere, string layerName)
+    private static List<GameObject> createChildSpheres(GameObject origin, GameObject hemisphere, string layerName)
     {
         float scaling = origin.transform.localScale.x / 2;
         int numSpheres = 32;
@@ -163,7 +126,7 @@ public static class Hemisphere
         return uspheres;
     }
 
-    Vector3[] PointsOnSphere(int n)
+    private static Vector3[] PointsOnSphere(int n)
     {
         List<Vector3> upts = new List<Vector3>();
         float inc = Mathf.PI * (3 - Mathf.Sqrt(5));
@@ -188,7 +151,7 @@ public static class Hemisphere
         return pts;
     }
 
-    private GameObject DrawHemisphereLines(GameObject hemisphere, string layerName)
+    private static GameObject DrawHemisphereLines(GameObject hemisphere, string layerName)
     {
         GameObject Sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Sphere.transform.position = hemisphere.transform.position;
