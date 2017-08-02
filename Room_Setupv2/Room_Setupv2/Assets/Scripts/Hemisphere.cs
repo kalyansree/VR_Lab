@@ -156,7 +156,6 @@ public static class Hemisphere
         GameObject Sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Sphere.transform.position = hemisphere.transform.position;
         Sphere.transform.localScale = hemisphere.transform.localScale;
-        List<Transform> sphereList = new List<Transform>();
         VectorLine hemisphereLine = new VectorLine("NewHemiLine", new List<Vector3>(), 2.0f, LineType.Discrete);
         GameObject VectorLineObj = GameObject.Find("NewHemiLine");
         hemisphereLine.Draw3DAuto();
@@ -166,9 +165,6 @@ public static class Hemisphere
         {
             hemisphereLine.points3.Add(Sphere.transform.position);
             hemisphereLine.points3.Add(childSphere.transform.position);
-
-            sphereList.Add(Sphere.transform);
-            sphereList.Add(childSphere.transform);
         }
         hemisphereLine.color = Color.green;
         //VectorLine line = new VectorLine("Wireframe", new List<Vector3>(), 1.0f, LineType.Discrete);
