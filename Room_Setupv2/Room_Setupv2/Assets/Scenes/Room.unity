@@ -4273,15 +4273,11 @@ MonoBehaviour:
   lineTransformList: []
   deformedLineTransformList: []
   forceLineTransformList: []
-  coordLineVectorList_x: []
-  coordLineVectorList_y: []
-  coordLineVectorList_z: []
   forceVectorList: []
   forceLineList: []
   frontTex: {fileID: 2800000, guid: 8f9c1207d3f3548eebdc8adf6ab8c561, type: 3}
   lineTex: {fileID: 2800000, guid: ccb667c9be88d47a0a9e144ff764abbb, type: 3}
   backTex: {fileID: 2800000, guid: b552d06a4330f47a08d09897dddcbd35, type: 3}
-  originPos: {fileID: 0}
 --- !u!1 &852988888
 GameObject:
   m_ObjectHideFlags: 0
@@ -7853,6 +7849,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RadialMenu: {fileID: 1288793307}
+  forceCanvas: {fileID: 731987060}
 --- !u!4 &1746781345
 Transform:
   m_ObjectHideFlags: 0

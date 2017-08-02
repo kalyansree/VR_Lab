@@ -26,21 +26,12 @@ public class InitLines : MonoBehaviour {
 
     public List<Transform> forceLineTransformList;
 
-    public List<Vector3> coordLineVectorList_x;
-    public List<Vector3> coordLineVectorList_y;
-    public List<Vector3> coordLineVectorList_z;
     public List<Vector3> forceVectorList;
 
     public List<VectorLine> forceLineList;
     public Texture2D frontTex;
     public Texture2D lineTex;
     public Texture2D backTex;
-
-    private VectorLine coordLine_x;
-    private VectorLine coordLine_y;
-    private VectorLine coordLine_z;
-
-    public GameObject originPos;
 
 
     void Start () {
@@ -59,31 +50,6 @@ public class InitLines : MonoBehaviour {
 
         deformedLine = new VectorLine("deformedLine", new List<Vector3>(), 10.0f);
         deformedLine.Draw3DAuto();
-
-
-
-        Vector3 origin = new Vector3(-0.5F, -0.5F, 0.5F);
-
-        coordLineVectorList_x.Add(origin);
-        coordLineVectorList_x.Add(new Vector3(0.5F, -0.5F, 0.5F));
-
-        coordLineVectorList_y.Add(origin);
-        coordLineVectorList_y.Add(new Vector3(-0.5F, 0.5F, 0.5F));
-
-        coordLineVectorList_z.Add(origin);
-        coordLineVectorList_z.Add(new Vector3(-0.5F, -0.5F, -0.5F));
-
-        coordLine_x = new VectorLine("coordLine", coordLineVectorList_x, 2.0f);
-        coordLine_x.endCap = "Arrow";
-        coordLine_x.Draw3DAuto();
-
-        coordLine_y = new VectorLine("coordLine", coordLineVectorList_y, 2.0f);
-        coordLine_y.endCap = "Arrow";
-        coordLine_y.Draw3DAuto();
-
-        coordLine_z = new VectorLine("coordLine", coordLineVectorList_z, 2.0f);
-        coordLine_z.endCap = "Arrow";
-        coordLine_z.Draw3DAuto();
 
         lineTransformList = new List<Transform>();
         deformedLineTransformList = new List<Transform>();
@@ -129,15 +95,5 @@ public class InitLines : MonoBehaviour {
             forceLineList[Mathf.FloorToInt(i/2)].points3[i%2] = transform.position;
             i++;
         }
-
-        //axis lines
-        coordLine_x.points3[0] = gameObject.transform.TransformPoint(coordLineVectorList_x[0]);
-        coordLine_x.points3[1] = gameObject.transform.TransformPoint(coordLineVectorList_x[1]);
-
-        coordLine_y.points3[0] = gameObject.transform.TransformPoint(coordLineVectorList_y[0]);
-        coordLine_y.points3[1] = gameObject.transform.TransformPoint(coordLineVectorList_y[1]);
-
-        coordLine_z.points3[0] = gameObject.transform.TransformPoint(coordLineVectorList_z[0]);
-        coordLine_z.points3[1] = gameObject.transform.TransformPoint(coordLineVectorList_z[1]);
     }
 }

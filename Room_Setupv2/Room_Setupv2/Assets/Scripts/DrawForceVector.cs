@@ -60,7 +60,7 @@ public class DrawForceVector : MonoBehaviour {
 
     private bool createdOrigin;
 
-
+    private bool lockToAxes;
     private Texture2D frontTex;
     private Texture2D lineTex;
     private Texture2D backTex;
@@ -199,9 +199,28 @@ public class DrawForceVector : MonoBehaviour {
         relativePos.x = Mathf.Round(vectorToLoc.x / tileSize) * tileSize;
         relativePos.y = Mathf.Round(vectorToLoc.y / tileSize) * tileSize;
         relativePos.z = Mathf.Round(vectorToLoc.z / tileSize) * tileSize;
-
         relativePos = domain.transform.TransformDirection(relativePos);
         closestPoint = relativePos + domain.transform.position;
+        if(lockToAxes)
+        {
+            Vector3 localClosestPoint = domain.transform.InverseTransformPoint(closestPoint);
+            float max = Mathf.Max(localClosestPoint.x, localClosestPoint.y, localClosestPoint.z);
+            if (max == localClosestPoint.x)
+            {
+                closestPoint.y = 0;
+                closestPoint.z = 0;
+            }
+            else if (max == localClosestPoint.y)
+            {
+                closestPoint.x = 0;
+                closestPoint.z = 0;
+            }
+            else if(max == localClosestPoint.z)
+            {
+                closestPoint.x = 0;
+                closestPoint.y = 0;
+            }
+        }
     }
 
     GameObject createPoint()
@@ -248,6 +267,16 @@ public class DrawForceVector : MonoBehaviour {
             }
         }
         return sb.ToString();
+    }
+
+    public void LockToAxes()
+    {
+        lockToAxes = true;
+    }
+
+    public void UnlockToAxes()
+    {
+        lockToAxes = false;
     }
 }
     

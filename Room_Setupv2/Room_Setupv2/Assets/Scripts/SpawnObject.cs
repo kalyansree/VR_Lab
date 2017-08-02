@@ -9,7 +9,7 @@ using UnityEngine.UI;
  * Note that each type of sphere has its own instance of this class, so don't assume that all spheres are looking at the same instances of these variables/objects. 
  * Use static variables if all spheres need to see the same object or value. 
  */
-public class SpawnObject : MonoBehaviour { 
+public class SpawnObject : MonoBehaviour {
 
     //--- PRIVATE VARIABLES --//
 
@@ -75,19 +75,19 @@ public class SpawnObject : MonoBehaviour {
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
-        allowPlacing = false;        
+        allowPlacing = false;
     }
     void Update()
     {
         var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
-        
+
         if (distToCube < 0.1)
-        {            
+        {
             getClosestPoint();
             preview.transform.position = closestPoint;
             preview.transform.localScale = gameObject.transform.lossyScale;
             Vector3 pos = domain.transform.InverseTransformPoint(preview.transform.position);
-            double xPos = System.Math.Round(pos.x,3);
+            double xPos = System.Math.Round(pos.x, 3);
             double yPos = System.Math.Round(pos.y, 3);
             double zPos = System.Math.Round(pos.z, 3);
 
@@ -119,7 +119,7 @@ public class SpawnObject : MonoBehaviour {
                 preview.SetActive(false);
                 isColliding = true;
                 currCollidingObj = transform.gameObject;
-                if(allowDrag)
+                if (allowDrag)
                 {
                     Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
                     color.a = 1;
@@ -192,7 +192,7 @@ public class SpawnObject : MonoBehaviour {
                 }
                 else
                 {
-                    destSphere = createPoint();                    
+                    destSphere = createPoint();
                 }
             }
 
@@ -212,10 +212,10 @@ public class SpawnObject : MonoBehaviour {
             localCoord.z += 1.0F;
             coordText.text = localCoord.ToString("F4");
         }
-        
+
     }
 
-    void getClosestPoint()
+    private void getClosestPoint()
     {
         float tileSize = domain.transform.localScale.x * gridGranularity;
         Vector3 vectorToLoc = gameObject.transform.position - domain.transform.position;
@@ -233,7 +233,7 @@ public class SpawnObject : MonoBehaviour {
         }
     }
 
-    GameObject createPoint()
+    private GameObject createPoint()
     {
         GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         newObj.transform.position = closestPoint;
