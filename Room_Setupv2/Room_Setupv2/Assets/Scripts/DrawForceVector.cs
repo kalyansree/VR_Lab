@@ -299,14 +299,12 @@ public class DrawForceVector : MonoBehaviour {
         return sb.ToString();
     }
 
-    public void LockToAxes()
+    public void ToggleLockToAxes()
     {
-        lockToAxes = true;
-    }
-
-    public void UnlockToAxes()
-    {
-        lockToAxes = false;
+        if (lockToAxes)
+            lockToAxes = false;
+        else
+            lockToAxes = true;
     }
 }
     
