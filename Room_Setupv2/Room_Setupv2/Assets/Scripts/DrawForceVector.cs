@@ -13,6 +13,8 @@ public class DrawForceVector : MonoBehaviour {
 
     public Vector3 forceVector;
 
+    public Material hemisphereMaterial;
+
     Text forceText;
 
     //--- PRIVATE VARIABLES --//
@@ -165,11 +167,15 @@ public class DrawForceVector : MonoBehaviour {
         {
             originSet = false;
             GameObject destSphere;
-            if (isColliding)
+            GameObject InputOutputPoint;
+            GameObject forcePoint;
+            if (isColliding && createdOrigin)
             {
                 destSphere = currCollidingObj;
+                InputOutputPoint = currCollidingObj;
+                forcePoint = originSphere;
             }
-            else if(createdOrigin)
+            else if(createdOrigin && !isColliding)
             {
                 domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
                 int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
@@ -178,15 +184,30 @@ public class DrawForceVector : MonoBehaviour {
                 createdOrigin = false;
                 return;
             }
+            else if(!createdOrigin && isColliding)
+            {
+                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
+                createdOrigin = false;
+                return;
+            }
             else
             {
                 destSphere = createPoint();
+                InputOutputPoint = originSphere;
+                forcePoint = destSphere;
             }
 
             //add to our list of line coordinates
             domain.GetComponent<InitLines>().forceLineTransformList.Add(destSphere.transform);
             domain.GetComponent<InitLines>().forceLineTransformList.Add(originSphere.transform);
-            domain.GetComponent<InitLines>().forceVectorList.Add(forceVector); 
+            domain.GetComponent<InitLines>().forceVectorList.Add(forceVector);
+            createdOrigin = false;
+
+            //InputOutputInfo
+            GameObject hemisphere = Hemisphere.CreateHemisphere(hemisphereMaterial, InputOutputPoint.transform.position, )
+            domain.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, null, forcVector);
+
+
         }
     }
 
@@ -238,6 +259,8 @@ public class DrawForceVector : MonoBehaviour {
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
+        
+        newObj.AddComponent<InputOutputInfo>();
         return newObj;
     }
 
