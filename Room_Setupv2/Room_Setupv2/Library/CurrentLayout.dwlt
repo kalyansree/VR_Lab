@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 2}
-  m_MinSize: {x: 950, y: 300}
+  m_MinSize: {x: 950, y: 521}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -107,10 +107,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 713, y: 492}
-  m_MaxSize: {x: 18008, y: 14042}
+  m_MinSize: {x: 709, y: 471}
+  m_MaxSize: {x: 18004, y: 14021}
   vertical: 0
-  controlID: 9
+  controlID: 47
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -156,10 +156,10 @@ MonoBehaviour:
     y: 0
     width: 1320
     height: 947
-  m_MinSize: {x: 234, y: 492}
-  m_MaxSize: {x: 10004, y: 14042}
+  m_MinSize: {x: 234, y: 471}
+  m_MaxSize: {x: 10004, y: 14021}
   vertical: 1
-  controlID: 10
+  controlID: 48
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -178,8 +178,8 @@ MonoBehaviour:
     y: 0
     width: 1320
     height: 612
-  m_MinSize: {x: 204, y: 221}
-  m_MaxSize: {x: 4004, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
@@ -231,8 +231,8 @@ MonoBehaviour:
     y: 0
     width: 398
     height: 947
-  m_MinSize: {x: 277, y: 71}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -368,9 +368,9 @@ MonoBehaviour:
     height: 926
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 94b30000
-    m_LastClickedID: 45972
-    m_ExpandedIDs: 386afdfff6f4ffff0ef7ffff00000000
+    m_SelectedIDs: b6fbffff
+    m_LastClickedID: -1098
+    m_ExpandedIDs: 02b7ffff06b7ffff14b7ffffb6fbffffbefbffffc0fbffffe4fbffffe6fbffff00000000442c0000ce2c0000122e0000742e0000ae2e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -452,11 +452,11 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.050150406, y: -0.8843698, z: -0.09775952, w: 0.4536718}
     speed: 2
-    m_Value: {x: -0.050150406, y: -0.8843698, z: -0.09775952, w: 0.4536718}
+    m_Value: {x: 0.050150406, y: 0.88436985, z: 0.09775953, w: -0.45367184}
   m_Size:
-    m_Target: 0.042868245
+    m_Target: 0.34286827
     speed: 2
-    m_Value: 0.042868245
+    m_Value: 0.34286827
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -504,19 +504,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Materials
+    - Assets/Scripts
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Materials
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 107}
-    m_SelectedIDs: 8c310000
-    m_LastClickedID: 12684
-    m_ExpandedIDs: 00000000ea2e00005e2f0000ce2f0000e22f000004300000d2300000dc30000006310000103100003c3100005a31000094320000c0320000183300006837000000ca9a3bffffff7f
+    m_SelectedIDs: b4280000
+    m_LastClickedID: 10420
+    m_ExpandedIDs: 000000007e270000f62700006c28000080280000a22800007629000080290000ac290000b6290000e4290000042a0000462b0000722b0000ce2b00001630000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -544,7 +544,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ea2e00005e2f0000ce2f0000e22f000004300000d2300000dc30000006310000103100003c3100005a31000094320000c03200001833000068370000
+    m_ExpandedIDs: 000000007e270000f62700006c28000080280000a22800007629000080290000ac290000b6290000e4290000042a0000462b0000722b0000ce2b000016300000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -575,18 +575,18 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: f8240000f624000000000000b83c0000943b0000aa430000c22a000008290000662b0000be2e0000c42e000032310100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: AddInputOutputInfo
+      m_OriginalName: AddInputOutputInfo
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 12824
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 9}
     m_CreateAssetUtility:

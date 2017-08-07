@@ -197,18 +197,25 @@ public class DrawForceVector : MonoBehaviour {
                 forcePoint = destSphere;
             }
 
+            if(InputOutputPoint.GetComponent<InputOutputInfo>().GetForcePoint() != null) //we already have a forcepoint
+            {
+                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
+                int index = Networking.GetComponent<Networking>().allTransformList.IndexOf(originSphere.transform);
+                Networking.GetComponent<Networking>().allTransformList.Remove(originSphere.transform);
+                Destroy(domain.transform.GetChild(index).gameObject);
+                createdOrigin = false;
+                return;
+            }
             //add to our list of line coordinates
             domain.GetComponent<InitLines>().forceLineTransformList.Add(destSphere.transform);
             domain.GetComponent<InitLines>().forceLineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().forceVectorList.Add(forceVector);
 
-
             //InputOutputInfo
-            GameObject hemisphere = Hemisphere.CreateHemisphere(hemisphereMaterial, InputOutputPoint.transform.position, forcePoint.transform.position, !createdOrigin);
-            if (domain.GetComponent<InputOutputInfo>() == null)
-                domain.AddComponent<InputOutputInfo>();
-            domain.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, hemisphere, forceVector, createdOrigin);
-            hemisphere.transform.parent = domain.transform;
+            Vector3 scale = new Vector3(1, 1, 1);
+            GameObject hemisphere = Hemisphere.CreateHemisphere(hemisphereMaterial, InputOutputPoint.transform.position, forcePoint.transform.position, !createdOrigin, scale);
+            InputOutputPoint.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, hemisphere, forceVector, createdOrigin);
+            hemisphere.transform.parent = forcePoint.transform;
             createdOrigin = false;
         }
     }

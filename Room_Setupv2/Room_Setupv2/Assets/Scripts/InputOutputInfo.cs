@@ -9,13 +9,13 @@ public class InputOutputInfo : MonoBehaviour {
 
     private Vector3 forceVector;
 
-    private List<Vector3> incomingJoints;
+    private List<GameObject> connectedPoints;
     private bool directionTowardsOrigin;
 
     private bool viability;
     void Start()
     {
-        incomingJoints = new List<Vector3>();
+        connectedPoints = new List<GameObject>();
     }
     public bool Setup(GameObject originPoint, GameObject forcePoint, GameObject hemisphereObj, Vector3 forceVector, bool directionTowardsOrigin)
     {
@@ -66,9 +66,20 @@ public class InputOutputInfo : MonoBehaviour {
 
     public bool checkViability()
     {
+        if(forceVector == null)
+        {
+            return false;
+        }
+        if (origin.CompareTag("Output"))
+        {
+            foreach (GameObject obj in connectedPoints)
+            {
+                Vector3 direction = obj.transform.position - origin.transform.position;
+                if (checkViability(forceVector, direction) == false)
+                    return false;
+            }
+        }
         return true;
-
-
     }
 
     public void toggleHemisphereView()
@@ -77,6 +88,19 @@ public class InputOutputInfo : MonoBehaviour {
             hemisphere.SetActive(false);
         else
             hemisphere.SetActive(true);
+    }
+
+    public void addConnection(GameObject vertex)
+    {
+        connectedPoints.Add(vertex);
+    }
+
+    private bool checkViability(Vector3 forceVector, Vector3 vertexVector)
+    {
+        if (Vector3.Angle(forceVector, vertexVector) > 90)
+            return false;
+        else
+            return true;
     }
 
 

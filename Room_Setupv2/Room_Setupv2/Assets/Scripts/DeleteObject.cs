@@ -56,8 +56,6 @@ public class DeleteObject : MonoBehaviour
     [Tooltip("GameObject of CenterEyeAnchor")]
     public GameObject myCamera;
 
-    public GameObject force;
-
 
     void Start()
     {
@@ -174,10 +172,12 @@ public class DeleteObject : MonoBehaviour
             {
                 if(currCollidingObj.CompareTag("Force"))
                 {
-                    deleteForcePoint();
+                    deleteForcePoint(originSphere);
                 }
-                else
+                else if(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output"))
                 {
+                    GameObject force = currCollidingObj.GetComponent<InputOutputInfo>().GetForcePoint();
+                    deleteForcePoint(force);
                     deletePoint();
                 }                
             }
@@ -291,15 +291,15 @@ public class DeleteObject : MonoBehaviour
 
     }
 
-    void deleteForcePoint()
+    void deleteForcePoint(GameObject forcePoint)
     {
         if (originSet == false)
             return;
-        ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(originSphere.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(forcePoint.transform);
 
         for (int i = 0; i < domain.GetComponent<InitLines>().forceLineTransformList.Count; i++)
         {
-            if (domain.GetComponent<InitLines>().forceLineTransformList[i].position == originSphere.transform.position)
+            if (domain.GetComponent<InitLines>().forceLineTransformList[i].position == forcePoint.transform.position)
             {
                 if (i % 2 == 0)
                 {
@@ -328,7 +328,7 @@ public class DeleteObject : MonoBehaviour
         }
         foreach (Transform childTransform in domain.transform)
         {
-            if (childTransform.position == originSphere.transform.position)
+            if (childTransform.position == forcePoint.transform.position)
             {
                 Destroy(childTransform.gameObject);
             }

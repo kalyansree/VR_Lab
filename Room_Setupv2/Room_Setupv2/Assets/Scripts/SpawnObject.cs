@@ -199,6 +199,15 @@ public class SpawnObject : MonoBehaviour {
             //add to our list of line coordinates
             domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().lineTransformList.Add(destSphere.transform);
+
+            if(originSphere.CompareTag("Input") || originSphere.CompareTag("Output"))
+            {
+                originSphere.GetComponent<InputOutputInfo>().addConnection(destSphere);
+            }
+            else if (destSphere.CompareTag("Input") || destSphere.CompareTag("Output"))
+            {
+                destSphere.GetComponent<InputOutputInfo>().addConnection(originSphere);
+            }
         }
 
         //canvas coordinates
@@ -248,6 +257,10 @@ public class SpawnObject : MonoBehaviour {
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
+        if(newObj.CompareTag("Input") || newObj.CompareTag("Output"))
+        {
+            newObj.AddComponent<InputOutputInfo>();
+        }
         return newObj;
     }
 }
