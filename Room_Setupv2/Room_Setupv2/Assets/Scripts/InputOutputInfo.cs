@@ -8,9 +8,15 @@ public class InputOutputInfo : MonoBehaviour {
     private GameObject hemisphere;
 
     private Vector3 forceVector;
+
+    private List<Vector3> incomingJoints;
     private bool directionTowardsOrigin;
 
     private bool viability;
+    void Start()
+    {
+        incomingJoints = new List<Vector3>();
+    }
     public bool Setup(GameObject originPoint, GameObject forcePoint, GameObject hemisphereObj, Vector3 forceVector, bool directionTowardsOrigin)
     {
         this.origin = originPoint;
@@ -61,6 +67,16 @@ public class InputOutputInfo : MonoBehaviour {
     public bool checkViability()
     {
         return true;
+
+
+    }
+
+    public void toggleHemisphereView()
+    {
+        if (hemisphere.activeSelf)
+            hemisphere.SetActive(false);
+        else
+            hemisphere.SetActive(true);
     }
 
 

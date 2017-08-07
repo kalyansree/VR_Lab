@@ -201,13 +201,15 @@ public class DrawForceVector : MonoBehaviour {
             domain.GetComponent<InitLines>().forceLineTransformList.Add(destSphere.transform);
             domain.GetComponent<InitLines>().forceLineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().forceVectorList.Add(forceVector);
-            createdOrigin = false;
+
 
             //InputOutputInfo
-            GameObject hemisphere = Hemisphere.CreateHemisphere(hemisphereMaterial, InputOutputPoint.transform.position, )
-            domain.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, null, forcVector);
-
-
+            GameObject hemisphere = Hemisphere.CreateHemisphere(hemisphereMaterial, InputOutputPoint.transform.position, forcePoint.transform.position, !createdOrigin);
+            if (domain.GetComponent<InputOutputInfo>() == null)
+                domain.AddComponent<InputOutputInfo>();
+            domain.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, hemisphere, forceVector, createdOrigin);
+            hemisphere.transform.parent = domain.transform;
+            createdOrigin = false;
         }
     }
 
@@ -259,8 +261,6 @@ public class DrawForceVector : MonoBehaviour {
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
-        
-        newObj.AddComponent<InputOutputInfo>();
         return newObj;
     }
 
