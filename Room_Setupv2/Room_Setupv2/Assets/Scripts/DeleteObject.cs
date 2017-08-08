@@ -179,7 +179,11 @@ public class DeleteObject : MonoBehaviour
                     GameObject force = currCollidingObj.GetComponent<InputOutputInfo>().GetForcePoint();
                     deleteForcePoint(force);
                     deletePoint();
-                }                
+                }
+                else
+                {
+                    deletePoint();
+                }
             }
             originSet = false;
         }
@@ -237,6 +241,11 @@ public class DeleteObject : MonoBehaviour
             {
                 Destroy(childTransform.gameObject);
             }
+
+            if (childTransform.gameObject.CompareTag("Input") || childTransform.gameObject.CompareTag("Output"))
+            {
+                childTransform.gameObject.GetComponent<InputOutputInfo>().removeConnection(originSphere);
+            }
         }
 
     }
@@ -262,6 +271,18 @@ public class DeleteObject : MonoBehaviour
                 break;
             } 
         }
+        if(originSphere.CompareTag("Input") || currCollidingObj.CompareTag("Input") || originSphere.CompareTag("Output") || currCollidingObj.CompareTag("Output"))
+        {
+            foreach (Transform childTransform in domain.transform)
+            {
+                if (childTransform.gameObject.CompareTag("Input") || childTransform.gameObject.CompareTag("Output"))
+                {
+                    childTransform.gameObject.GetComponent<InputOutputInfo>().removeConnection(originSphere);
+                    childTransform.gameObject.GetComponent<InputOutputInfo>().removeConnection(currCollidingObj);
+                }
+            }
+        }
+
 
     }
 
@@ -328,6 +349,13 @@ public class DeleteObject : MonoBehaviour
         }
         foreach (Transform childTransform in domain.transform)
         {
+            if (childTransform.gameObject.CompareTag("Input") || childTransform.gameObject.CompareTag("Output"))
+            {
+                if(childTransform.GetComponent<InputOutputInfo>().GetForcePoint().transform.position == forcePoint.transform.position)
+                {
+                    childTransform.GetComponent<InputOutputInfo>().DeleteForcePoint();
+                }
+            }
             if (childTransform.position == forcePoint.transform.position)
             {
                 Destroy(childTransform.gameObject);

@@ -12,6 +12,8 @@ public class InputOutputInfo : MonoBehaviour {
     private List<GameObject> connectedPoints;
     private bool directionTowardsOrigin;
 
+    private Material originalMaterial;
+
     private bool viability;
     void Start()
     {
@@ -24,8 +26,9 @@ public class InputOutputInfo : MonoBehaviour {
         this.hemisphere = hemisphereObj;
         this.forceVector = forceVector;
         this.directionTowardsOrigin = directionTowardsOrigin;
+        this.originalMaterial = originPoint.GetComponent<MeshRenderer>().sharedMaterial;
 
-        return checkViability();
+        return checkFeasibility();
     }
 
     public void SetOriginPoint(GameObject originPoint)
@@ -38,6 +41,11 @@ public class InputOutputInfo : MonoBehaviour {
         this.force = forcePoint;
     }
 
+    public void DeleteForcePoint()
+    {
+        this.force = null;
+    }
+
     public void SetHemisphereObj(GameObject hemisphereObj)
     {
         this.hemisphere = hemisphereObj;
@@ -46,7 +54,7 @@ public class InputOutputInfo : MonoBehaviour {
     public bool SetForceVector(Vector3 forceVector)
     {
         this.forceVector = forceVector;
-        return checkViability();
+        return checkFeasibility();
 
     }
     public GameObject GetOriginPoint()
@@ -64,7 +72,7 @@ public class InputOutputInfo : MonoBehaviour {
         return hemisphere;
     }
 
-    public bool checkViability()
+    public bool checkFeasibility()
     {
         if(forceVector == null)
         {
@@ -76,8 +84,11 @@ public class InputOutputInfo : MonoBehaviour {
             {
                 Vector3 direction = obj.transform.position - origin.transform.position;
                 if (checkViability(forceVector, direction) == false)
+                {
                     return false;
+                }
             }
+            
         }
         return true;
     }
@@ -93,6 +104,11 @@ public class InputOutputInfo : MonoBehaviour {
     public void addConnection(GameObject vertex)
     {
         connectedPoints.Add(vertex);
+    }
+
+    public void removeConnection(GameObject vertex)
+    {
+        connectedPoints.Remove(vertex);
     }
 
     private bool checkViability(Vector3 forceVector, Vector3 vertexVector)

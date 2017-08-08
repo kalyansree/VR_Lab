@@ -11,7 +11,9 @@ public class DrawForceVector : MonoBehaviour {
     public Camera myCamera;
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
 
-    public Vector3 forceVector;
+    public Vector3 forceVectorLH;
+    public Vector3 forceVectorRH;
+
 
     public Material hemisphereMaterial;
 
@@ -60,6 +62,8 @@ public class DrawForceVector : MonoBehaviour {
     [Tooltip("GameObject of Networking")]
     public GameObject Networking;
 
+    public GameObject ForceRadialMenuPanel;
+
     private bool createdOrigin;
 
     private bool lockToAxes;
@@ -73,11 +77,7 @@ public class DrawForceVector : MonoBehaviour {
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
-
-        frontTex = domain.GetComponent<InitLines>().frontTex;
-        lineTex = domain.GetComponent<InitLines>().lineTex;
-        backTex = domain.GetComponent<InitLines>().backTex;
-        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
+        Hemisphere.CreateHemisphereMesh();
     }
 	
 	// Update is called once per frame
@@ -89,6 +89,7 @@ public class DrawForceVector : MonoBehaviour {
         preview.transform.localScale = gameObject.transform.lossyScale;
         
         isColliding = false;
+        preview.SetActive(true);
         //check if our preview is colliding with a placed sphere
         foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
         {
@@ -112,16 +113,20 @@ public class DrawForceVector : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
-            if (isColliding)
+            if (isColliding && (currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))
             {
                 originSphere = currCollidingObj;
                 createdOrigin = false;
             }
                 
-            else
+            else if(!isColliding)
             {
                 originSphere = createPoint();
                 createdOrigin = true;
+            }
+            else
+            {
+                return;
             }
 
             originSet = true;
@@ -143,22 +148,19 @@ public class DrawForceVector : MonoBehaviour {
             dest = closestPoint;
 
 
-            StringBuilder sb = new StringBuilder();
-
-
-
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
                 domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[0] = dest;
                 domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[1] = origin;
                 Vector3 dest_local = domain.transform.InverseTransformPoint(dest);
                 Vector3 origin_local = domain.transform.InverseTransformPoint(origin);
-                forceVector = dest_local - origin_local;
-                if (forceVector.magnitude > 1)
+                forceVectorLH = dest_local - origin_local;
+                if (forceVectorLH.magnitude > 1)
                 {
-                    forceVector.Normalize();
+                    forceVectorLH.Normalize();
                 }
-                forceText.text = forceVector.x + "\n" + forceVector.y + "\n" + -forceVector.z + "\n" + forceVector.magnitude + "\n"; 
+                forceVectorRH = new Vector3(forceVectorLH.x, forceVectorLH.y, -forceVectorLH.z);
+                forceText.text = forceVectorRH.x.ToString("F4") + "\n" + forceVectorRH.y.ToString("F4") + "\n" + forceVectorRH.z.ToString("F4") + "\n" + forceVectorRH.magnitude.ToString("F4") + "\n"; 
 
             }
         }
@@ -209,13 +211,14 @@ public class DrawForceVector : MonoBehaviour {
             //add to our list of line coordinates
             domain.GetComponent<InitLines>().forceLineTransformList.Add(destSphere.transform);
             domain.GetComponent<InitLines>().forceLineTransformList.Add(originSphere.transform);
-            domain.GetComponent<InitLines>().forceVectorList.Add(forceVector);
+            domain.GetComponent<InitLines>().forceVectorList.Add(forceVectorLH);
 
             //InputOutputInfo
-            Vector3 scale = new Vector3(1, 1, 1);
+            Vector3 scale = new Vector3(10, 10, 10);
             GameObject hemisphere = Hemisphere.CreateHemisphere(hemisphereMaterial, InputOutputPoint.transform.position, forcePoint.transform.position, !createdOrigin, scale);
-            InputOutputPoint.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, hemisphere, forceVector, createdOrigin);
+            InputOutputPoint.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, hemisphere, forceVectorRH, createdOrigin);
             hemisphere.transform.parent = forcePoint.transform;
+            hemisphere.transform.localScale = scale;
             createdOrigin = false;
         }
     }
@@ -231,25 +234,29 @@ public class DrawForceVector : MonoBehaviour {
         relativePos.z = Mathf.Round(vectorToLoc.z / tileSize) * tileSize;
         relativePos = domain.transform.TransformDirection(relativePos);
         closestPoint = relativePos + domain.transform.position;
-        if(lockToAxes)
+
+        if (lockToAxes && originSet)
         {
             Vector3 localClosestPoint = domain.transform.InverseTransformPoint(closestPoint);
-            float max = Mathf.Max(localClosestPoint.x, localClosestPoint.y, localClosestPoint.z);
-            if (max == localClosestPoint.x)
+            Vector3 localOriginPoint = domain.transform.InverseTransformPoint(origin);
+            Vector3 localDistance = localClosestPoint - localOriginPoint;
+            float max = Mathf.Max(Mathf.Abs(localDistance.x), Mathf.Abs(localDistance.y), Mathf.Abs(localDistance.z));
+            if (max == Mathf.Abs(localDistance.x))
             {
-                closestPoint.y = 0;
-                closestPoint.z = 0;
+                localClosestPoint.y = localOriginPoint.y;
+                localClosestPoint.z = localOriginPoint.z;
             }
-            else if (max == localClosestPoint.y)
+            else if (max == Mathf.Abs(localDistance.y))
             {
-                closestPoint.x = 0;
-                closestPoint.z = 0;
+                localClosestPoint.x = localOriginPoint.x;
+                localClosestPoint.z = localOriginPoint.z;
             }
-            else if(max == localClosestPoint.z)
+            else if (max == Mathf.Abs(localDistance.z))
             {
-                closestPoint.x = 0;
-                closestPoint.y = 0;
+                localClosestPoint.x = localOriginPoint.x;
+                localClosestPoint.y = localOriginPoint.y;
             }
+            closestPoint = domain.transform.TransformPoint(localClosestPoint);
         }
     }
 
@@ -302,9 +309,23 @@ public class DrawForceVector : MonoBehaviour {
     public void ToggleLockToAxes()
     {
         if (lockToAxes)
+        {
             lockToAxes = false;
+            ColorBlock colors = ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors;
+            colors.normalColor = Color.white;
+            colors.highlightedColor = Color.gray;
+            ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors = colors;
+        }
         else
+        {
             lockToAxes = true;
+            ColorBlock colors = ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors;
+            colors.normalColor = Color.red;
+            colors.highlightedColor = Color.yellow;
+            ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors = colors;
+        }
+
+        
     }
 }
     

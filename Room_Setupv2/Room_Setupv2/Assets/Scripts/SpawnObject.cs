@@ -204,24 +204,11 @@ public class SpawnObject : MonoBehaviour {
             {
                 originSphere.GetComponent<InputOutputInfo>().addConnection(destSphere);
             }
-            else if (destSphere.CompareTag("Input") || destSphere.CompareTag("Output"))
+            if (destSphere.CompareTag("Input") || destSphere.CompareTag("Output"))
             {
                 destSphere.GetComponent<InputOutputInfo>().addConnection(originSphere);
             }
         }
-
-        //canvas coordinates
-        if (preview.activeSelf)
-        {
-            Vector3 localCoord = domain.transform.InverseTransformPoint(closestPoint);
-            localCoord.x += 0.5F;
-            localCoord.y += 0.5F;
-            localCoord.z += 0.5F;
-            localCoord.z = -localCoord.z;
-            localCoord.z += 1.0F;
-            coordText.text = localCoord.ToString("F4");
-        }
-
     }
 
     private void getClosestPoint()

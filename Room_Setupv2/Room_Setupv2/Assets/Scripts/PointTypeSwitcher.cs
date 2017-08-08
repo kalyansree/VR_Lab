@@ -29,6 +29,7 @@ public class PointTypeSwitcher : MonoBehaviour {
     };
 
     public GameObject fixAxesRadialMenu;
+    public GameObject forceRadialMenu;
     public GameObject forceCanvas;
     private void Start()
     {
@@ -36,14 +37,7 @@ public class PointTypeSwitcher : MonoBehaviour {
         int buttonNo = 0;
         int i = 0;
         activeSphere = 0;
-        foreach (Transform joint in transform)
-        {
-            if (i == buttonNo)
-                joint.gameObject.SetActive(true);
-            else
-                joint.gameObject.SetActive(false);
-            i++;
-        }
+        SwitchTo(0);
     }
     public void SwitchTo(int buttonNo)
     {        
@@ -54,6 +48,16 @@ public class PointTypeSwitcher : MonoBehaviour {
         else
         {
             fixAxesRadialMenu.SetActive(true);
+        }
+
+        if(buttonNo == (int)Type.FORCE)
+        {
+            forceRadialMenu.SetActive(true);
+        }
+        else
+        {
+            forceRadialMenu.SetActive(false);
+
         }
         if(buttonNo == (int)Type.FORCE)
         {

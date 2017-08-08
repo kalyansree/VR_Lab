@@ -7,9 +7,9 @@ using Vectrosity;
 
 public static class Hemisphere
 {
-    private static Mesh hemisphereMesh = CreateHemisphereMesh();
+    private static Mesh hemisphereMesh;
  
-    private static Mesh CreateHemisphereMesh()
+    public static void CreateHemisphereMesh()
     {
         GameObject Sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         GameObject Cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -21,7 +21,7 @@ public static class Hemisphere
         GameObject.Destroy(Cube);
         Mesh m = CSG.Intersect(Sphere, Cube);
         m.name = "Hemisphere Mesh";
-        return m;
+        hemisphereMesh = m;
     }
 
     public static GameObject CreateHemisphere(Material material, Vector3 Position, Vector3 Target, bool oppositeDir, Vector3? Scale = null)
@@ -49,9 +49,10 @@ public static class Hemisphere
         hemisphereGameObject.transform.eulerAngles = new Vector3(euler.z, euler.y + 90F, euler.x);
 
         hemisphereGameObject.transform.position = Position;
-        GameObject VectorLineObj = DrawHemisphereLines(hemisphereGameObject, "hemisphere");
-        VectorLineObj.transform.parent = hemisphereGameObject.transform;
-        VectorLineObj.name = "HemiLine";
+        //this is not working in the Room Scene, although it is working in TestCSG for some reason -- need to test some more
+        //GameObject VectorLineObj = DrawHemisphereLines(hemisphereGameObject, "hemisphere");
+        //VectorLineObj.transform.parent = hemisphereGameObject.transform;
+        //VectorLineObj.name = "HemiLine";
         return hemisphereGameObject;
     }
 
@@ -98,9 +99,9 @@ public static class Hemisphere
         return final;
     }
 
-    private static List<GameObject> createChildSpheres(GameObject origin, GameObject hemisphere, string layerName)
+    private static List<GameObject> createChildSpheres(GameObject origin, GameObject hemisphere, string layerName, float radius)
     {
-        float scaling = origin.transform.localScale.x / 2;
+        float scaling = radius;
         int numSpheres = 32;
         Vector3[] pts = PointsOnSphere(numSpheres);
         List<GameObject> uspheres = new List<GameObject>();
@@ -154,13 +155,14 @@ public static class Hemisphere
     private static GameObject DrawHemisphereLines(GameObject hemisphere, string layerName)
     {
         GameObject Sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject.Destroy(Sphere.GetComponent<Collider>());
         Sphere.transform.position = hemisphere.transform.position;
-        Sphere.transform.localScale = hemisphere.transform.localScale;
+        Sphere.transform.localScale = hemisphere.transform.lossyScale;
         VectorLine hemisphereLine = new VectorLine("NewHemiLine", new List<Vector3>(), 2.0f, LineType.Discrete);
         GameObject VectorLineObj = GameObject.Find("NewHemiLine");
         hemisphereLine.Draw3DAuto();
 
-        List<GameObject> childList = createChildSpheres(Sphere, hemisphere, layerName);
+        List<GameObject> childList = createChildSpheres(Sphere, hemisphere, layerName, Sphere.transform.localScale.x / 2);
         foreach (GameObject childSphere in childList)
         {
             hemisphereLine.points3.Add(Sphere.transform.position);
