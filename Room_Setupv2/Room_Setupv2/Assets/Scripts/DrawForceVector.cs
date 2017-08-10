@@ -77,7 +77,6 @@ public class DrawForceVector : MonoBehaviour {
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
-        Hemisphere.CreateHemisphereMesh();
     }
 	
 	// Update is called once per frame
@@ -171,13 +170,7 @@ public class DrawForceVector : MonoBehaviour {
             GameObject destSphere;
             GameObject InputOutputPoint;
             GameObject forcePoint;
-            if (isColliding && createdOrigin)
-            {
-                destSphere = currCollidingObj;
-                InputOutputPoint = currCollidingObj;
-                forcePoint = originSphere;
-            }
-            else if(createdOrigin && !isColliding)
+            if (createdOrigin && (!isColliding || (isColliding && !(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))))
             {
                 domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
                 int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
@@ -191,6 +184,12 @@ public class DrawForceVector : MonoBehaviour {
                 domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
                 createdOrigin = false;
                 return;
+            }
+            else if (isColliding && createdOrigin)
+            {
+                destSphere = currCollidingObj;
+                InputOutputPoint = currCollidingObj;
+                forcePoint = originSphere;
             }
             else
             {

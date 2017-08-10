@@ -44,11 +44,7 @@ public class InputOutputInfo : MonoBehaviour {
     public void DeleteForcePoint()
     {
         this.force = null;
-    }
-
-    public void SetHemisphereObj(GameObject hemisphereObj)
-    {
-        this.hemisphere = hemisphereObj;
+        this.hemisphere = null;
     }
 
     public bool SetForceVector(Vector3 forceVector)
