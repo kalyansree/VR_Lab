@@ -316,50 +316,13 @@ public class DeleteObject : MonoBehaviour
     {
         if (originSet == false)
             return;
+        int index = Networking.GetComponent<Networking>().forceTransformList.IndexOf(forcePoint.transform);
         ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(forcePoint.transform);
-
-        for (int i = 0; i < domain.GetComponent<InitLines>().forceLineTransformList.Count; i++)
-        {
-            if (domain.GetComponent<InitLines>().forceLineTransformList[i].position == forcePoint.transform.position)
-            {
-                if (i % 2 == 0)
-                {
-                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i + 1);
-                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i);
-
-                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(1);
-                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(0);
-                    domain.GetComponent<InitLines>().forceLineList.RemoveAt(Mathf.FloorToInt(i / 2));
-
-                    i -= 1;
-
-                }
-                else
-                {
-                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i);
-                    domain.GetComponent<InitLines>().forceLineTransformList.RemoveAt(i - 1);
-
-                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(1);
-                    domain.GetComponent<InitLines>().forceLineList[Mathf.FloorToInt(i / 2)].points3.RemoveAt(0);
-                    domain.GetComponent<InitLines>().forceLineList.RemoveAt(Mathf.FloorToInt(i / 2));
-
-                    i -= 2;
-                }
-            }
-        }
-        foreach (Transform childTransform in domain.transform)
-        {
-            if (childTransform.gameObject.CompareTag("Input") || childTransform.gameObject.CompareTag("Output"))
-            {
-                if(childTransform.GetComponent<InputOutputInfo>().GetForcePoint().transform.position == forcePoint.transform.position)
-                {
-                    childTransform.GetComponent<InputOutputInfo>().DeleteForcePoint();
-                }
-            }
-            if (childTransform.position == forcePoint.transform.position)
-            {
-                Destroy(childTransform.gameObject);
-            }
-        }
+        VectorLine vline = domain.GetComponent<InitLines>().forceLineList[index];
+        VectorLine.Destroy(ref vline);
+        domain.GetComponent<InitLines>().forceLineList.RemoveAt(index);
+        GameObject origin = forcePoint.GetComponent<ForcePointInfo>().GetConnectedPoint();
+        origin.GetComponent<InputOutputInfo>().DeleteForcePoint();
+        Destroy(forcePoint);
     }
 }

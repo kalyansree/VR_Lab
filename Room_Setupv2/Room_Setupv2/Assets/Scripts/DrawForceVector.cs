@@ -129,7 +129,7 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             originSet = true;
-            VectorLine forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
+            VectorLine forceLine = new VectorLine("NewForceLine", new List<Vector3>(), 30.0f);
             forceLine.endCap = "Arrow";
             forceLine.Draw3DAuto();
             forceLine.points3.Add(originSphere.transform.position);
@@ -172,15 +172,18 @@ public class DrawForceVector : MonoBehaviour {
             GameObject forcePoint;
             if (createdOrigin && (!isColliding || (isColliding && !(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))))
             {
+                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
+                VectorLine.Destroy(ref vline);
                 domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
-                int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
-                ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
-                Destroy(domain.transform.GetChild(index).gameObject);
+                ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(originSphere.transform);
+                Destroy(originSphere);
                 createdOrigin = false;
                 return;
             }
             else if(!createdOrigin && isColliding)
             {
+                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
+                VectorLine.Destroy(ref vline);
                 domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
                 createdOrigin = false;
                 return;
@@ -200,17 +203,23 @@ public class DrawForceVector : MonoBehaviour {
 
             if(InputOutputPoint.GetComponent<InputOutputInfo>().GetForcePoint() != null) //we already have a forcepoint
             {
+                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
+                VectorLine.Destroy(ref vline);
                 domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
-                int index = Networking.GetComponent<Networking>().allTransformList.IndexOf(originSphere.transform);
-                Networking.GetComponent<Networking>().allTransformList.Remove(originSphere.transform);
-                Destroy(domain.transform.GetChild(index).gameObject);
+                Networking.GetComponent<Networking>().forceTransformList.Remove(forcePoint.transform);
+                Destroy(forcePoint);
                 createdOrigin = false;
                 return;
             }
-            //add to our list of line coordinates
-            domain.GetComponent<InitLines>().forceLineTransformList.Add(destSphere.transform);
-            domain.GetComponent<InitLines>().forceLineTransformList.Add(originSphere.transform);
+
+            GameObject vectorLineObj = GameObject.Find("NewForceLine");
+            vectorLineObj.transform.parent = forcePoint.transform;
+            vectorLineObj.name = "ForceLine";
+            //add to our force vector
             domain.GetComponent<InitLines>().forceVectorList.Add(forceVectorLH);
+
+            //ForcePointInfo
+            forcePoint.GetComponent<ForcePointInfo>().SetConnectedPoint(InputOutputPoint);
 
             //InputOutputInfo
             Vector3 scale = new Vector3(10, 10, 10);
@@ -272,6 +281,8 @@ public class DrawForceVector : MonoBehaviour {
         }
         ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Add(newObj.transform);
         newObj.transform.SetParent(domain.transform, true);
+        newObj.AddComponent<ForcePointInfo>();
+        newObj.name = "ForcePoint";
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
         return newObj;
@@ -282,7 +293,7 @@ public class DrawForceVector : MonoBehaviour {
     {
         int forceVectorIndex = 0;
         StringBuilder sb = new StringBuilder();
-        foreach (Transform transform in domain.GetComponent<InitLines>().forceLineTransformList)
+        foreach (Transform transform in Networking.GetComponent<Networking>().forceTransformList)
         {
             if (transform.gameObject.CompareTag("Input"))
             {

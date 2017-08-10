@@ -24,8 +24,6 @@ public class InitLines : MonoBehaviour {
 
     public List<Transform> deformedLineTransformList;
 
-    public List<Transform> forceLineTransformList;
-
     public List<Vector3> forceVectorList;
 
     public List<VectorLine> forceLineList;
@@ -55,7 +53,6 @@ public class InitLines : MonoBehaviour {
         deformedLineTransformList = new List<Transform>();
 
         //Force Line
-        forceLineTransformList = new List<Transform>();
         forceVectorList = new List<Vector3>();
         forceLineList = new List<VectorLine>();
         //forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
@@ -88,12 +85,6 @@ public class InitLines : MonoBehaviour {
                 mainLine.points3[i] = transform.position;
                 i++;
             }
-        }
-        i = 0;
-        foreach (Transform transform in forceLineTransformList)
-        {
-            forceLineList[Mathf.FloorToInt(i/2)].points3[i%2] = transform.position;
-            i++;
         }
     }
 }

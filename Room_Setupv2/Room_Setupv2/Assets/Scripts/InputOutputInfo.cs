@@ -70,7 +70,7 @@ public class InputOutputInfo : MonoBehaviour {
 
     public bool checkFeasibility()
     {
-        if(forceVector == null)
+        if(forceVector == null || origin == null)
         {
             return false;
         }
@@ -78,7 +78,16 @@ public class InputOutputInfo : MonoBehaviour {
         {
             foreach (GameObject obj in connectedPoints)
             {
-                Vector3 direction = obj.transform.position - origin.transform.position;
+                Vector3 direction;
+                if (directionTowardsOrigin)
+                {
+                    direction = obj.transform.position - origin.transform.position;
+                }
+                else
+                {
+                    direction = origin.transform.position - obj.transform.position;
+                }
+                
                 if (checkViability(forceVector, direction) == false)
                 {
                     return false;

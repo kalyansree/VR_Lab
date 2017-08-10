@@ -248,6 +248,7 @@ public class SpawnObject : MonoBehaviour {
         {
             newObj.AddComponent<InputOutputInfo>();
         }
+        newObj.name = newObj.tag;
         return newObj;
     }
 }

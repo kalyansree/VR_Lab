@@ -7,28 +7,28 @@ Direct3D:
     VRAM:     4044 MB
     Driver:   22.19.171.257
 Begin MonoManager ReloadAssembly
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.dll (this message is harmless)
-Loading C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.dll into Unity Child Domain
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Assembly-CSharp.dll (this message is harmless)
-Loading C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.UI.dll (this message is harmless)
-Loading C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
-Loading C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.VR.dll (this message is harmless)
-Loading C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.VR.dll into Unity Child Domain
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Vectrosity.dll (this message is harmless)
-Loading C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Vectrosity.dll into Unity Child Domain
-- Completed reload, in  0.062 seconds
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\System.Core.dll (this message is harmless)
-Platform assembly: C:\Users\VR\Documents\GitHub\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\System.dll (this message is harmless)
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.VR.dll (this message is harmless)
+Loading C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\UnityEngine.VR.dll into Unity Child Domain
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Vectrosity.dll (this message is harmless)
+Loading C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\Vectrosity.dll into Unity Child Domain
+- Completed reload, in  0.724 seconds
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2\KrishnanLabv5_Data\Managed\System.dll (this message is harmless)
 <RI> Initializing input.
 <RI> Input initialized.
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initialized touch support.
-UnloadTime: 0.785748 ms
+UnloadTime: 0.761856 ms
 [VRDevice] Successfully created device Oculus.
-Unity v5.6.2f1, Oculus Utilities v1.14.0, OVRPlugin v1.14.0, SDK v1.16.0.
+Unity v5.6.2f1, Oculus Utilities v1.14.0, OVRPlugin v1.14.0, SDK v1.17.0.
  
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
@@ -41,5 +41,29 @@ No Oculus Rift App ID has been provided. Go to Oculus Avatar > Edit Configuratio
 (Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
 
 Setting up 2 worker threads for Enlighten.
-  Thread -> id: 6088 -> priority: 1 
-  Thread -> id: 7788 -> priority: 1 
+  Thread -> id: 2a24 -> priority: 1 
+  Thread -> id: 3604 -> priority: 1 
+VectorLine.SetEndCap: end cap "Arrow" has already been set up
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+socket is sent
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+socket is set up
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+1(0.9000, 0.0000, 1.0000)I;2(0.3500, 0.5000, 0.4000)T;3(0.8000, 1.0000, 0.0000)O;4(0.3500, 0.0000, 0.4000)F;5(0.2500, 1.0000, 0.0000)F;
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+1 2 2 3 2 4 3 5 
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
+1(0.0000, 0.0000, 0.3500);
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/DebugBindings.gen.cpp Line: 51)
+
