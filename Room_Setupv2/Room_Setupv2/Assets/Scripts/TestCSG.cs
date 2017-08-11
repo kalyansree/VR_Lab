@@ -14,11 +14,6 @@ public class TestCSG : MonoBehaviour {
     private GameObject final2;
     private GameObject final3;
 
-    private GameObject cube1;
-    private GameObject cube2;
-    private GameObject cube3;
-    private GameObject cube4;
-
     private bool updatePos;
 
 
@@ -63,6 +58,8 @@ public class TestCSG : MonoBehaviour {
         demoLine.points3.Add(target4.transform.position);
         demoLine.points3.Add(pos.transform.position);
         demoLine.Draw3DAuto();
+        flip2 = true;
+        flip4 = true;
     }
 
     void Update()
@@ -73,43 +70,28 @@ public class TestCSG : MonoBehaviour {
             hemisphere2 = Hemisphere.CreateHemisphere(hemisphereMaterial2, pos.transform.position, target2.transform.position, flip2);
             hemisphere3 = Hemisphere.CreateHemisphere(hemisphereMaterial3, pos.transform.position, target3.transform.position, flip3);
             hemisphere4 = Hemisphere.CreateHemisphere(hemisphereMaterial4, pos.transform.position, target4.transform.position, flip4);
-            cube1 = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube2 = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube3 = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube4 = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
             updatePos = true;
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
-            final1 = GetIntersection(hemisphere1, cube2, truncatedHemisphereMaterial, true);
-            hemisphere2.SetActive(false);
-            cube1.SetActive(false);
+            final1 = Hemisphere.GetIntersection(hemisphere1, hemisphere2, truncatedHemisphereMaterial, true);
         }
         if(Input.GetKeyDown(KeyCode.S))
         {
-            final2 = GetIntersection(final1, cube3, truncatedHemisphereMaterial, true);
-            hemisphere3.SetActive(false);
+            final2 = Hemisphere.GetIntersection(final1, hemisphere3, truncatedHemisphereMaterial, true);
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
-            final3 = GetIntersection(final2, cube4, truncatedHemisphereMaterial, true);
-            hemisphere4.SetActive(false);
+            final3 = Hemisphere.GetIntersection(final2, hemisphere4, truncatedHemisphereMaterial, true);
         }
 
         if (Input.GetKeyDown(KeyCode.B))
-        {
+        { 
             ToggleView();
         }
 
-
-
         if (updatePos)
         {
-            SetCubePosition(ref cube1, hemisphere1, target1);
-            SetCubePosition(ref cube2, hemisphere2, target2);
-            SetCubePosition(ref cube3, hemisphere3, target3);
-            SetCubePosition(ref cube4, hemisphere4, target4);
             if (flip1)
             {
                 hemisphere1.transform.rotation = Quaternion.LookRotation(hemisphere1.transform.position - target1.transform.position);
@@ -189,54 +171,5 @@ public class TestCSG : MonoBehaviour {
             final2.SetActive(true);
             final3.SetActive(false);
         }
-    }
-
-    void SetCubePosition(ref GameObject Cube, GameObject Hemisphere, GameObject Target)
-    {
-        Cube.transform.localScale = new Vector3(1.1F, 1.1F, 1.1F);
-        Cube.transform.position = Hemisphere.transform.position;
-        Cube.transform.Translate(Vector3.forward * (Cube.transform.localScale.x / 2));
-        Cube.GetComponent<MeshRenderer>().sharedMaterial = Hemisphere.GetComponent<MeshRenderer>().sharedMaterial;
-        Cube.transform.rotation = Quaternion.LookRotation(Hemisphere.transform.position - Target.transform.position);
-
-    }
-
-    public static GameObject GetIntersection(GameObject obj, GameObject cube, Material material, bool disableHemispheres)
-    {
-        //Vector3 position;
-
-        //position = obj.transform.position;
-        //obj.transform.position = new Vector3(0, 0, 0);
-        //cube.transform.position = obj.transform.position;
-        //cube.transform.Translate(Vector3.forward * (cube.transform.localScale.x / 2));
-
-        if (obj.transform.localScale == cube.transform.localScale)
-        {
-            cube.transform.localScale *= 1.05F;
-        }
-        Mesh n = CSG.Intersect(cube, obj);
-        n.name = "Truncated Sphere";
-        GameObject final = new GameObject("Final");
-        final.AddComponent<MeshFilter>().sharedMesh = n;
-        final.AddComponent<MeshRenderer>().sharedMaterial = material;
-        final.AddComponent<MeshCollider>();
-        final.GetComponent<MeshCollider>().sharedMesh = n;
-        //cube.transform.localScale /= 1.05F;
-        //obj.transform.position = position;
-        //cube.transform.position = position;
-        //final.transform.position = position;
-        final.layer = LayerMask.NameToLayer("final");
-
-        //GameObject VectorLineObj = DrawHemisphereLines(final, "final");
-        //VectorLineObj.transform.parent = final.transform;
-        //VectorLineObj.name = "HemiLine";
-
-        if (disableHemispheres)
-        {
-            obj.gameObject.SetActive(false);
-            cube.gameObject.SetActive(false);
-        }
-
-        return final;
     }
 }
