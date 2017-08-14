@@ -67,8 +67,13 @@ public class SpawnObject : MonoBehaviour {
     [Tooltip("GameObject of Networking")]
     public GameObject Networking;
 
-
     public Text coordText;
+
+
+    //Materials
+    public Material HemisphereMaterial1;
+    public Material HemisphereMaterial2;
+    public Material truncatedHemisphereMaterial;
     void Start()
     {
         preview.SetActive(false); //disable until we need it
@@ -200,6 +205,8 @@ public class SpawnObject : MonoBehaviour {
             domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().lineTransformList.Add(destSphere.transform);
 
+
+            //Inputs and Outputs
             if(originSphere.CompareTag("Input") || originSphere.CompareTag("Output"))
             {
                 originSphere.GetComponent<InputOutputInfo>().addConnection(destSphere);
@@ -208,6 +215,18 @@ public class SpawnObject : MonoBehaviour {
             {
                 destSphere.GetComponent<InputOutputInfo>().addConnection(originSphere);
             }
+
+            //Intermediate Points
+            if(originSphere.CompareTag("Intermediate"))
+            {
+                originSphere.GetComponent<IntermediateInfo>().addConnection(destSphere, true);
+            }
+            if (destSphere.CompareTag("Intermediate"))
+            {
+                destSphere.GetComponent<IntermediateInfo>().addConnection(originSphere, false);
+            }
+
+
         }
     }
 
@@ -247,6 +266,12 @@ public class SpawnObject : MonoBehaviour {
         if(newObj.CompareTag("Input") || newObj.CompareTag("Output"))
         {
             newObj.AddComponent<InputOutputInfo>();
+        } else if(newObj.CompareTag("Intermediate"))
+        {
+            newObj.AddComponent<IntermediateInfo>();
+            newObj.GetComponent<IntermediateInfo>().SetupMaterials(HemisphereMaterial1, HemisphereMaterial2, truncatedHemisphereMaterial);
+            newObj.GetComponent<IntermediateInfo>().SetPoint(newObj);
+            newObj.GetComponent<IntermediateInfo>().SetDomain(domain);
         }
         newObj.name = newObj.tag;
         return newObj;

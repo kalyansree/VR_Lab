@@ -55,8 +55,8 @@ public static class Hemisphere
         GameObject cubeGameObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cubeGameObject.name = "GuideCube";
         GameObject.Destroy(cubeGameObject.GetComponent<MeshRenderer>());
-        SetCubePosition(ref cubeGameObject, hemisphereGameObject, Target, oppositeDir);
         cubeGameObject.transform.parent = hemisphereGameObject.transform;
+        SetCubePosition(ref cubeGameObject, hemisphereGameObject, Target, oppositeDir);
 
         //this is not working in the Room Scene, although it is working in TestCSG for some reason -- need to test some more
         //GameObject VectorLineObj = DrawHemisphereLines(hemisphereGameObject, "hemisphere");
@@ -65,7 +65,7 @@ public static class Hemisphere
         return hemisphereGameObject;
     }
 
-    public static GameObject GetIntersection(GameObject obj, GameObject hemisphere, Material material, bool disableHemispheres)
+    public static GameObject GetIntersection(GameObject obj, GameObject hemisphere, Material truncatedMaterial, bool disableHemispheres)
     {
 
         GameObject cube = hemisphere.transform.Find("GuideCube").gameObject;
@@ -96,7 +96,7 @@ public static class Hemisphere
         n.name = "Truncated Sphere";
         GameObject final = new GameObject("Final");
         final.AddComponent<MeshFilter>().sharedMesh = n;
-        final.AddComponent<MeshRenderer>().sharedMaterial = material;
+        final.AddComponent<MeshRenderer>().sharedMaterial = truncatedMaterial;
         final.AddComponent<MeshCollider>();
         final.GetComponent<MeshCollider>().sharedMesh = n;
         obj.transform.position = position;
@@ -209,7 +209,7 @@ public static class Hemisphere
             Cube.transform.rotation = Quaternion.LookRotation(Target - Hemisphere.transform.position);
         }
 
-        Cube.transform.Translate(Vector3.back * (Cube.transform.localScale.x / 2));
+        Cube.transform.Translate(Vector3.back * (Cube.transform.lossyScale.x / 2));
 
     }
 }

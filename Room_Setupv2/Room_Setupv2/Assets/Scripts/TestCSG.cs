@@ -58,8 +58,6 @@ public class TestCSG : MonoBehaviour {
         demoLine.points3.Add(target4.transform.position);
         demoLine.points3.Add(pos.transform.position);
         demoLine.Draw3DAuto();
-        flip2 = true;
-        flip4 = true;
     }
 
     void Update()
@@ -67,21 +65,24 @@ public class TestCSG : MonoBehaviour {
         if (Input.GetKeyDown("space"))
         {
             hemisphere1 = Hemisphere.CreateHemisphere(hemisphereMaterial1, pos.transform.position, target1.transform.position, flip1);
-            hemisphere2 = Hemisphere.CreateHemisphere(hemisphereMaterial2, pos.transform.position, target2.transform.position, flip2);
-            hemisphere3 = Hemisphere.CreateHemisphere(hemisphereMaterial3, pos.transform.position, target3.transform.position, flip3);
-            hemisphere4 = Hemisphere.CreateHemisphere(hemisphereMaterial4, pos.transform.position, target4.transform.position, flip4);
-            updatePos = true;
+            
+            
+            
+            //updatePos = true;
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
+            hemisphere2 = Hemisphere.CreateHemisphere(hemisphereMaterial2, pos.transform.position, target2.transform.position, flip2);
             final1 = Hemisphere.GetIntersection(hemisphere1, hemisphere2, truncatedHemisphereMaterial, true);
         }
         if(Input.GetKeyDown(KeyCode.S))
         {
+            hemisphere3 = Hemisphere.CreateHemisphere(hemisphereMaterial3, pos.transform.position, target3.transform.position, flip3);
             final2 = Hemisphere.GetIntersection(final1, hemisphere3, truncatedHemisphereMaterial, true);
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
+            hemisphere4 = Hemisphere.CreateHemisphere(hemisphereMaterial4, pos.transform.position, target4.transform.position, flip4);
             final3 = Hemisphere.GetIntersection(final2, hemisphere4, truncatedHemisphereMaterial, true);
         }
 

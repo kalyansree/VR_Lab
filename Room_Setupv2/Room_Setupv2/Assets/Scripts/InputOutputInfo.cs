@@ -68,6 +68,10 @@ public class InputOutputInfo : MonoBehaviour {
         return hemisphere;
     }
 
+    public bool GetDirection()
+    {
+        return directionTowardsOrigin;
+    }
     public bool checkFeasibility()
     {
         if(forceVector == null || origin == null)

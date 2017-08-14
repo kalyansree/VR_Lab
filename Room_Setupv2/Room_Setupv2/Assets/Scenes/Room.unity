@@ -2969,7 +2969,6 @@ GameObject:
   - component: {fileID: 557349239}
   - component: {fileID: 557349243}
   - component: {fileID: 557349242}
-  - component: {fileID: 557349241}
   - component: {fileID: 557349240}
   - component: {fileID: 557349244}
   m_Layer: 2
@@ -3008,21 +3007,6 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   myCamera: {fileID: 369225323}
---- !u!54 &557349241
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 557349238}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!23 &557349242
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3288,7 +3272,6 @@ GameObject:
   - component: {fileID: 627083727}
   - component: {fileID: 627083725}
   - component: {fileID: 627083728}
-  - component: {fileID: 627083729}
   - component: {fileID: 627083726}
   m_Layer: 2
   m_Name: Fixed
@@ -3383,21 +3366,10 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
---- !u!54 &627083729
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 627083723}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
+  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
+  truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
+    type: 2}
 --- !u!1 &647862438
 GameObject:
   m_ObjectHideFlags: 0
@@ -3883,7 +3855,6 @@ GameObject:
   - component: {fileID: 768384013}
   - component: {fileID: 768384011}
   - component: {fileID: 768384014}
-  - component: {fileID: 768384015}
   - component: {fileID: 768384012}
   m_Layer: 2
   m_Name: Output
@@ -3978,21 +3949,10 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
---- !u!54 &768384015
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 768384009}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
+  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
+  truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
+    type: 2}
 --- !u!1 &816890739
 GameObject:
   m_ObjectHideFlags: 0
@@ -4182,7 +4142,7 @@ Rigidbody:
   m_Drag: 100
   m_AngularDrag: 100
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -5501,7 +5461,6 @@ GameObject:
   - component: {fileID: 1155676116}
   - component: {fileID: 1155676114}
   - component: {fileID: 1155676117}
-  - component: {fileID: 1155676118}
   - component: {fileID: 1155676115}
   m_Layer: 2
   m_Name: Intermediate
@@ -5596,21 +5555,10 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
---- !u!54 &1155676118
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1155676112}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
+  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
+  truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
+    type: 2}
 --- !u!1 &1176355334
 GameObject:
   m_ObjectHideFlags: 0
@@ -8204,7 +8152,6 @@ GameObject:
   - component: {fileID: 1770133889}
   - component: {fileID: 1770133893}
   - component: {fileID: 1770133892}
-  - component: {fileID: 1770133890}
   - component: {fileID: 1770133891}
   m_Layer: 2
   m_Name: Force
@@ -8226,21 +8173,6 @@ Transform:
   m_Father: {fileID: 1746781345}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &1770133890
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1770133888}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &1770133891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9448,7 +9380,6 @@ GameObject:
   - component: {fileID: 2045748246}
   - component: {fileID: 2045748244}
   - component: {fileID: 2045748247}
-  - component: {fileID: 2045748248}
   - component: {fileID: 2045748245}
   m_Layer: 2
   m_Name: Input
@@ -9543,21 +9474,10 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
---- !u!54 &2045748248
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2045748242}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
+  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
+  truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
+    type: 2}
 --- !u!1 &2095464902
 GameObject:
   m_ObjectHideFlags: 0

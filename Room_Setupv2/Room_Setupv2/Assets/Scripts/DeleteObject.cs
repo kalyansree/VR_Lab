@@ -271,19 +271,23 @@ public class DeleteObject : MonoBehaviour
                 break;
             } 
         }
-        if(originSphere.CompareTag("Input") || currCollidingObj.CompareTag("Input") || originSphere.CompareTag("Output") || currCollidingObj.CompareTag("Output"))
+        if(originSphere.CompareTag("Input") || originSphere.CompareTag("Output"))
         {
-            foreach (Transform childTransform in domain.transform)
-            {
-                if (childTransform.gameObject.CompareTag("Input") || childTransform.gameObject.CompareTag("Output"))
-                {
-                    childTransform.gameObject.GetComponent<InputOutputInfo>().removeConnection(originSphere);
-                    childTransform.gameObject.GetComponent<InputOutputInfo>().removeConnection(currCollidingObj);
-                }
-            }
+            originSphere.GetComponent<InputOutputInfo>().removeConnection(currCollidingObj);
+        }
+        if (currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output"))
+        {
+            currCollidingObj.GetComponent<InputOutputInfo>().removeConnection(originSphere);
         }
 
-
+        if (originSphere.CompareTag("Intermediate"))
+        {
+            originSphere.GetComponent<IntermediateInfo>().removeConnection(currCollidingObj);
+        }
+        if (currCollidingObj.CompareTag("Intermediate"))
+        {
+            currCollidingObj.GetComponent<IntermediateInfo>().removeConnection(originSphere);
+        }
     }
 
     void highlightLine()
