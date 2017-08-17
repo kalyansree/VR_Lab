@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Vectrosity;
 
 public class IntermediateInfo : MonoBehaviour {
 
@@ -15,6 +16,7 @@ public class IntermediateInfo : MonoBehaviour {
     private Material hemisphereMaterial1;
     private Material hemisphereMaterial2;
     private Material truncatedHemisphereMaterial;
+    private Material planeMaterial;
 
     private bool flipDirection1;
     private bool flipDirection2;
@@ -26,12 +28,16 @@ public class IntermediateInfo : MonoBehaviour {
 
     private GameObject domain;
 
+    private GameObject plane;
+    private GameObject vectorLineObj;
 
-    public void SetupMaterials(Material hemisphereMat1, Material hemisphereMat2, Material truncatedHemisphereMat)
+
+    public void SetupMaterials(Material hemisphereMat1, Material hemisphereMat2, Material truncatedHemisphereMat, Material planeMat)
     {
         this.hemisphereMaterial1 = hemisphereMat1;
         this.hemisphereMaterial2 = hemisphereMat2;
         this.truncatedHemisphereMaterial = truncatedHemisphereMat;
+        this.planeMaterial = planeMat;
     }
 
     public void SetPoint(GameObject intermediatePoint)
@@ -101,17 +107,25 @@ public class IntermediateInfo : MonoBehaviour {
         {
             foreach (GameObject hemiObj in hemisphereList)
             {
-                hemiObj.SetActive(false);
+                hemiObj.GetComponent<MeshRenderer>().enabled = false;
             }
             hemisphereVisible = false;
+            if(truncationExists)
+            {
+                truncatedHemisphere.GetComponent<MeshRenderer>().enabled = false;
+            }
         }
         else
         {
             foreach (GameObject hemiObj in hemisphereList)
             {
-                hemiObj.SetActive(true);
+                hemiObj.GetComponent<MeshRenderer>().enabled = true;
             }
             hemisphereVisible = true;
+            if (truncationExists)
+            {
+                truncatedHemisphere.GetComponent<MeshRenderer>().enabled = true;
+            }
         }
     }
     // Adds connection to the vertex and generates the truncated hemisphere
@@ -205,5 +219,19 @@ public class IntermediateInfo : MonoBehaviour {
             return true;
         }
 
+    }
+
+    public void SpawnPlane(GameObject target, GameObject lineObj, Vector3 size)
+    {
+        this.vectorLineObj = lineObj;
+        plane = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        //new Vector3(10, 10, 0.001F)
+        plane.transform.localScale = size;
+        plane.transform.rotation = Quaternion.LookRotation(target.transform.position - intermediatePoint.transform.position);
+        plane.transform.position = intermediatePoint.transform.position;
+        plane.GetComponent<MeshRenderer>().sharedMaterial = planeMaterial;
+        plane.transform.parent = intermediatePoint.transform;
+
+        //TODO: Switch to "drawing line on plane" mode
     }
 }

@@ -3370,6 +3370,7 @@ MonoBehaviour:
   HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
+  planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}
 --- !u!1 &647862438
 GameObject:
   m_ObjectHideFlags: 0
@@ -3953,6 +3954,7 @@ MonoBehaviour:
   HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
+  planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}
 --- !u!1 &816890739
 GameObject:
   m_ObjectHideFlags: 0
@@ -5559,6 +5561,7 @@ MonoBehaviour:
   HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
+  planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}
 --- !u!1 &1176355334
 GameObject:
   m_ObjectHideFlags: 0
@@ -9478,6 +9481,7 @@ MonoBehaviour:
   HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
+  planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}
 --- !u!1 &2095464902
 GameObject:
   m_ObjectHideFlags: 0

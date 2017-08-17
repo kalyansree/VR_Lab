@@ -105,9 +105,9 @@ public class InputOutputInfo : MonoBehaviour {
     public void toggleHemisphereView()
     {
         if (hemisphere.activeSelf)
-            hemisphere.SetActive(false);
+            hemisphere.GetComponent<MeshRenderer>().enabled = false;
         else
-            hemisphere.SetActive(true);
+            hemisphere.GetComponent<MeshRenderer>().enabled = true;
     }
 
     public void addConnection(GameObject vertex)

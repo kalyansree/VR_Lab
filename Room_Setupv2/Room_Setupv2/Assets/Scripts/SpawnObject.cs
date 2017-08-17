@@ -74,6 +74,7 @@ public class SpawnObject : MonoBehaviour {
     public Material HemisphereMaterial1;
     public Material HemisphereMaterial2;
     public Material truncatedHemisphereMaterial;
+    public Material planeMaterial;
     void Start()
     {
         preview.SetActive(false); //disable until we need it
@@ -269,7 +270,7 @@ public class SpawnObject : MonoBehaviour {
         } else if(newObj.CompareTag("Intermediate"))
         {
             newObj.AddComponent<IntermediateInfo>();
-            newObj.GetComponent<IntermediateInfo>().SetupMaterials(HemisphereMaterial1, HemisphereMaterial2, truncatedHemisphereMaterial);
+            newObj.GetComponent<IntermediateInfo>().SetupMaterials(HemisphereMaterial1, HemisphereMaterial2, truncatedHemisphereMaterial, planeMaterial);
             newObj.GetComponent<IntermediateInfo>().SetPoint(newObj);
             newObj.GetComponent<IntermediateInfo>().SetDomain(domain);
         }

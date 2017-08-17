@@ -110,8 +110,8 @@ public static class Hemisphere
 
         if (disableHemispheres)
         {
-            obj.gameObject.SetActive(false);
-            hemisphere.gameObject.SetActive(false);
+            obj.GetComponent<MeshRenderer>().enabled = false;
+            hemisphere.GetComponent<MeshRenderer>().enabled = false;
         }
 
         return final;

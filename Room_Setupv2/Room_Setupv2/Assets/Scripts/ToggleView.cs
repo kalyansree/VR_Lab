@@ -15,6 +15,10 @@ public class ToggleView : MonoBehaviour {
                 {
                     transform.gameObject.GetComponent<InputOutputInfo>().toggleHemisphereView();
                 }
+                if(transform.gameObject.CompareTag("Intermediate"))
+                {
+                    transform.gameObject.GetComponent<IntermediateInfo>().toggleHemisphereView();
+                }
             }
         }
 	}
