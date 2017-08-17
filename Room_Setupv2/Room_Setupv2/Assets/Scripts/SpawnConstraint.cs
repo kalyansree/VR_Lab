@@ -9,7 +9,8 @@ using UnityEngine.UI;
  * Note that each type of sphere has its own instance of this class, so don't assume that all spheres are looking at the same instances of these variables/objects. 
  * Use static variables if all spheres need to see the same object or value. 
  */
-public class SpawnObject : MonoBehaviour {
+public class SpawnConstraint : MonoBehaviour
+{
 
     //--- PRIVATE VARIABLES --//
 
@@ -208,7 +209,7 @@ public class SpawnObject : MonoBehaviour {
 
 
             //Inputs and Outputs
-            if(originSphere.CompareTag("Input") || originSphere.CompareTag("Output"))
+            if (originSphere.CompareTag("Input") || originSphere.CompareTag("Output"))
             {
                 originSphere.GetComponent<InputOutputInfo>().addConnection(destSphere);
             }
@@ -218,7 +219,7 @@ public class SpawnObject : MonoBehaviour {
             }
 
             //Intermediate Points
-            if(originSphere.CompareTag("Intermediate"))
+            if (originSphere.CompareTag("Intermediate"))
             {
                 originSphere.GetComponent<IntermediateInfo>().addConnection(destSphere, true);
             }
@@ -264,10 +265,11 @@ public class SpawnObject : MonoBehaviour {
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
-        if(newObj.CompareTag("Input") || newObj.CompareTag("Output"))
+        if (newObj.CompareTag("Input") || newObj.CompareTag("Output"))
         {
             newObj.AddComponent<InputOutputInfo>();
-        } else if(newObj.CompareTag("Intermediate"))
+        }
+        else if (newObj.CompareTag("Intermediate"))
         {
             newObj.AddComponent<IntermediateInfo>();
             newObj.GetComponent<IntermediateInfo>().SetupMaterials(HemisphereMaterial1, HemisphereMaterial2, truncatedHemisphereMaterial, planeMaterial);

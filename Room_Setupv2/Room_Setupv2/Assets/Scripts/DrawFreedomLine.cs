@@ -9,16 +9,7 @@ public class DrawFreedomLine : MonoBehaviour
 {
 
     [Tooltip("GameObject containing Camera (CenterEyeAnchor)")]
-    public Camera myCamera;
-    [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
-
-    public Vector3 forceVectorLH;
-    public Vector3 forceVectorRH;
-
-
-    public Material hemisphereMaterial;
-
-    Text forceText;
+    public Camera myCamera;    
 
     //--- PRIVATE VARIABLES --//
 
@@ -58,180 +49,67 @@ public class DrawFreedomLine : MonoBehaviour
 
     [Tooltip("GameObject of Right Controller")]
     public GameObject RightController;
-    [Tooltip("GameObject of Preview Sphere")]
-    public GameObject preview;
     [Tooltip("GameObject of Networking")]
     public GameObject Networking;
 
-    public GameObject ForceRadialMenuPanel;
+    public Texture2D dottedTexture;
+
+    public GameObject RadialMenu;
 
     private bool createdOrigin;
 
     private bool lockToAxes;
-    private Texture2D frontTex;
-    private Texture2D lineTex;
-    private Texture2D backTex;
+
+    private VectorLine dottedLine;
+
+    private bool constraintMode;
     // Use this for initialization
     void Start()
     {
-        forceText = GameObject.Find("Direction_Angles1").GetComponent<Text>();
-        preview.SetActive(false); //disable until we need it
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
     }
-
-    // Update is called once per frame
+   
     void Update()
     {
-        var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
-
-        getClosestPoint();
-        preview.transform.position = closestPoint;
-        preview.transform.localScale = gameObject.transform.lossyScale;
-
-        isColliding = false;
-        preview.SetActive(true);
-        //check if our preview is colliding with a placed sphere
-        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
+        if(constraintMode)
         {
-            //print(dist);
-            if (transform.position == closestPoint)
-            {
-                preview.SetActive(false);
-                isColliding = true;
-                currCollidingObj = transform.gameObject;
-                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
-                color.a = 1;
-                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
-            }
-            else
-            {
-                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
-                color.a = 0.353F;
-                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
-            }
+            constraintModeUpdate();
         }
-
-        if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
+        else
         {
-            if (isColliding && (currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))
-            {
-                originSphere = currCollidingObj;
-                createdOrigin = false;
-            }
+            normalUpdate();
+        }        
+    }
 
-            else if (!isColliding)
-            {
-                originSphere = createPoint();
-                createdOrigin = true;
-            }
-            else
-            {
-                return;
-            }
-
-            originSet = true;
-            VectorLine forceLine = new VectorLine("NewForceLine", new List<Vector3>(), 30.0f);
-            forceLine.endCap = "Arrow";
-            forceLine.Draw3DAuto();
-            forceLine.points3.Add(originSphere.transform.position);
-            forceLine.points3.Add(originSphere.transform.position);
-            forceLine.SetColor(Color.blue);
-            domain.GetComponent<InitLines>().forceLineList.Add(forceLine);
-
-            numLines = domain.GetComponent<InitLines>().forceLineList.Count;
-
-        }
-
-        if (OVRInput.Get(OVRInput.Button.One) && originSet)
+    GameObject createPoint()
+    {
+        GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        newObj.transform.position = closestPoint;
+        newObj.transform.localScale = gameObject.transform.lossyScale;
+        newObj.tag = gameObject.tag;
+        Renderer rend = newObj.GetComponent<Renderer>();
+        if (rend != null)
         {
-            origin = originSphere.transform.position;
-            dest = closestPoint;
-
-
-            if (origin != Vector3.zero && dest != Vector3.zero)
-            {
-                domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[0] = dest;
-                domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[1] = origin;
-                Vector3 dest_local = domain.transform.InverseTransformPoint(dest);
-                Vector3 origin_local = domain.transform.InverseTransformPoint(origin);
-                forceVectorLH = dest_local - origin_local;
-                if (forceVectorLH.magnitude > 1)
-                {
-                    forceVectorLH.Normalize();
-                }
-                forceVectorRH = new Vector3(forceVectorLH.x, forceVectorLH.y, -forceVectorLH.z);
-                forceText.text = forceVectorRH.x.ToString("F4") + "\n" + forceVectorRH.y.ToString("F4") + "\n" + forceVectorRH.z.ToString("F4") + "\n" + forceVectorRH.magnitude.ToString("F4") + "\n";
-
-            }
+            rend.material = gameObject.GetComponent<Renderer>().material;
         }
+        newObj.name = "FreedomPoint";
+        return newObj;
+    }
 
-        if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
-        {
-            originSet = false;
-            GameObject destSphere;
-            GameObject InputOutputPoint;
-            GameObject forcePoint;
-            if (createdOrigin && (!isColliding || (isColliding && !(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))))
-            {
-                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
-                VectorLine.Destroy(ref vline);
-                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
-                ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(originSphere.transform);
-                Destroy(originSphere);
-                createdOrigin = false;
-                return;
-            }
-            else if (!createdOrigin && isColliding)
-            {
-                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
-                VectorLine.Destroy(ref vline);
-                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
-                createdOrigin = false;
-                return;
-            }
-            else if (isColliding && createdOrigin)
-            {
-                destSphere = currCollidingObj;
-                InputOutputPoint = currCollidingObj;
-                forcePoint = originSphere;
-            }
-            else
-            {
-                destSphere = createPoint();
-                InputOutputPoint = originSphere;
-                forcePoint = destSphere;
-            }
-
-            if (InputOutputPoint.GetComponent<InputOutputInfo>().GetForcePoint() != null) //we already have a forcepoint
-            {
-                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
-                VectorLine.Destroy(ref vline);
-                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
-                Networking.GetComponent<Networking>().forceTransformList.Remove(forcePoint.transform);
-                Destroy(forcePoint);
-                createdOrigin = false;
-                return;
-            }
-
-            GameObject vectorLineObj = GameObject.Find("NewForceLine");
-            vectorLineObj.transform.parent = forcePoint.transform;
-            vectorLineObj.name = "ForceLine";
-            //add to our force vector
-            domain.GetComponent<InitLines>().forceVectorList.Add(forceVectorLH);
-
-            //ForcePointInfo
-            forcePoint.GetComponent<ForcePointInfo>().SetConnectedPoint(InputOutputPoint);
-
-            //InputOutputInfo
-            Vector3 scale = new Vector3(10, 10, 10);
-            GameObject hemisphere = Hemisphere.CreateHemisphere(hemisphereMaterial, InputOutputPoint.transform.position, forcePoint.transform.position, !createdOrigin, scale);
-            InputOutputPoint.GetComponent<InputOutputInfo>().Setup(InputOutputPoint, forcePoint, hemisphere, forceVectorRH, createdOrigin);
-            hemisphere.transform.parent = forcePoint.transform;
-            hemisphere.transform.localScale = scale;
-            createdOrigin = false;
-        }
+    void SwitchToConstraintMode(GameObject intermediatePoint, GameObject target)
+    {
+        /*
+         * 1. Disable switcher
+         * 2. Spawn Plane w/ correct material & attach it
+         * 3. switch to constraint mode
+         */
+        RadialMenu.SetActive(false);
+        Vector3 size = domain.transform.lossyScale;
+        size.z = size.z / 10000;
+        intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size);
+        constraintMode = true;
     }
 
     void getClosestPoint()
@@ -271,74 +149,102 @@ public class DrawFreedomLine : MonoBehaviour
         }
     }
 
-    GameObject createPoint()
+    private void normalUpdate()
     {
-        GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        newObj.transform.position = closestPoint;
-        newObj.transform.localScale = gameObject.transform.lossyScale;
-        newObj.tag = gameObject.tag;
-        Renderer rend = newObj.GetComponent<Renderer>();
-        if (rend != null)
+        getClosestPoint();
+        isColliding = false;
+        //check if our preview is colliding with a placed sphere
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
         {
-            rend.material = gameObject.GetComponent<Renderer>().material;
-        }
-        ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Add(newObj.transform);
-        newObj.transform.SetParent(domain.transform, true);
-        newObj.AddComponent<ForcePointInfo>();
-        newObj.name = "ForcePoint";
-        //print(newObj.transform.localPosition);
-        //print(newObj.transform.position);
-        return newObj;
-    }
-
-    override
-    public string ToString()
-    {
-        int forceVectorIndex = 0;
-        StringBuilder sb = new StringBuilder();
-        foreach (Transform transform in Networking.GetComponent<Networking>().forceTransformList)
-        {
-            if (transform.gameObject.CompareTag("Input"))
+            if (transform.CompareTag("Intermediate"))
             {
-                int inputIndex = Networking.GetComponent<Networking>().allTransformList.IndexOf(transform);
-                sb.Append(inputIndex + 1);
-                //Quaternion temp = new Quaternion();
-                Vector3 currVector = domain.GetComponent<InitLines>().forceVectorList[forceVectorIndex++];
-
-                currVector.z = -currVector.z;
-                //temp.x = currVector.x;
-                //temp.y = currVector.y;
-                //temp.z = currVector.z;
-
-                //temp.w = currVector.magnitude;
-
-                sb.Append(currVector.ToString("F4")); //+ temp.ToString("!"));
-                sb.Append(";");
+                if (transform.position == closestPoint && transform.GetComponent<IntermediateInfo>().GetConnections().Count >= 1)
+                {
+                    isColliding = true;
+                    currCollidingObj = transform.gameObject;
+                    transform.GetComponent<IntermediateInfo>().HighlightPoint(true);
+                }
+                else
+                {
+                    transform.GetComponent<IntermediateInfo>().HighlightPoint(false);
+                }
             }
         }
-        return sb.ToString();
+
+        if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
+        {
+            if (isColliding)
+            {
+                originSphere = currCollidingObj;
+                createdOrigin = false;
+
+                originSet = true;
+                dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 16.0f);
+                dottedLine.points3.Add(originSphere.transform.position);
+                dottedLine.points3.Add(originSphere.transform.position);
+                dottedLine.textureScale = 1.00f;
+                dottedLine.Draw3DAuto();
+            }
+        }
+
+        if (OVRInput.Get(OVRInput.Button.One) && originSet)
+        {
+            origin = originSphere.transform.position;
+            dest = transform.position;
+
+            if (origin != Vector3.zero && dest != Vector3.zero)
+            {
+                dottedLine.points3[0] = dest;
+                dottedLine.points3[1] = origin;
+            }
+
+            //TODO: Only show line when it is in the valid area
+        }
+
+
+        if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
+        {
+            originSet = false;
+            if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null)
+            {
+                VectorLine.Destroy(ref dottedLine);
+                return;
+            }
+
+            //TODO: Check that point is in a valid area
+
+            GameObject destSphere;
+            destSphere = createPoint();
+            destSphere.transform.parent = originSphere.transform;
+            GameObject freedomLineObj = GameObject.Find("NewFreedomLine");
+            freedomLineObj.transform.parent = originSphere.transform;
+            freedomLineObj.name = "FreedomLine";
+
+            originSphere.GetComponent<IntermediateInfo>().SetFreedomLine(dottedLine, freedomLineObj);
+
+            SwitchToConstraintMode(originSphere, destSphere);
+        }
     }
 
-    public void ToggleLockToAxes()
+    private void constraintModeUpdate()
     {
-        if (lockToAxes)
-        {
-            lockToAxes = false;
-            ColorBlock colors = ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors;
-            colors.normalColor = Color.white;
-            colors.highlightedColor = Color.gray;
-            ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors = colors;
-        }
-        else
-        {
-            lockToAxes = true;
-            ColorBlock colors = ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors;
-            colors.normalColor = Color.red;
-            colors.highlightedColor = Color.yellow;
-            ForceRadialMenuPanel.transform.GetChild(0).gameObject.GetComponent<Button>().colors = colors;
-        }
-
-
+        /*
+         * 1. Have origin sphere already locked where the intermediate point is.
+         * In other words, the user should not need to start drawing, there should already be a line going from
+         * the origin to the closest point to the user's controller on the plane.
+         * 
+         * 2. When user presses A, simply place the constraint where the preview is.
+         * 
+         * 3. Hide freedom line and freedom point after constraint is placed.
+         * 
+         * 
+         * TODO:
+         * If constraint is deleted, or another connection is added to this point,
+         * get rid of everything (including the invisible freedom line / point.
+         * 
+         * Modify delete tool to allow deleting spheres not on the grid
+         * 
+         */
     }
 }
 

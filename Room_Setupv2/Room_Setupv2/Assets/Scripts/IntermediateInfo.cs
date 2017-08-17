@@ -29,8 +29,8 @@ public class IntermediateInfo : MonoBehaviour {
     private GameObject domain;
 
     private GameObject plane;
-    private GameObject vectorLineObj;
-
+    private GameObject freedomLineVectorObj;
+    private VectorLine freedomLineVector;
 
     public void SetupMaterials(Material hemisphereMat1, Material hemisphereMat2, Material truncatedHemisphereMat, Material planeMat)
     {
@@ -40,19 +40,52 @@ public class IntermediateInfo : MonoBehaviour {
         this.planeMaterial = planeMat;
     }
 
-    public void SetPoint(GameObject intermediatePoint)
+    public void SetObjs(GameObject intermediatePoint, GameObject domain)
     {
         connectionList = new List<GameObject>();
         hemisphereList = new List<GameObject>();
         this.intermediatePoint = intermediatePoint;
+        this.domain = domain;
+        freedomLineVectorObj = null;
+        freedomLineVector = null;
+        plane = null;
     }
 
-    public void SetDomain(GameObject obj)
+    public List<GameObject> GetConnections()
     {
-        this.domain = obj;
+        return connectionList;
+    }
+
+    public VectorLine GetFreedomLine()
+    {
+        return freedomLineVector;
+    }
+
+    public GameObject GetFreedomLinePObj()
+    {
+        return freedomLineVectorObj;
+    }
+
+    public void SetFreedomLine(VectorLine freedomLine, GameObject freedomLineObj)
+    {
+        this.freedomLineVector = freedomLine;
+        this.freedomLineVectorObj = freedomLineObj;
+    }
+    public void removeFreedomLineAndPlane()
+    {
+        VectorLine.Destroy(ref freedomLineVector);
+        GameObject.Destroy(plane);
+
+        freedomLineVector = null;
+        freedomLineVectorObj = null;
+        plane = null;
     }
     public bool addConnection(GameObject connection, bool drawnTowardConnection)
     {
+        /*
+         * TODO:
+         * Remove freedomLine and plane if a new connection is added when a constraint already exists
+         */ 
         if (connectionList.Contains(connection))
             return false;
 
@@ -94,11 +127,6 @@ public class IntermediateInfo : MonoBehaviour {
             recalculateTruncation();
             return true;
         }
-    }
-
-    public List<GameObject> GetConnections()
-    {
-        return connectionList;
     }
 
     public void toggleHemisphereView()
@@ -221,9 +249,8 @@ public class IntermediateInfo : MonoBehaviour {
 
     }
 
-    public void SpawnPlane(GameObject target, GameObject lineObj, Vector3 size)
+    public void SpawnPlane(GameObject target, Vector3 size)
     {
-        this.vectorLineObj = lineObj;
         plane = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //new Vector3(10, 10, 0.001F)
         plane.transform.localScale = size;
@@ -233,5 +260,28 @@ public class IntermediateInfo : MonoBehaviour {
         plane.transform.parent = intermediatePoint.transform;
 
         //TODO: Switch to "drawing line on plane" mode
+    }
+
+    public void HighlightPoint(bool highlight)
+    {
+        if (!hemisphereVisible)
+            return;
+        float alpha = 0;
+        if (highlight)
+            alpha = 1;
+        else
+            alpha = 0.353F;
+
+
+        Color color = intermediatePoint.GetComponent<Renderer>().material.color;
+        color.a = alpha;
+        intermediatePoint.GetComponent<Renderer>().material.color = color;
+
+        if(truncationExists)
+        {
+            color = truncatedHemisphere.GetComponent<Renderer>().material.color;
+            color.a = alpha;
+            intermediatePoint.GetComponent<Renderer>().material.color = color;
+        }
     }
 }
