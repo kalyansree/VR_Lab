@@ -63,12 +63,24 @@ public class DrawFreedomLine : MonoBehaviour
     private VectorLine dottedLine;
 
     private bool constraintMode;
+
+    private GameObject freedomPos;
+
+    private GameObject freedomLineObj;
+
+    [Tooltip("GameObject of Preview Sphere")]
+    public GameObject preview;
+
     // Use this for initialization
     void Start()
     {
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
+
+        freedomPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        freedomPos.transform.localScale = new Vector3(0.01F, 0.01F, 0.01F);
+        Destroy(freedomPos.GetComponent<MeshRenderer>());
     }
    
     void Update()
@@ -96,20 +108,6 @@ public class DrawFreedomLine : MonoBehaviour
         }
         newObj.name = "FreedomPoint";
         return newObj;
-    }
-
-    void SwitchToConstraintMode(GameObject intermediatePoint, GameObject target)
-    {
-        /*
-         * 1. Disable switcher
-         * 2. Spawn Plane w/ correct material & attach it
-         * 3. switch to constraint mode
-         */
-        RadialMenu.SetActive(false);
-        Vector3 size = domain.transform.lossyScale;
-        size.z = size.z / 10000;
-        intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size);
-        constraintMode = true;
     }
 
     void getClosestPoint()
@@ -151,6 +149,7 @@ public class DrawFreedomLine : MonoBehaviour
 
     private void normalUpdate()
     {
+        preview.SetActive(false);
         getClosestPoint();
         isColliding = false;
         //check if our preview is colliding with a placed sphere
@@ -184,6 +183,7 @@ public class DrawFreedomLine : MonoBehaviour
                 dottedLine.points3.Add(originSphere.transform.position);
                 dottedLine.textureScale = 1.00f;
                 dottedLine.Draw3DAuto();
+                freedomLineObj = GameObject.Find("NewFreedomLine");
             }
         }
 
@@ -197,21 +197,27 @@ public class DrawFreedomLine : MonoBehaviour
                 dottedLine.points3[0] = dest;
                 dottedLine.points3[1] = origin;
             }
+            
 
-            //TODO: Only show line when it is in the valid area
+            if(!InTruncation(originSphere, gameObject))
+            {
+                freedomLineObj.SetActive(false);
+            }
+            else
+            {
+                freedomLineObj.SetActive(true);
+            }
         }
 
 
         if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
         {
             originSet = false;
-            if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null)
+            if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null || !InTruncation(originSphere, gameObject))
             {
                 VectorLine.Destroy(ref dottedLine);
                 return;
             }
-
-            //TODO: Check that point is in a valid area
 
             GameObject destSphere;
             destSphere = createPoint();
@@ -226,8 +232,53 @@ public class DrawFreedomLine : MonoBehaviour
         }
     }
 
+    private bool InTruncation(GameObject origin, GameObject dest)
+    {
+        freedomPos.transform.position = Physics.ClosestPoint(dest.transform.position, origin.GetComponent<Collider>(), origin.transform.position, origin.transform.rotation);
+        List<GameObject> hemisphereList = origin.GetComponent<IntermediateInfo>().GetHemispheres();
+        int layerMask = 1 << LayerMask.NameToLayer("hemisphere");
+        Collider[] list = Physics.OverlapSphere(freedomPos.transform.position, freedomPos.transform.localScale.x, layerMask);
+        if (list.Length == hemisphereList.Count)
+            return true;
+        else
+            return false;
+
+    }
+
+    void SwitchToConstraintMode(GameObject intermediatePoint, GameObject target)
+    {
+        /*
+         * 1. Disable switcher
+         * 2. Spawn Plane w/ correct material & attach it
+         * 3. switch to constraint mode
+         * 4. Initialize dottedLine
+         */
+        RadialMenu.SetActive(false);
+        Vector3 size = domain.transform.lossyScale;
+        size.z = size.z / 10000;
+        intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size);
+        dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 16.0f);
+        dottedLine.points3.Add(originSphere.transform.position);
+        dottedLine.points3.Add(originSphere.transform.position);
+        dottedLine.textureScale = 1.00f;
+        dottedLine.Draw3DAuto();
+
+        constraintMode = true;
+    }
+        
     private void constraintModeUpdate()
     {
+        dottedLine.points3[1] = gameObject.transform.position;
+        preview.SetActive(true);
+
+        GameObject plane = originSphere.GetComponent<IntermediateInfo>().GetPlane();
+        preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(gameObject.transform.position);
+
+        if(OVRInput.GetDown(OVRInput.Button.One))
+        {
+            //create a new fixed point at the position of the preview
+            // Hide Freedom Line and Freedom Point
+        }
         /*
          * 1. Have origin sphere already locked where the intermediate point is.
          * In other words, the user should not need to start drawing, there should already be a line going from

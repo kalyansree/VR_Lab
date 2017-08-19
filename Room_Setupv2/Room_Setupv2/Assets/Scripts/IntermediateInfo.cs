@@ -56,6 +56,11 @@ public class IntermediateInfo : MonoBehaviour {
         return connectionList;
     }
 
+    public List<GameObject> GetHemispheres()
+    {
+        return hemisphereList;
+    }
+
     public VectorLine GetFreedomLine()
     {
         return freedomLineVector;
@@ -65,6 +70,22 @@ public class IntermediateInfo : MonoBehaviour {
     {
         return freedomLineVectorObj;
     }
+
+    public float GetScale()
+    {
+        if (truncationExists)
+        {
+            return truncatedHemisphere.transform.lossyScale.x;
+        }
+        else
+            return 0;
+    }
+
+    public GameObject GetPlane()
+    {
+        return plane;
+    }
+
 
     public void SetFreedomLine(VectorLine freedomLine, GameObject freedomLineObj)
     {
@@ -258,8 +279,6 @@ public class IntermediateInfo : MonoBehaviour {
         plane.transform.position = intermediatePoint.transform.position;
         plane.GetComponent<MeshRenderer>().sharedMaterial = planeMaterial;
         plane.transform.parent = intermediatePoint.transform;
-
-        //TODO: Switch to "drawing line on plane" mode
     }
 
     public void HighlightPoint(bool highlight)
