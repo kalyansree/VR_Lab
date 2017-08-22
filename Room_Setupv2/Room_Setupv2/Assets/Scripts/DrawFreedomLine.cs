@@ -318,14 +318,12 @@ public class DrawFreedomLine : MonoBehaviour
 
         if(OVRInput.GetDown(OVRInput.Button.One))
         {
-
-            //Temporary fix
             GameObject newFixed = GameObject.Instantiate(preview);
-            newFixed.transform.parent = originSphere.transform;
+            newFixed.transform.parent = domain.transform;
             newFixed.GetComponent<MeshRenderer>().sharedMaterial = fixedMaterial;
             newFixed.tag = "Fixed";
             newFixed.name = newFixed.tag;
-            ((Networking)Networking.GetComponent(typeof(Networking))).addToList(newFixed);
+            Networking.GetComponent<Networking>().addToList(newFixed);
 
             //Line
 

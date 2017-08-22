@@ -4072,7 +4072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bee1b664eeac82b4eab9cd1e4ee2f3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowDrag: 1
+  allowDrag: 0
   restrictToBoundary: 0
   restrictToInside: 0
   domain: {fileID: 848136301}
@@ -9535,7 +9535,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bee1b664eeac82b4eab9cd1e4ee2f3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowDrag: 1
+  allowDrag: 0
   restrictToBoundary: 0
   restrictToInside: 0
   domain: {fileID: 848136301}

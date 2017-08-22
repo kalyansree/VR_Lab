@@ -223,6 +223,13 @@ public class Networking : MonoBehaviour {
         {
             Vector3 newCoords = getLocalCoords(coords[i]);
             GameObject newObj = GameObject.Instantiate(allTransformList[i].gameObject, domain.transform);
+
+            List<GameObject> children = new List<GameObject>();
+            foreach (Transform child in newObj.transform)
+            {
+                children.Add(child.gameObject);
+            }
+            children.ForEach(child => Destroy(child));
             newObj.transform.localScale = allTransformList[i].localScale;
             Color color = ((Renderer)newObj.GetComponent<Renderer>()).material.color;
             color.a = 1F;
