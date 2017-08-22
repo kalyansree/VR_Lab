@@ -116,13 +116,21 @@ public class TestCSG : MonoBehaviour {
             dottedLine.points3[0] = pos.transform.position;
             dottedLine.points3[1] = freedomTarget.transform.position;
             plane.transform.rotation = Quaternion.LookRotation(origin.transform.position - freedomTarget.transform.position);
-            freedomPos.transform.position = Physics.ClosestPoint(freedomTarget.transform.position, origin.GetComponent<Collider>(), origin.transform.position, origin.transform.rotation);
+            //freedomPos.transform.position = Physics.ClosestPoint(freedomTarget.transform.position, origin.GetComponent<Collider>(), origin.transform.position, origin.transform.rotation);
 
-            int layerMask = 1 << LayerMask.NameToLayer("hemisphere");
-            Collider[] list = Physics.OverlapSphere(freedomPos.transform.position, freedomPos.transform.localScale.x, layerMask);
-            print(list.Length);
-            if (list.Length == 2)
-            {
+            //int layerMask = 1 << LayerMask.NameToLayer("hemisphere");
+            //Collider[] list = Physics.OverlapSphere(freedomPos.transform.position, freedomPos.transform.localScale.x, layerMask);
+            //print(list.Length);
+            //if (list.Length == 2)
+            //{
+            //    lineObj.SetActive(true);
+            //}
+            //else
+            //{
+            //    lineObj.SetActive(false);
+            //}
+
+            if (InTruncation(origin, freedomTarget)) {
                 lineObj.SetActive(true);
             }
             else
@@ -156,5 +164,18 @@ public class TestCSG : MonoBehaviour {
             final1.GetComponent<MeshRenderer>().enabled = true;
 
         }
+    }
+
+    private bool InTruncation(GameObject origin, GameObject dest)
+    {
+        freedomPos.transform.position = Physics.ClosestPoint(dest.transform.position, origin.GetComponent<Collider>(), origin.transform.position, origin.transform.rotation);
+        int layerMask = 1 << LayerMask.NameToLayer("hemisphere");
+        Collider[] list = Physics.OverlapSphere(freedomPos.transform.position, freedomPos.transform.lossyScale.x, layerMask);
+        print(list.Length);
+        if (list.Length == 2)
+            return true;
+        else
+            return false;
+
     }
 }

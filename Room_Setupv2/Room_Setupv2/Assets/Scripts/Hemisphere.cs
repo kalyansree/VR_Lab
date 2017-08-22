@@ -73,6 +73,7 @@ public static class Hemisphere
         size.x -= 0.01F;
         size.y -= 0.01F;
         size.z -= 0.01F;
+        //check if there is indeed area that is overlapping between the two objects
         Collider[] hitColliders = Physics.OverlapBox(cube.transform.position, size / 2, cube.transform.rotation);
         bool isColliding = false;
         foreach (Collider col in hitColliders)

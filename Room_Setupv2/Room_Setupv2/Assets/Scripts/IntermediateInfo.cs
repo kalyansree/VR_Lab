@@ -18,9 +18,6 @@ public class IntermediateInfo : MonoBehaviour {
     private Material truncatedHemisphereMaterial;
     private Material planeMaterial;
 
-    private bool flipDirection1;
-    private bool flipDirection2;
-
     private bool hemisphereVisible;
     private bool truncationExists;
 
@@ -48,6 +45,9 @@ public class IntermediateInfo : MonoBehaviour {
         this.domain = domain;
         freedomLineVectorObj = null;
         freedomLineVector = null;
+        hemisphereVisible = true;
+        truncationExists = false;
+
         plane = null;
     }
 
@@ -71,14 +71,24 @@ public class IntermediateInfo : MonoBehaviour {
         return freedomLineVectorObj;
     }
 
-    public float GetScale()
+    public float GetScaleAsFloat()
     {
         if (truncationExists)
         {
-            return truncatedHemisphere.transform.lossyScale.x;
+            return hemisphereList[0].transform.lossyScale.x;
         }
         else
             return 0;
+    }
+
+    public Vector3 GetScale()
+    {
+        if (truncationExists)
+        {
+            return hemisphereList[0].transform.lossyScale;
+        }
+        else
+            return new Vector3(0, 0, 0);
     }
 
     public GameObject GetPlane()
@@ -141,10 +151,12 @@ public class IntermediateInfo : MonoBehaviour {
         }
         else
         {
+
             int connectionIndex = connectionList.IndexOf(connection);
+            Destroy(truncatedHemisphere);
+            Destroy(hemisphereList[connectionIndex]);
             connectionList.RemoveAt(connectionIndex);
             hemisphereList.RemoveAt(connectionIndex);
-            Destroy(truncatedHemisphere);
             recalculateTruncation();
             return true;
         }
@@ -190,7 +202,15 @@ public class IntermediateInfo : MonoBehaviour {
             viability = false;
             return newHemisphere;
         }
-        float scaling = 10;
+        float scaling = 1;
+        if (domain.GetComponent<ResizeObject>().getMagnification() >= 1)
+        {
+            scaling = 10;
+        }
+        else
+        {
+            scaling = 20;
+        }
         domain.transform.localScale = domain.transform.localScale * scaling;
         GameObject truncation = Hemisphere.GetIntersection(existingTruncation, newHemisphere, truncatedHemisphereMaterial, true);
         
@@ -223,7 +243,7 @@ public class IntermediateInfo : MonoBehaviour {
         else if(connectionList.Count == 1)
         {
             truncatedHemisphere = hemisphereList[0];
-            truncatedHemisphere.SetActive(true);
+            truncatedHemisphere.GetComponent<MeshRenderer>().enabled = true;
             viability = false;
             truncationExists = true;
         }
@@ -235,7 +255,7 @@ public class IntermediateInfo : MonoBehaviour {
                 truncation = truncate(hemisphereList[i], truncation);
             }
             truncatedHemisphere = truncation;
-            truncatedHemisphere.SetActive(true);
+            truncatedHemisphere.GetComponent<MeshRenderer>().enabled = true;
         }
     }
 

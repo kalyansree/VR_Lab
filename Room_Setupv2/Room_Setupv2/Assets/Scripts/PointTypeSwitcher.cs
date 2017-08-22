@@ -25,7 +25,8 @@ public class PointTypeSwitcher : MonoBehaviour {
         INTERMEDIATE,
         FIXED,
         DELETE,
-        FORCE
+        FORCE,
+        FREEDOM
     };
 
     public GameObject fixAxesRadialMenu;
@@ -73,7 +74,7 @@ public class PointTypeSwitcher : MonoBehaviour {
             if (i == buttonNo)
             {
                 joint.gameObject.SetActive(true);
-                if(!(i == (int)Type.DELETE || i == (int)Type.INTERMEDIATE || i == (int)Type.FORCE))
+                if(!(i == (int)Type.DELETE || i == (int)Type.INTERMEDIATE || i == (int)Type.FORCE || i == (int)Type.FREEDOM))
                 {
                     FixedDirections fd = joint.gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
                     if (i == (int)Type.FIXED)

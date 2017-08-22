@@ -177,7 +177,8 @@ public class DeleteObject : MonoBehaviour
                 else if(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output"))
                 {
                     GameObject force = currCollidingObj.GetComponent<InputOutputInfo>().GetForcePoint();
-                    deleteForcePoint(force);
+                    if(force != null)
+                        deleteForcePoint(force);
                     deletePoint();
                 }
                 else
@@ -245,6 +246,11 @@ public class DeleteObject : MonoBehaviour
             if (childTransform.gameObject.CompareTag("Input") || childTransform.gameObject.CompareTag("Output"))
             {
                 childTransform.gameObject.GetComponent<InputOutputInfo>().removeConnection(originSphere);
+            }
+
+            if (childTransform.CompareTag("Intermediate"))
+            {
+                childTransform.GetComponent<IntermediateInfo>().removeConnection(originSphere);
             }
         }
 

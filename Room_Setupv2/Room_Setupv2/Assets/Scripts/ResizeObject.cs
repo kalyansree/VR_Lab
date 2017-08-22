@@ -8,12 +8,15 @@ public class ResizeObject : MonoBehaviour {
     public OVRInput.Controller RController = OVRInput.Controller.RTouch;
     private float initDist, currDist = -1;
     private Vector3 initScale;
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    private Vector3 currScale;
+    private float totalMagnification;
+    void Start()
+    {
+        initScale = gameObject.transform.localScale;
+        totalMagnification = 1;
+    }
+    // Update is called once per frame
+    void Update () {
         if (OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger) && OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger))
         {
             Vector3 Lcontroller_loc = OVRInput.GetLocalControllerPosition(LController);
@@ -21,12 +24,12 @@ public class ResizeObject : MonoBehaviour {
             if (initDist == -1 && currDist == -1 || initDist == 0 && currDist == -1)
             {
                 initDist = Vector3.Distance(Lcontroller_loc, Rcontroller_loc);
-                initScale = gameObject.transform.localScale;
+                currScale = gameObject.transform.localScale;
             }
             else
             {
                 currDist = Vector3.Distance(Lcontroller_loc, Rcontroller_loc);
-                gameObject.transform.localScale = initScale *  currDist / initDist;
+                gameObject.transform.localScale = currScale *  currDist / initDist;
                 //print("initDist: " + initDist);
                 //print("currDist: " + currDist);
             }
@@ -36,8 +39,26 @@ public class ResizeObject : MonoBehaviour {
         {
             initDist = -1;
             currDist = -1;
-            initScale = gameObject.transform.localScale;
+
+            totalMagnification = gameObject.transform.localScale.x / initScale.x;
+            if(totalMagnification >= 8)
+            {
+                gameObject.transform.localScale = initScale * 8;
+                totalMagnification = 8;
+            }
+            else if(totalMagnification <= 0.05)
+            {
+                gameObject.transform.localScale = initScale * 0.05F;
+                totalMagnification = 0.05F;
+            }
+
+            //print(totalMagnification);
         }
 
+    }
+
+    public float getMagnification()
+    {
+        return totalMagnification;
     }
 }

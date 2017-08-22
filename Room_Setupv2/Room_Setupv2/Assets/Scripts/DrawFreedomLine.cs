@@ -7,9 +7,29 @@ using System.Text;
 
 public class DrawFreedomLine : MonoBehaviour
 {
+    //--- PUBLIC VARIABLES ---//
+    [Tooltip("GameObject of the Domain Cube")]
+    public GameObject domain;
+
+    [Tooltip("GameObject of Right Controller")]
+    public GameObject RightController;
+    [Tooltip("GameObject of Networking")]
+    public GameObject Networking;
+
+    public Texture2D dottedTexture;
+
+    public GameObject LeftRadialMenu;
 
     [Tooltip("GameObject containing Camera (CenterEyeAnchor)")]
-    public Camera myCamera;    
+    public Camera myCamera;
+
+    [Tooltip("GameObject of Preview Sphere")]
+    public GameObject preview;
+
+    public GameObject lightObj;
+
+    public Material fixedMaterial;
+
 
     //--- PRIVATE VARIABLES --//
 
@@ -43,33 +63,23 @@ public class DrawFreedomLine : MonoBehaviour
     //Is set by getClosestPoint() function
     private Vector3 closestPoint;
 
-    //--- PUBLIC VARIABLES ---//
-    [Tooltip("GameObject of the Domain Cube")]
-    public GameObject domain;
-
-    [Tooltip("GameObject of Right Controller")]
-    public GameObject RightController;
-    [Tooltip("GameObject of Networking")]
-    public GameObject Networking;
-
-    public Texture2D dottedTexture;
-
-    public GameObject RadialMenu;
-
     private bool createdOrigin;
 
     private bool lockToAxes;
 
     private VectorLine dottedLine;
+    private VectorLine failLine;
 
     private bool constraintMode;
 
     private GameObject freedomPos;
 
     private GameObject freedomLineObj;
+    private GameObject failLineObj;
 
-    [Tooltip("GameObject of Preview Sphere")]
-    public GameObject preview;
+    private GameObject testSphere;
+
+
 
     // Use this for initialization
     void Start()
@@ -79,8 +89,13 @@ public class DrawFreedomLine : MonoBehaviour
         isColliding = false;
 
         freedomPos = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        freedomPos.transform.localScale = new Vector3(0.01F, 0.01F, 0.01F);
+        freedomPos.transform.localScale = new Vector3(0.001F, 0.001F, 0.001F);
         Destroy(freedomPos.GetComponent<MeshRenderer>());
+        Destroy(freedomPos.GetComponent<Collider>());
+
+        testSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        Destroy(testSphere.GetComponent<MeshRenderer>());
+        Destroy(testSphere.GetComponent<Collider>());
     }
    
     void Update()
@@ -178,12 +193,20 @@ public class DrawFreedomLine : MonoBehaviour
                 createdOrigin = false;
 
                 originSet = true;
-                dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 16.0f);
+                dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 8.0f);
                 dottedLine.points3.Add(originSphere.transform.position);
                 dottedLine.points3.Add(originSphere.transform.position);
                 dottedLine.textureScale = 1.00f;
                 dottedLine.Draw3DAuto();
                 freedomLineObj = GameObject.Find("NewFreedomLine");
+
+                failLine = new VectorLine("failLine", new List<Vector3>(), 8.0f);
+                failLine.points3.Add(originSphere.transform.position);
+                failLine.points3.Add(originSphere.transform.position);
+                failLine.Draw3DAuto();
+                failLine.SetColor(Color.red);
+                failLineObj = GameObject.Find("failLine");
+                
             }
         }
 
@@ -196,22 +219,28 @@ public class DrawFreedomLine : MonoBehaviour
             {
                 dottedLine.points3[0] = dest;
                 dottedLine.points3[1] = origin;
+
+                failLine.points3[1] = origin;
+                failLine.points3[0] = dest;
             }
             
 
             if(!InTruncation(originSphere, gameObject))
             {
                 freedomLineObj.SetActive(false);
+                failLineObj.SetActive(true);
             }
             else
             {
                 freedomLineObj.SetActive(true);
+                failLineObj.SetActive(false);
             }
         }
 
 
         if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
         {
+            VectorLine.Destroy(ref failLine);
             originSet = false;
             if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null || !InTruncation(originSphere, gameObject))
             {
@@ -234,10 +263,14 @@ public class DrawFreedomLine : MonoBehaviour
 
     private bool InTruncation(GameObject origin, GameObject dest)
     {
-        freedomPos.transform.position = Physics.ClosestPoint(dest.transform.position, origin.GetComponent<Collider>(), origin.transform.position, origin.transform.rotation);
+        testSphere.transform.position = origin.transform.position;
+        testSphere.transform.localScale = origin.GetComponent<IntermediateInfo>().GetScale();
+        testSphere.AddComponent<SphereCollider>();
+        freedomPos.transform.position = Physics.ClosestPoint(dest.transform.position, testSphere.GetComponent<Collider>(), origin.transform.position, origin.transform.rotation);
+        Destroy(testSphere.GetComponent<Collider>());
         List<GameObject> hemisphereList = origin.GetComponent<IntermediateInfo>().GetHemispheres();
         int layerMask = 1 << LayerMask.NameToLayer("hemisphere");
-        Collider[] list = Physics.OverlapSphere(freedomPos.transform.position, freedomPos.transform.localScale.x, layerMask);
+        Collider[] list = Physics.OverlapSphere(freedomPos.transform.position, freedomPos.transform.lossyScale.x, layerMask);
         if (list.Length == hemisphereList.Count)
             return true;
         else
@@ -249,17 +282,21 @@ public class DrawFreedomLine : MonoBehaviour
     {
         /*
          * 1. Disable switcher
-         * 2. Spawn Plane w/ correct material & attach it
-         * 3. switch to constraint mode
-         * 4. Initialize dottedLine
+         * 2. Turn Down light
+         * 3. Spawn Plane w/ correct material & attach it
+         * 4. switch to constraint mode
+         * 5. Initialize dottedLine
          */
-        RadialMenu.SetActive(false);
+        LeftRadialMenu.SetActive(false);
+        lightObj.SetActive(false);
         Vector3 size = domain.transform.lossyScale;
         size.z = size.z / 10000;
         intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size);
-        dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 16.0f);
+        dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 8.0f);
         dottedLine.points3.Add(originSphere.transform.position);
         dottedLine.points3.Add(originSphere.transform.position);
+        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
+        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine    .points3.Add(originSphere.transform.position);
         dottedLine.textureScale = 1.00f;
         dottedLine.Draw3DAuto();
 
@@ -268,14 +305,37 @@ public class DrawFreedomLine : MonoBehaviour
         
     private void constraintModeUpdate()
     {
-        dottedLine.points3[1] = gameObject.transform.position;
+        dottedLine.points3[0] = originSphere.transform.position;
+        dottedLine.points3[1] = preview.transform.position;
+
+        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[0] = originSphere.transform.position;
+        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[0] = preview.transform.position;
         preview.SetActive(true);
 
         GameObject plane = originSphere.GetComponent<IntermediateInfo>().GetPlane();
+        preview.transform.localScale = gameObject.transform.lossyScale;
         preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(gameObject.transform.position);
 
         if(OVRInput.GetDown(OVRInput.Button.One))
         {
+
+            //Temporary fix
+            GameObject newFixed = GameObject.Instantiate(preview);
+            newFixed.transform.parent = originSphere.transform;
+            newFixed.GetComponent<MeshRenderer>().sharedMaterial = fixedMaterial;
+            newFixed.tag = "Fixed";
+            newFixed.name = newFixed.tag;
+            ((Networking)Networking.GetComponent(typeof(Networking))).addToList(newFixed);
+
+            //Line
+
+            domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
+            domain.GetComponent<InitLines>().lineTransformList.Add(newFixed.transform);
+            lightObj.SetActive(true);
+            plane.SetActive(false);
+            VectorLine.Destroy(ref dottedLine);
+            dottedLine = null;
+            constraintMode = false;            
             //create a new fixed point at the position of the preview
             // Hide Freedom Line and Freedom Point
         }

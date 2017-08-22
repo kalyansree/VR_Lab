@@ -163,6 +163,7 @@ public class SpawnObject : MonoBehaviour {
             else
             {
                 originSphere = createPoint();
+                return;
             }
         }
         if (OVRInput.Get(OVRInput.Button.One) && originSet && allowDrag)

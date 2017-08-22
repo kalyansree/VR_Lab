@@ -295,21 +295,21 @@ public class DrawForceVector : MonoBehaviour {
         StringBuilder sb = new StringBuilder();
         foreach (Transform transform in Networking.GetComponent<Networking>().forceTransformList)
         {
-            if (transform.gameObject.CompareTag("Input"))
+            GameObject IOPoint = transform.gameObject.GetComponent<ForcePointInfo>().GetConnectedPoint();
+            if (IOPoint.CompareTag("Input"))
             {
-                int inputIndex = Networking.GetComponent<Networking>().allTransformList.IndexOf(transform);
+                int inputIndex = Networking.GetComponent<Networking>().allTransformList.IndexOf(IOPoint.transform);
                 sb.Append(inputIndex + 1);
                 //Quaternion temp = new Quaternion();
                 Vector3 currVector = domain.GetComponent<InitLines>().forceVectorList[forceVectorIndex++];
-
-                currVector.z = -currVector.z;
+                Vector3 finalVector = new Vector3(currVector.x, currVector.y, -currVector.z);
                 //temp.x = currVector.x;
                 //temp.y = currVector.y;
                 //temp.z = currVector.z;
 
                 //temp.w = currVector.magnitude;
 
-                sb.Append(currVector.ToString("F4")); //+ temp.ToString("!"));
+                sb.Append(finalVector.ToString("F4")); //+ temp.ToString("!"));
                 sb.Append(";");
             }
         }
