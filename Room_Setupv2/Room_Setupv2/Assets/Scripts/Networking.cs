@@ -48,6 +48,9 @@ public class Networking : MonoBehaviour {
 	void Update () {
         if (messageSet)
         {
+            //msg1 = "1(1.0000, 0.8500, 0.0000)I;2(1.0000, 1.0000, 0.0000)F;3(0.5000, 0.2000, 0.5000)T;4(0.5000, 0.8500, 1.0000)O;5(0.5000, 0.5000, 1.0000)F;6(0.5000, 0.2000, 0.0000)F;";
+            //msg2 = "1 2 1 3 4 5 4 3 3 6 ";
+            //msg3 = "1(1.0000, 0.0000, 0.0000);";
             SendData(msg1);
             SendData(msg2);
             SendData(msg3);
@@ -59,7 +62,7 @@ public class Networking : MonoBehaviour {
 
     public void Submit()
     {
-        if(!checkConditions())
+        if (!checkConditions())
         {
             submitCanvas.transform.Find("WarningText").GetComponent<Text>().text = errorMsg;
             submitCanvas.transform.Find("WarningText").gameObject.SetActive(true);
@@ -75,6 +78,12 @@ public class Networking : MonoBehaviour {
             submitCanvas.transform.Find("SentText").gameObject.SetActive(false);
             return;
         }
+
+        //TEST PURPOSES ONLY
+        //setupSocket();
+        //TEST PURPOSES ONLY
+
+
         Debug.Log("socket is set up");
         msg1 = ConvertToString(allTransformList, true);
         msg2 = ConvertToString(domain.GetComponent<InitLines>().lineTransformList, false);
