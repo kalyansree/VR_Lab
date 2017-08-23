@@ -283,6 +283,7 @@ public class DrawForceVector : MonoBehaviour {
         newObj.transform.SetParent(domain.transform, true);
         newObj.AddComponent<ForcePointInfo>();
         newObj.name = "ForcePoint";
+        newObj.layer = LayerMask.NameToLayer("point");
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
         return newObj;

@@ -323,6 +323,7 @@ public class DrawFreedomLine : MonoBehaviour
             newFixed.GetComponent<MeshRenderer>().sharedMaterial = fixedMaterial;
             newFixed.tag = "Fixed";
             newFixed.name = newFixed.tag;
+            newFixed.layer = LayerMask.NameToLayer("point");
             Networking.GetComponent<Networking>().addToList(newFixed);
 
             //Line

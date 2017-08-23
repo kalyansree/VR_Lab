@@ -11,9 +11,6 @@ public class TestCSG : MonoBehaviour {
     private GameObject final3;
 
     private GameObject plane;
-
-    
-
     private bool updatePos;
 
 

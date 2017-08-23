@@ -275,6 +275,7 @@ public class SpawnObject : MonoBehaviour {
             newObj.GetComponent<IntermediateInfo>().SetObjs(newObj, domain);
         }
         newObj.name = newObj.tag;
+        newObj.layer = LayerMask.NameToLayer("point");
         return newObj;
     }
 }

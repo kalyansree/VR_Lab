@@ -214,7 +214,7 @@ public class IntermediateInfo : MonoBehaviour {
         domain.transform.localScale = domain.transform.localScale * scaling;
         GameObject truncation = Hemisphere.GetIntersection(existingTruncation, newHemisphere, truncatedHemisphereMaterial, true);
         
-        if (truncation == null) //means there was no overlapping region
+        if (truncation == null) //means there was no ove rlapping region
         {
             viability = false;
             truncationExists = false;
