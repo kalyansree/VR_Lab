@@ -1838,7 +1838,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 374927152}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1048630337}
+        m_MethodName: ResetAllButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &374927152
@@ -2916,7 +2927,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 6a4bb83f3b0e20c448329a5a6537bad2, type: 2}
+  - {fileID: 2100000, guid: ae10bf0ba5657fa41a8ebe42d0db760a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3313,6 +3324,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   preview: {fileID: 1864835675}
   domain: {fileID: 848136301}
+  PointTypeSwitcher: {fileID: 1746781343}
   coordText: {fileID: 322021289}
 --- !u!1 &627083723
 GameObject:
@@ -3420,7 +3432,6 @@ MonoBehaviour:
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
-  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
   planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}
@@ -4004,7 +4015,6 @@ MonoBehaviour:
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
-  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
   planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}
@@ -4457,7 +4467,6 @@ MonoBehaviour:
   lineTransformList: []
   deformedLineTransformList: []
   forceVectorList: []
-  forceLineList: []
   frontTex: {fileID: 2800000, guid: 8f9c1207d3f3548eebdc8adf6ab8c561, type: 3}
   lineTex: {fileID: 2800000, guid: ccb667c9be88d47a0a9e144ff764abbb, type: 3}
   backTex: {fileID: 2800000, guid: b552d06a4330f47a08d09897dddcbd35, type: 3}
@@ -5234,8 +5243,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1048630337}
-        m_MethodName: ResetAllButton
+      - m_Target: {fileID: 2095464903}
+        m_MethodName: Submit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5543,7 +5552,6 @@ MonoBehaviour:
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
-  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
   planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}
@@ -5684,8 +5692,8 @@ Light:
   serializedVersion: 8
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.38
-  m_Range: 10
+  m_Intensity: 1.5
+  m_Range: 20
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -7647,6 +7655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enableTeleport: 0
+  targetListPolicy: {fileID: 0}
   pointerRenderer: {fileID: 1687697857}
   activationButton: 14
   holdButtonToActivate: 1
@@ -7659,8 +7668,8 @@ MonoBehaviour:
   interactWithObjects: 0
   grabToPointerTip: 0
   controller: {fileID: 0}
+  interactUse: {fileID: 0}
   customOrigin: {fileID: 0}
-  directionIndicator: {fileID: 0}
 --- !u!114 &1687697855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7739,6 +7748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playareaCursor: {fileID: 0}
+  directionIndicator: {fileID: 0}
   customRaycast: {fileID: 0}
   layersToIgnore:
     serializedVersion: 2
@@ -9364,7 +9374,6 @@ MonoBehaviour:
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
-  HemisphereMaterial2: {fileID: 2100000, guid: 8c2c4306475dc5743aac502cafbf4ae3, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
   planeMaterial: {fileID: 2100000, guid: e7f036215d090a04398d2bccb70a60da, type: 2}

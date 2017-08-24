@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
+using Parabox.CSG;
 
 public class IntermediateInfo : MonoBehaviour {
 
@@ -14,7 +15,6 @@ public class IntermediateInfo : MonoBehaviour {
     private GameObject truncatedHemisphere;
 
     private Material hemisphereMaterial1;
-    private Material hemisphereMaterial2;
     private Material truncatedHemisphereMaterial;
     private Material planeMaterial;
 
@@ -29,10 +29,9 @@ public class IntermediateInfo : MonoBehaviour {
     private GameObject freedomLineVectorObj;
     private VectorLine freedomLineVector;
 
-    public void SetupMaterials(Material hemisphereMat1, Material hemisphereMat2, Material truncatedHemisphereMat, Material planeMat)
+    public void SetupMaterials(Material hemisphereMat1, Material truncatedHemisphereMat, Material planeMat)
     {
         this.hemisphereMaterial1 = hemisphereMat1;
-        this.hemisphereMaterial2 = hemisphereMat2;
         this.truncatedHemisphereMaterial = truncatedHemisphereMat;
         this.planeMaterial = planeMat;
     }
@@ -102,6 +101,7 @@ public class IntermediateInfo : MonoBehaviour {
         this.freedomLineVector = freedomLine;
         this.freedomLineVectorObj = freedomLineObj;
     }
+
     public void removeFreedomLineAndPlane()
     {
         VectorLine.Destroy(ref freedomLineVector);
@@ -151,7 +151,6 @@ public class IntermediateInfo : MonoBehaviour {
         }
         else
         {
-
             int connectionIndex = connectionList.IndexOf(connection);
             Destroy(truncatedHemisphere);
             Destroy(hemisphereList[connectionIndex]);
@@ -162,31 +161,14 @@ public class IntermediateInfo : MonoBehaviour {
         }
     }
 
-    public void toggleHemisphereView()
+    public void toggleHemisphereView(bool visible)
     {
-        if (hemisphereVisible)
+        if (truncationExists)
         {
-            foreach (GameObject hemiObj in hemisphereList)
-            {
-                hemiObj.GetComponent<MeshRenderer>().enabled = false;
-            }
-            hemisphereVisible = false;
-            if(truncationExists)
-            {
-                truncatedHemisphere.GetComponent<MeshRenderer>().enabled = false;
-            }
-        }
-        else
-        {
-            foreach (GameObject hemiObj in hemisphereList)
-            {
-                hemiObj.GetComponent<MeshRenderer>().enabled = true;
-            }
-            hemisphereVisible = true;
-            if (truncationExists)
-            {
-                truncatedHemisphere.GetComponent<MeshRenderer>().enabled = true;
-            }
+            hemisphereVisible = visible;
+            truncatedHemisphere.GetComponent<MeshRenderer>().enabled = visible;
+            if(freedomLineVectorObj != null)
+                freedomLineVectorObj.SetActive(visible);
         }
     }
     // Adds connection to the vertex and generates the truncated hemisphere
@@ -320,7 +302,7 @@ public class IntermediateInfo : MonoBehaviour {
         {
             color = truncatedHemisphere.GetComponent<Renderer>().material.color;
             color.a = alpha;
-            intermediatePoint.GetComponent<Renderer>().material.color = color;
+            truncatedHemisphere.GetComponent<Renderer>().material.color = color;
         }
     }
 }

@@ -33,10 +33,7 @@ public class PointTypeSwitcher : MonoBehaviour {
     public GameObject forceRadialMenu;
     public GameObject forceCanvas;
     private void Start()
-    {
-        
-        int buttonNo = 0;
-        int i = 0;
+    { 
         activeSphere = 0;
         SwitchTo(0);
     }
@@ -98,6 +95,11 @@ public class PointTypeSwitcher : MonoBehaviour {
         FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
         fd.toggleDirection(dir);
 
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.GetChild(activeSphere).transform.position;
     }
 }
 

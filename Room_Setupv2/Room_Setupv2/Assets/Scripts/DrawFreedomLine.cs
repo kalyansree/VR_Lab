@@ -63,10 +63,6 @@ public class DrawFreedomLine : MonoBehaviour
     //Is set by getClosestPoint() function
     private Vector3 closestPoint;
 
-    private bool createdOrigin;
-
-    private bool lockToAxes;
-
     private VectorLine dottedLine;
     private VectorLine failLine;
 
@@ -110,21 +106,6 @@ public class DrawFreedomLine : MonoBehaviour
         }        
     }
 
-    GameObject createPoint()
-    {
-        GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        newObj.transform.position = closestPoint;
-        newObj.transform.localScale = gameObject.transform.lossyScale;
-        newObj.tag = gameObject.tag;
-        Renderer rend = newObj.GetComponent<Renderer>();
-        if (rend != null)
-        {
-            rend.material = gameObject.GetComponent<Renderer>().material;
-        }
-        newObj.name = "FreedomPoint";
-        return newObj;
-    }
-
     void getClosestPoint()
     {
         float tileSize = domain.transform.localScale.x * gridGranularity;
@@ -136,30 +117,6 @@ public class DrawFreedomLine : MonoBehaviour
         relativePos.z = Mathf.Round(vectorToLoc.z / tileSize) * tileSize;
         relativePos = domain.transform.TransformDirection(relativePos);
         closestPoint = relativePos + domain.transform.position;
-
-        if (lockToAxes && originSet)
-        {
-            Vector3 localClosestPoint = domain.transform.InverseTransformPoint(closestPoint);
-            Vector3 localOriginPoint = domain.transform.InverseTransformPoint(origin);
-            Vector3 localDistance = localClosestPoint - localOriginPoint;
-            float max = Mathf.Max(Mathf.Abs(localDistance.x), Mathf.Abs(localDistance.y), Mathf.Abs(localDistance.z));
-            if (max == Mathf.Abs(localDistance.x))
-            {
-                localClosestPoint.y = localOriginPoint.y;
-                localClosestPoint.z = localOriginPoint.z;
-            }
-            else if (max == Mathf.Abs(localDistance.y))
-            {
-                localClosestPoint.x = localOriginPoint.x;
-                localClosestPoint.z = localOriginPoint.z;
-            }
-            else if (max == Mathf.Abs(localDistance.z))
-            {
-                localClosestPoint.x = localOriginPoint.x;
-                localClosestPoint.y = localOriginPoint.y;
-            }
-            closestPoint = domain.transform.TransformPoint(localClosestPoint);
-        }
     }
 
     private void normalUpdate()
@@ -176,6 +133,8 @@ public class DrawFreedomLine : MonoBehaviour
                 {
                     isColliding = true;
                     currCollidingObj = transform.gameObject;
+                    preview.transform.position = transform.position;
+                    preview.SetActive(true);
                     transform.GetComponent<IntermediateInfo>().HighlightPoint(true);
                 }
                 else
@@ -190,8 +149,6 @@ public class DrawFreedomLine : MonoBehaviour
             if (isColliding)
             {
                 originSphere = currCollidingObj;
-                createdOrigin = false;
-
                 originSet = true;
                 dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 8.0f);
                 dottedLine.points3.Add(originSphere.transform.position);
@@ -214,7 +171,7 @@ public class DrawFreedomLine : MonoBehaviour
         {
             origin = originSphere.transform.position;
             dest = transform.position;
-
+            originSphere.GetComponent<IntermediateInfo>().HighlightPoint(true);
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
                 dottedLine.points3[0] = dest;
@@ -248,16 +205,13 @@ public class DrawFreedomLine : MonoBehaviour
                 return;
             }
 
-            GameObject destSphere;
-            destSphere = createPoint();
-            destSphere.transform.parent = originSphere.transform;
             GameObject freedomLineObj = GameObject.Find("NewFreedomLine");
             freedomLineObj.transform.parent = originSphere.transform;
             freedomLineObj.name = "FreedomLine";
 
             originSphere.GetComponent<IntermediateInfo>().SetFreedomLine(dottedLine, freedomLineObj);
-
-            SwitchToConstraintMode(originSphere, destSphere);
+            originSphere.GetComponent<IntermediateInfo>().HighlightPoint(false);
+            SwitchToConstraintMode(originSphere, gameObject);
         }
     }
 
@@ -289,14 +243,14 @@ public class DrawFreedomLine : MonoBehaviour
          */
         LeftRadialMenu.SetActive(false);
         lightObj.SetActive(false);
-        Vector3 size = domain.transform.lossyScale;
+        Vector3 size = domain.transform.lossyScale * 2;
         size.z = size.z / 10000;
         intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size);
-        dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 8.0f);
+        dottedLine = new VectorLine("NewLine", new List<Vector3>(), dottedTexture, 8.0f);
         dottedLine.points3.Add(originSphere.transform.position);
         dottedLine.points3.Add(originSphere.transform.position);
         ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
-        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine    .points3.Add(originSphere.transform.position);
+        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
         dottedLine.textureScale = 1.00f;
         dottedLine.Draw3DAuto();
 
@@ -305,9 +259,6 @@ public class DrawFreedomLine : MonoBehaviour
         
     private void constraintModeUpdate()
     {
-        dottedLine.points3[0] = originSphere.transform.position;
-        dottedLine.points3[1] = preview.transform.position;
-
         ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[0] = originSphere.transform.position;
         ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[0] = preview.transform.position;
         preview.SetActive(true);
@@ -316,9 +267,23 @@ public class DrawFreedomLine : MonoBehaviour
         preview.transform.localScale = gameObject.transform.lossyScale;
         preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(gameObject.transform.position);
 
-        if(OVRInput.GetDown(OVRInput.Button.One))
+        Vector3 localCoord = domain.transform.InverseTransformPoint(preview.transform.position);
+        localCoord.x += 0.5F;
+        localCoord.y += 0.5F;
+        localCoord.z += 0.5F;
+        localCoord.z = -localCoord.z;
+        localCoord.z += 1.0F;
+        preview.transform.position = restrictCoords(localCoord);
+        preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(preview.transform.position);
+
+        dottedLine.points3[0] = originSphere.transform.position;
+        dottedLine.points3[1] = preview.transform.position;
+
+
+        if (OVRInput.GetDown(OVRInput.Button.One))
         {
             GameObject newFixed = GameObject.Instantiate(preview);
+            newFixed.AddComponent<SphereCollider>();
             newFixed.transform.parent = domain.transform;
             newFixed.GetComponent<MeshRenderer>().sharedMaterial = fixedMaterial;
             newFixed.tag = "Fixed";
@@ -355,6 +320,44 @@ public class DrawFreedomLine : MonoBehaviour
          * Modify delete tool to allow deleting spheres not on the grid
          * 
          */
+    }
+
+    private Vector3 restrictCoords(Vector3 localCoord)
+    {
+        if(localCoord.x < 0)
+        {
+            localCoord.x = 0;
+        }
+        else if(localCoord.x > 1)
+        {
+            localCoord.x = 1;
+        }
+
+        if (localCoord.y < 0)
+        {
+            localCoord.y = 0;
+        }
+        else if (localCoord.y > 1)
+        {
+            localCoord.y = 1;
+        }
+
+        if (localCoord.z < 0)
+        {
+            localCoord.z = 0;
+        }
+        else if (localCoord.z > 1)
+        {
+            localCoord.z = 1;
+        }
+
+        localCoord.x -= 0.5F;
+        localCoord.y -= 0.5F;
+        localCoord.z -= 1.0F;
+        localCoord.z = -localCoord.z;
+        localCoord.z -= 0.5F;
+
+        return domain.transform.TransformPoint(localCoord);
     }
 }
 

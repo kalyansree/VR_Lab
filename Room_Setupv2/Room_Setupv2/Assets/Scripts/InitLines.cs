@@ -25,18 +25,20 @@ public class InitLines : MonoBehaviour {
     public List<Transform> deformedLineTransformList;
 
     public List<Vector3> forceVectorList;
-
-    public List<VectorLine> forceLineList;
     public Texture2D frontTex;
     public Texture2D lineTex;
     public Texture2D backTex;
 
+    void Awake()
+    {
+        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
+    }
 
     void Start () {
         VectorLine.SetCamera3D(myCamera);
         //Wireframe of cube
         VectorLine line = new VectorLine("Wireframe", new List<Vector3>(), 1.0f, LineType.Discrete);
-        VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
+
         Mesh cubeMesh = ((MeshFilter)gameObject.GetComponent("MeshFilter")).mesh;
         line.MakeWireframe(cubeMesh);
         line.drawTransform = gameObject.transform;
@@ -54,7 +56,6 @@ public class InitLines : MonoBehaviour {
 
         //Force Line
         forceVectorList = new List<Vector3>();
-        forceLineList = new List<VectorLine>();
         //forceLine = new VectorLine("ForceLine", new List<Vector3>(), 30.0f);
         //VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
         //forceLine.endCap = "Arrow";

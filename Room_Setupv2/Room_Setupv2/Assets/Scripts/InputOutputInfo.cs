@@ -12,8 +12,6 @@ public class InputOutputInfo : MonoBehaviour {
     private List<GameObject> connectedPoints;
     private bool directionTowardsOrigin;
 
-    private Material originalMaterial;
-
     private bool viability;
     void Start()
     {
@@ -26,7 +24,6 @@ public class InputOutputInfo : MonoBehaviour {
         this.hemisphere = hemisphereObj;
         this.forceVector = forceVector;
         this.directionTowardsOrigin = directionTowardsOrigin;
-        this.originalMaterial = originPoint.GetComponent<MeshRenderer>().sharedMaterial;
 
         return checkFeasibility();
     }
@@ -44,6 +41,7 @@ public class InputOutputInfo : MonoBehaviour {
     public void DeleteForcePoint()
     {
         this.force = null;
+        this.forceVector = new Vector3(-1, -1, -1);
         this.hemisphere = null;
     }
 
@@ -63,6 +61,11 @@ public class InputOutputInfo : MonoBehaviour {
         return force;
     }
 
+    public Vector3 GetForceVector()
+    {
+        return forceVector;
+    }
+
     public GameObject GetHemisphereObj()
     {
         return hemisphere;
@@ -74,7 +77,7 @@ public class InputOutputInfo : MonoBehaviour {
     }
     public bool checkFeasibility()
     {
-        if(forceVector == null || origin == null)
+        if(forceVector == new Vector3(-1, -1, -1) || origin == null)
         {
             return false;
         }
@@ -102,12 +105,10 @@ public class InputOutputInfo : MonoBehaviour {
         return true;
     }
 
-    public void toggleHemisphereView()
+    public void toggleHemisphereView(bool visible)
     {
-        if (hemisphere.activeSelf)
-            hemisphere.GetComponent<MeshRenderer>().enabled = false;
-        else
-            hemisphere.GetComponent<MeshRenderer>().enabled = true;
+        if(hemisphere != null)
+            hemisphere.GetComponent<MeshRenderer>().enabled = visible;
     }
 
     public void addConnection(GameObject vertex)

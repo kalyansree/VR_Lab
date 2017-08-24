@@ -72,17 +72,10 @@ public class DeleteObject : MonoBehaviour
     void Update()
     {
         unHighlightLines();
-        var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
         //We show the preview once the controller is close enough to the cube and we aren't colliding with an existing sphere
-  
-        getClosestPoint();
-        preview.transform.position = closestPoint;
-        preview.transform.localScale = gameObject.transform.lossyScale;
-        preview.SetActive(true);
-        allowPlacing = true;
 
-        isColliding = checkColliding();
-        //isColliding = checkCollidingVerTwo();
+        //isColliding = checkColliding();
+        isColliding = checkCollidingVerTwo();
 
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
@@ -98,11 +91,7 @@ public class DeleteObject : MonoBehaviour
         if (OVRInput.Get(OVRInput.Button.One) && originSet)
         {
             origin = originSphere.transform.position;
-            //if we're not allowed to place, just show the line drawing towards the player's sphere, not the preview sphere
-            if (!allowPlacing)
-                dest = gameObject.transform.position;
-            else
-                dest = closestPoint;
+            dest = gameObject.transform.position;
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
                 delLine.points3[0] = origin;
@@ -111,22 +100,22 @@ public class DeleteObject : MonoBehaviour
             if(isColliding && origin != dest)
             {
                 highlightLine();
+                delLine.active = false;
             }
             else
             {
+
+                delLine.active = true;
                 unHighlightLines();
             }
         }
 
         if (OVRInput.GetUp(OVRInput.Button.One)&& originSet)
         {
-            
-            GameObject destSphere;
             delLine.points3.RemoveAt(0);
             delLine.points3.RemoveAt(0); //we do this twice to get rid of both points
             if (isColliding && currCollidingObj.transform.position != originSphere.transform.position)
             {
-                destSphere = currCollidingObj;
                 deleteLine();
             }
             else if(isColliding)
@@ -287,11 +276,9 @@ public class DeleteObject : MonoBehaviour
     {
         if (originSet == false)
             return;
-        int index = Networking.GetComponent<Networking>().forceTransformList.IndexOf(forcePoint.transform);
         ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(forcePoint.transform);
-        VectorLine vline = domain.GetComponent<InitLines>().forceLineList[index];
+        VectorLine vline = forcePoint.GetComponent<ForcePointInfo>().GetLine();
         VectorLine.Destroy(ref vline);
-        domain.GetComponent<InitLines>().forceLineList.RemoveAt(index);
         GameObject origin = forcePoint.GetComponent<ForcePointInfo>().GetConnectedPoint();
         origin.GetComponent<InputOutputInfo>().DeleteForcePoint();
         Destroy(forcePoint);
@@ -299,6 +286,11 @@ public class DeleteObject : MonoBehaviour
 
     private bool checkColliding()
     {
+        getClosestPoint();
+        preview.transform.position = closestPoint;
+        preview.transform.localScale = gameObject.transform.lossyScale;
+        preview.SetActive(true);
+        allowPlacing = true;
         bool colliding = false;
         //check if our preview is colliding with a placed sphere
         foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
@@ -346,18 +338,17 @@ public class DeleteObject : MonoBehaviour
     private bool checkCollidingVerTwo()
     {
         unHighlightAll();
+        preview.transform.position = transform.position;
+        allowPlacing = true;
         int layerMask = 1 << LayerMask.NameToLayer("point");
         Collider[] colliderList = Physics.OverlapSphere(transform.position, transform.lossyScale.x / 2, layerMask);
-        bool colliding = false;
-        if(colliderList.Length == 0)
+        if (colliderList.Length == 0)
         {
             return false;
         }
         else if(colliderList.Length == 1) //means we are colliding with multiple points, which can happen
         {
-            colliding = true;
-            currCollidingObj = colliderList[0].gameObject;
-            preview.SetActive(false);
+            currCollidingObj = colliderList[0].gameObject;  
             Color color = currCollidingObj.GetComponent<Renderer>().material.color;
             color.a = 1;
             currCollidingObj.GetComponent<Renderer>().material.color = color;
@@ -365,9 +356,7 @@ public class DeleteObject : MonoBehaviour
         }
         else if (colliderList.Length > 1)
         {
-            colliding = true;
             currCollidingObj = FindClosestPoint(colliderList, transform.gameObject);
-            preview.SetActive(false);
             Color color = currCollidingObj.GetComponent<Renderer>().material.color;
             color.a = 1;
             currCollidingObj.GetComponent<Renderer>().material.color = color;

@@ -73,7 +73,6 @@ public class SpawnConstraint : MonoBehaviour
 
     //Materials
     public Material HemisphereMaterial1;
-    public Material HemisphereMaterial2;
     public Material truncatedHemisphereMaterial;
     public Material planeMaterial;
     void Start()
@@ -272,7 +271,7 @@ public class SpawnConstraint : MonoBehaviour
         else if (newObj.CompareTag("Intermediate"))
         {
             newObj.AddComponent<IntermediateInfo>();
-            newObj.GetComponent<IntermediateInfo>().SetupMaterials(HemisphereMaterial1, HemisphereMaterial2, truncatedHemisphereMaterial, planeMaterial);
+            newObj.GetComponent<IntermediateInfo>().SetupMaterials(HemisphereMaterial1, truncatedHemisphereMaterial, planeMaterial);
             newObj.GetComponent<IntermediateInfo>().SetObjs(newObj, domain);
         }
         newObj.name = newObj.tag;

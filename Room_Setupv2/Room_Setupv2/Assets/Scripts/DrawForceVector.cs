@@ -70,6 +70,8 @@ public class DrawForceVector : MonoBehaviour {
     private Texture2D frontTex;
     private Texture2D lineTex;
     private Texture2D backTex;
+
+    private VectorLine currLine;
     // Use this for initialization
     void Start () {
         forceText = GameObject.Find("Direction_Angles1").GetComponent<Text>();
@@ -81,7 +83,6 @@ public class DrawForceVector : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
 
         getClosestPoint();
         preview.transform.position = closestPoint;
@@ -95,7 +96,6 @@ public class DrawForceVector : MonoBehaviour {
             //print(dist);
             if (transform.position == closestPoint)
             {
-                preview.SetActive(false);
                 isColliding = true;
                 currCollidingObj = transform.gameObject;
                 Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
@@ -129,15 +129,12 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             originSet = true;
-            VectorLine forceLine = new VectorLine("NewForceLine", new List<Vector3>(), 30.0f);
-            forceLine.endCap = "Arrow";
-            forceLine.Draw3DAuto();
-            forceLine.points3.Add(originSphere.transform.position);
-            forceLine.points3.Add(originSphere.transform.position);
-            forceLine.SetColor(Color.blue);
-            domain.GetComponent<InitLines>().forceLineList.Add(forceLine);
-            
-            numLines = domain.GetComponent<InitLines>().forceLineList.Count;
+            currLine = new VectorLine("NewForceLine", new List<Vector3>(), 30.0f);
+            currLine.endCap = "Arrow";
+            currLine.Draw3DAuto();
+            currLine.points3.Add(originSphere.transform.position);
+            currLine.points3.Add(originSphere.transform.position);
+            currLine.SetColor(Color.blue);
 
         }
 
@@ -149,8 +146,8 @@ public class DrawForceVector : MonoBehaviour {
 
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
-                domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[0] = dest;
-                domain.GetComponent<InitLines>().forceLineList[numLines - 1].points3[1] = origin;
+                currLine.points3[0] = dest;
+                currLine.points3[1] = origin;
                 Vector3 dest_local = domain.transform.InverseTransformPoint(dest);
                 Vector3 origin_local = domain.transform.InverseTransformPoint(origin);
                 forceVectorLH = dest_local - origin_local;
@@ -172,9 +169,7 @@ public class DrawForceVector : MonoBehaviour {
             GameObject forcePoint;
             if (createdOrigin && (!isColliding || (isColliding && !(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))))
             {
-                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
-                VectorLine.Destroy(ref vline);
-                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
+                VectorLine.Destroy(ref currLine);
                 ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(originSphere.transform);
                 Destroy(originSphere);
                 createdOrigin = false;
@@ -182,9 +177,7 @@ public class DrawForceVector : MonoBehaviour {
             }
             else if(!createdOrigin && isColliding)
             {
-                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
-                VectorLine.Destroy(ref vline);
-                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
+                VectorLine.Destroy(ref currLine);
                 createdOrigin = false;
                 return;
             }
@@ -203,9 +196,7 @@ public class DrawForceVector : MonoBehaviour {
 
             if(InputOutputPoint.GetComponent<InputOutputInfo>().GetForcePoint() != null) //we already have a forcepoint
             {
-                VectorLine vline = domain.GetComponent<InitLines>().forceLineList[numLines - 1];
-                VectorLine.Destroy(ref vline);
-                domain.GetComponent<InitLines>().forceLineList.RemoveAt(numLines - 1);
+                VectorLine.Destroy(ref currLine);
                 Networking.GetComponent<Networking>().forceTransformList.Remove(forcePoint.transform);
                 Destroy(forcePoint);
                 createdOrigin = false;
@@ -213,13 +204,13 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             GameObject vectorLineObj = GameObject.Find("NewForceLine");
-            vectorLineObj.transform.parent = forcePoint.transform;
+            //vectorLineObj.transform.parent = forcePoint.transform;
             vectorLineObj.name = "ForceLine";
             //add to our force vector
             domain.GetComponent<InitLines>().forceVectorList.Add(forceVectorLH);
 
             //ForcePointInfo
-            forcePoint.GetComponent<ForcePointInfo>().SetConnectedPoint(InputOutputPoint);
+            forcePoint.GetComponent<ForcePointInfo>().Setup(InputOutputPoint, currLine, createdOrigin);
 
             //InputOutputInfo
             Vector3 scale = new Vector3(10, 10, 10);
@@ -292,7 +283,6 @@ public class DrawForceVector : MonoBehaviour {
     override
     public string ToString()
     {
-        int forceVectorIndex = 0;
         StringBuilder sb = new StringBuilder();
         foreach (Transform transform in Networking.GetComponent<Networking>().forceTransformList)
         {
@@ -301,16 +291,9 @@ public class DrawForceVector : MonoBehaviour {
             {
                 int inputIndex = Networking.GetComponent<Networking>().allTransformList.IndexOf(IOPoint.transform);
                 sb.Append(inputIndex + 1);
-                //Quaternion temp = new Quaternion();
-                Vector3 currVector = domain.GetComponent<InitLines>().forceVectorList[forceVectorIndex++];
-                Vector3 finalVector = new Vector3(currVector.x, currVector.y, -currVector.z);
-                //temp.x = currVector.x;
-                //temp.y = currVector.y;
-                //temp.z = currVector.z;
-
-                //temp.w = currVector.magnitude;
-
-                sb.Append(finalVector.ToString("F4")); //+ temp.ToString("!"));
+                //This vector is already in Right hand coordinate system
+                Vector3 currVector = IOPoint.GetComponent<InputOutputInfo>().GetForceVector();
+                sb.Append(currVector.ToString("F4")); //+ temp.ToString("!"));
                 sb.Append(";");
             }
         }
