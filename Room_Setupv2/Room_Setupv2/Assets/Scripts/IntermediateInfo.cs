@@ -119,6 +119,8 @@ public class IntermediateInfo : MonoBehaviour {
          */ 
         if (connectionList.Contains(connection))
             return false;
+        if (connection.CompareTag("Intermediate"))
+            return false;
 
         //first, generate a hemisphere
         bool dirTowardConnection = false;
@@ -138,7 +140,6 @@ public class IntermediateInfo : MonoBehaviour {
         hemisphere.transform.parent = intermediatePoint.transform;
         hemisphere.transform.localScale = scale;
         truncatedHemisphere = truncate(hemisphere, truncatedHemisphere);
-        
         return true;
 
     }
