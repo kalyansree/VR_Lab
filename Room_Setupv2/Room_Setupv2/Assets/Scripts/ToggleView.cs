@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * This script is used to toggle the visibility of hemispheres
+ * It will toggle hemispheres, truncated hemispheres, and freedom lines altogether.
+ */
 public class ToggleView : MonoBehaviour {
 
-    // Update is called once per frame
     public GameObject domain;
     bool visible;
 
