@@ -14,7 +14,7 @@ public class DrawForceVector : MonoBehaviour {
     public Vector3 forceVectorLH;
     public Vector3 forceVectorRH;
 
-
+    public GameObject forceCanvas;
     public Material hemisphereMaterial;
 
     Text forceText;
@@ -74,7 +74,7 @@ public class DrawForceVector : MonoBehaviour {
     private VectorLine currLine;
     // Use this for initialization
     void Start () {
-        forceText = GameObject.Find("Direction_Angles1").GetComponent<Text>();
+        forceText = forceCanvas.transform.Find("ForceText").GetComponent<Text>();
         preview.SetActive(false); //disable until we need it
         gridGranularity = (float)(1m / 20m);
         originSet = false;
@@ -83,7 +83,6 @@ public class DrawForceVector : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
         getClosestPoint();
         preview.transform.position = closestPoint;
         preview.transform.localScale = gameObject.transform.lossyScale;
@@ -112,6 +111,7 @@ public class DrawForceVector : MonoBehaviour {
 
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
+            forceCanvas.SetActive(true);
             if (isColliding && (currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))
             {
                 originSphere = currCollidingObj;
@@ -143,7 +143,6 @@ public class DrawForceVector : MonoBehaviour {
             origin = originSphere.transform.position;
             dest = closestPoint;
 
-
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
                 currLine.points3[0] = dest;
@@ -163,6 +162,8 @@ public class DrawForceVector : MonoBehaviour {
 
         if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
         {
+
+            forceCanvas.SetActive(false);
             originSet = false;
             GameObject destSphere;
             GameObject InputOutputPoint;

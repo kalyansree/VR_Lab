@@ -57,11 +57,7 @@ public class PointTypeSwitcher : MonoBehaviour {
             forceRadialMenu.SetActive(false);
 
         }
-        if(buttonNo == (int)Type.FORCE)
-        {
-            forceCanvas.SetActive(true);
-        }
-        else
+        if(buttonNo != (int)Type.FORCE)
         {
             forceCanvas.SetActive(false);
         }

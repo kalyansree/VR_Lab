@@ -197,7 +197,6 @@ public class DrawFreedomLine : MonoBehaviour
 
         if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
         {
-            VectorLine.Destroy(ref failLine);
             originSet = false;
             if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null || !InTruncation(originSphere, gameObject))
             {
@@ -205,11 +204,11 @@ public class DrawFreedomLine : MonoBehaviour
                 return;
             }
 
-            GameObject freedomLineObj = GameObject.Find("NewFreedomLine");
-            freedomLineObj.transform.parent = originSphere.transform;
-            freedomLineObj.name = "FreedomLine";
+            GameObject finalLineObj = GameObject.Find("NewFreedomLine");
+            finalLineObj.transform.parent = originSphere.transform;
+            finalLineObj.name = "FreedomLine";
 
-            originSphere.GetComponent<IntermediateInfo>().SetFreedomLine(dottedLine, freedomLineObj);
+            originSphere.GetComponent<IntermediateInfo>().SetFreedomLine(dottedLine, finalLineObj);
             originSphere.GetComponent<IntermediateInfo>().HighlightPoint(false);
             SwitchToConstraintMode(originSphere, gameObject);
         }
@@ -247,20 +246,15 @@ public class DrawFreedomLine : MonoBehaviour
         size.z = size.z / 10000;
         intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size);
         dottedLine = new VectorLine("NewLine", new List<Vector3>(), dottedTexture, 8.0f);
-        dottedLine.points3.Add(originSphere.transform.position);
-        dottedLine.points3.Add(originSphere.transform.position);
-        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
-        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
-        dottedLine.textureScale = 1.00f;
+        dottedLine.points3.Add(intermediatePoint.transform.position);
+        dottedLine.points3.Add(intermediatePoint.transform.position);
         dottedLine.Draw3DAuto();
-
+        freedomLineObj = GameObject.Find("NewLine");
         constraintMode = true;
     }
         
     private void constraintModeUpdate()
     {
-        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[0] = originSphere.transform.position;
-        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3[0] = preview.transform.position;
         preview.SetActive(true);
 
         GameObject plane = originSphere.GetComponent<IntermediateInfo>().GetPlane();
@@ -271,16 +265,26 @@ public class DrawFreedomLine : MonoBehaviour
         localCoord.x += 0.5F;
         localCoord.y += 0.5F;
         localCoord.z += 0.5F;
-        localCoord.z = -localCoord.z;
-        localCoord.z += 1.0F;
-        preview.transform.position = restrictCoords(localCoord);
-        preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(preview.transform.position);
-
+        if(checkCoords(localCoord) == true)
+        {
+            freedomLineObj.SetActive(true);
+            failLineObj.SetActive(false);
+        }
+        else
+        {
+            freedomLineObj.SetActive(false);
+            failLineObj.SetActive(true);
+        }
+       // preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(preview.transform.position);
+        dottedLine.textureScale = 1.00f;
         dottedLine.points3[0] = originSphere.transform.position;
         dottedLine.points3[1] = preview.transform.position;
 
+        failLine.points3[0] = originSphere.transform.position;
+        failLine.points3[1] = preview.transform.position;
 
-        if (OVRInput.GetDown(OVRInput.Button.One))
+
+        if (OVRInput.GetDown(OVRInput.Button.One) && checkCoords(localCoord))
         {
             GameObject newFixed = GameObject.Instantiate(preview);
             newFixed.AddComponent<SphereCollider>();
@@ -292,13 +296,19 @@ public class DrawFreedomLine : MonoBehaviour
             Networking.GetComponent<Networking>().addToList(newFixed);
 
             //Line
+            ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(originSphere.transform.position);
+            ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.Add(newFixed.transform.position);
 
             domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().lineTransformList.Add(newFixed.transform);
             lightObj.SetActive(true);
             plane.SetActive(false);
             VectorLine.Destroy(ref dottedLine);
+            VectorLine.Destroy(ref failLine);
+            freedomLineObj = null;
+            failLineObj = null;
             dottedLine = null;
+            
             constraintMode = false;            
             //create a new fixed point at the position of the preview
             // Hide Freedom Line and Freedom Point
@@ -322,42 +332,18 @@ public class DrawFreedomLine : MonoBehaviour
          */
     }
 
-    private Vector3 restrictCoords(Vector3 localCoord)
+    private bool checkCoords(Vector3 localCoord)
     {
-        if(localCoord.x < 0)
+        if(localCoord.x < 0 || localCoord.x > 1 ||
+            localCoord.y < 0 || localCoord.y > 1 ||
+            localCoord.z < 0 || localCoord.z > 1)
         {
-            localCoord.x = 0;
+            return false;
         }
-        else if(localCoord.x > 1)
+        else
         {
-            localCoord.x = 1;
+            return true;
         }
-
-        if (localCoord.y < 0)
-        {
-            localCoord.y = 0;
-        }
-        else if (localCoord.y > 1)
-        {
-            localCoord.y = 1;
-        }
-
-        if (localCoord.z < 0)
-        {
-            localCoord.z = 0;
-        }
-        else if (localCoord.z > 1)
-        {
-            localCoord.z = 1;
-        }
-
-        localCoord.x -= 0.5F;
-        localCoord.y -= 0.5F;
-        localCoord.z -= 1.0F;
-        localCoord.z = -localCoord.z;
-        localCoord.z -= 0.5F;
-
-        return domain.transform.TransformPoint(localCoord);
     }
 }
 
