@@ -55,6 +55,10 @@ public class Networking : MonoBehaviour {
             SendData(msg2);
             SendData(msg3);
             messageSet = false;
+        }
+
+        if (theStream.DataAvailable)
+        {
             String retMsg = theReader.ReadToEnd();
             plotDeformedCoords(retMsg);
         }

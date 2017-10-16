@@ -75,6 +75,8 @@ public class DrawFreedomLine : MonoBehaviour
 
     private GameObject testSphere;
 
+    private int numConstraints;
+
 
 
     // Use this for initialization
@@ -201,6 +203,7 @@ public class DrawFreedomLine : MonoBehaviour
             if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null || !InTruncation(originSphere, gameObject))
             {
                 VectorLine.Destroy(ref dottedLine);
+                VectorLine.Destroy(ref failLine);
                 return;
             }
 
@@ -251,6 +254,7 @@ public class DrawFreedomLine : MonoBehaviour
         dottedLine.Draw3DAuto();
         freedomLineObj = GameObject.Find("NewLine");
         constraintMode = true;
+        numConstraints = 0;
     }
         
     private void constraintModeUpdate()
@@ -286,6 +290,7 @@ public class DrawFreedomLine : MonoBehaviour
 
         if (OVRInput.GetDown(OVRInput.Button.One) && checkCoords(localCoord))
         {
+            numConstraints++;
             GameObject newFixed = GameObject.Instantiate(preview);
             newFixed.AddComponent<SphereCollider>();
             newFixed.transform.parent = domain.transform;
@@ -301,17 +306,9 @@ public class DrawFreedomLine : MonoBehaviour
 
             domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().lineTransformList.Add(newFixed.transform);
-            lightObj.SetActive(true);
-            plane.SetActive(false);
-            VectorLine.Destroy(ref dottedLine);
-            VectorLine.Destroy(ref failLine);
-            freedomLineObj = null;
-            failLineObj = null;
-            dottedLine = null;
-            
-            constraintMode = false;            
-            //create a new fixed point at the position of the preview
-            // Hide Freedom Line and Freedom Point
+
+            if (numConstraints == 2)
+                switchToRegularUpdateMode(plane);
         }
         /*
          * 1. Have origin sphere already locked where the intermediate point is.
@@ -330,6 +327,20 @@ public class DrawFreedomLine : MonoBehaviour
          * Modify delete tool to allow deleting spheres not on the grid
          * 
          */
+    }
+
+    private void switchToRegularUpdateMode(GameObject plane)
+    {
+        lightObj.SetActive(true);
+        plane.SetActive(false);
+        VectorLine.Destroy(ref dottedLine);
+        VectorLine.Destroy(ref failLine);
+        freedomLineObj = null;
+        failLineObj = null;
+        dottedLine = null;
+
+        constraintMode = false;
+
     }
 
     private bool checkCoords(Vector3 localCoord)
