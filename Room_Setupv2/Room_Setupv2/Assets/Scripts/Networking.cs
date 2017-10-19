@@ -235,6 +235,13 @@ public class Networking : MonoBehaviour {
         for(int i = 0; i < coords.Length-1; i++)
         {
             Vector3 newCoords = getLocalCoords(coords[i]);
+            //--------------------------------------TODO----------------------------------------------
+            //The below line will no longer work for intermediate mesh points
+            // suggest: leverage allTransformList length to get number of nodes
+            // use that information to understand when we have reached intermediate node coordinates
+            // maybe construct new list of vector3s and store newCoords (vector3) in there
+            // we do not want to create a bunch of empty game objects, just want to store positions so that we can use them to draw lines later
+            // This new list should also contain the original points so that the indices in the edge string can still be used to index into this new array
             GameObject newObj = GameObject.Instantiate(allTransformList[i].gameObject, domain.transform);
 
             List<GameObject> children = new List<GameObject>();
@@ -251,7 +258,11 @@ public class Networking : MonoBehaviour {
             newObj.transform.localPosition = newCoords;
         }
         string[] indices = strArr[1].Split(' ');
+        //--------------------------------------TODO----------------------------------------------
         //Modify lineTransformList
+        //Need to construct a new spline between each node
+        //instead of updating every intermediate mesh coord, maybe just make these spline gameObjects children of the main gameObject
+        // See if there is too much deviation when scaling / rotating to use this hack
         for (int i = 0; i < indices.Length - 1; i++)
         {
             if (string.Compare(indices[i], "") != 0)

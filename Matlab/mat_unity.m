@@ -190,7 +190,8 @@ for j = 1
 end
 utemp = reshape(u, 6, [])';
 utemp = utemp(:,1:3);
-a = zeros(NNODE,1);
+utemp = utemp + [nx, ny, nz];
+a = [1:NNODE]';
 u = [a , utemp];
 end
 
