@@ -29,12 +29,17 @@ public class InitLines : MonoBehaviour {
     public Texture2D lineTex;
     public Texture2D backTex;
 
+    public List<List<Vector3>> pointLists;
+    public List<VectorLine> deformedLineList;
+
     void Awake()
     {
         VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
     }
 
     void Start () {
+        deformedLineList = new List<VectorLine>();
+        pointLists = new List<List<Vector3>>();
         VectorLine.SetCamera3D(myCamera);
         //Wireframe of cube
         VectorLine line = new VectorLine("Wireframe", new List<Vector3>(), 1.0f, LineType.Discrete);
@@ -44,9 +49,8 @@ public class InitLines : MonoBehaviour {
         line.drawTransform = gameObject.transform;
         line.Draw3DAuto();
 
-        mainLine = new VectorLine("MainLine", new List<Vector3>(), 4.0f);
+        mainLine = new VectorLine("MainLine", new List<Vector3>(), 10.0f);
         mainLine.Draw3DAuto();
-
 
         deformedLine = new VectorLine("deformedLine", new List<Vector3>(), 10.0f);
         deformedLine.Draw3DAuto();
@@ -87,5 +91,21 @@ public class InitLines : MonoBehaviour {
                 i++;
             }
         }
+
+        for (i = 0; i < deformedLineList.Count; i++)
+        {
+            List<Vector3> worldCoords = new List<Vector3>();
+            foreach (Vector3 point in pointLists[i])
+            {
+                worldCoords.Add(transform.TransformPoint(point));
+            }
+            deformedLineList[i].points3 = worldCoords;
+        }
+    }
+
+    public void addDeformedLine(VectorLine vectorLine, List<Vector3> pointList)
+    {
+        deformedLineList.Add(vectorLine);
+        pointLists.Add(pointList);
     }
 }

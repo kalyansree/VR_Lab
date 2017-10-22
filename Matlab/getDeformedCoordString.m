@@ -1,4 +1,4 @@
-function finalString = getDeformedCoordString(node)
+function finalString = getDeformedCoordString(node, nnode)
     finalString = '';
     for i = 1:size(node,1)
         finalString = strcat(finalString, num2str(node(i,1)));
@@ -12,7 +12,9 @@ function finalString = getDeformedCoordString(node)
             
         end
         finalString = strcat(finalString, ');');
-        
+        if i == nnode
+            finalString = strcat(finalString, '|');
+        end
     end
     finalString = finalString{1};
 end

@@ -23,15 +23,15 @@ public class Networking : MonoBehaviour {
     String msg2;
     String msg3;
     private bool messageSet;
+    private bool readyToReceive;
     public List<Transform> allTransformList;
     public List<Transform> forceTransformList;
     public List<Transform> deformedTransformList;
 
-
+    public Camera myCamera;
     public GameObject domain;
     public GameObject force;
     public Canvas submitCanvas;
-
     private string errorMsg;
 
     private int inputCount;
@@ -54,13 +54,16 @@ public class Networking : MonoBehaviour {
             SendData(msg1);
             SendData(msg2);
             SendData(msg3);
+            readyToReceive = true;
             messageSet = false;
         }
 
-        if (theStream.DataAvailable)
+        if (readyToReceive && theStream.DataAvailable)
         {
             String retMsg = theReader.ReadToEnd();
             plotDeformedCoords(retMsg);
+            readyToReceive = false;
+
         }
     }
 
@@ -230,20 +233,25 @@ public class Networking : MonoBehaviour {
 
     private void plotDeformedCoords(string str)
     {
+        VectorLine.SetCamera3D(myCamera);
         string[] strArr = str.Split('|');
         string[] coords = strArr[0].Split(';');
-        for(int i = 0; i < coords.Length-1; i++)
+        string[] meshCoords = strArr[1].Split(';');
+        string[] indices = strArr[2].Split(' ');
+        string[] meshIndexStrings = strArr[3].Split(';');
+        List<Vector3> vectorList = new List<Vector3>();
+        int numPoints = coords.Length - 1;
+        int numMesh = meshCoords.Length - 1;
+        print("Number of Points received: " + numPoints);
+        print("Number of Mesh Points received: " + numMesh);
+        for (int i = 0; i < numPoints; i++) //stop one before because the last one is empty
         {
             Vector3 newCoords = getLocalCoords(coords[i]);
-            //--------------------------------------TODO----------------------------------------------
-            //The below line will no longer work for intermediate mesh points
-            // suggest: leverage allTransformList length to get number of nodes
-            // use that information to understand when we have reached intermediate node coordinates
-            // maybe construct new list of vector3s and store newCoords (vector3) in there
-            // we do not want to create a bunch of empty game objects, just want to store positions so that we can use them to draw lines later
-            // This new list should also contain the original points so that the indices in the edge string can still be used to index into this new array
-            GameObject newObj = GameObject.Instantiate(allTransformList[i].gameObject, domain.transform);
+            //Vector3 worldPosNewCoords = domain.transform.TransformPoint(newCoords);
+            vectorList.Add(newCoords);
 
+            GameObject newObj = GameObject.Instantiate(allTransformList[i].gameObject, domain.transform);
+            
             List<GameObject> children = new List<GameObject>();
             foreach (Transform child in newObj.transform)
             {
@@ -254,26 +262,47 @@ public class Networking : MonoBehaviour {
             Color color = ((Renderer)newObj.GetComponent<Renderer>()).material.color;
             color.a = 1F;
             ((Renderer)newObj.GetComponent<Renderer>()).material.color = color;
-            deformedTransformList.Add(newObj.transform);
             newObj.transform.localPosition = newCoords;
+            deformedTransformList.Add(newObj.transform);
         }
-        string[] indices = strArr[1].Split(' ');
+        //add the mesh coordinates too
+        for (int i = 0; i < numMesh; i++)
+        {
+            //Vector3 worldPosNewCoords = domain.transform.TransformPoint(getLocalCoords(meshCoords[i]));
+            vectorList.Add(getLocalCoords(meshCoords[i]));
+        }
         //--------------------------------------TODO----------------------------------------------
         //Modify lineTransformList
         //Need to construct a new spline between each node
         //instead of updating every intermediate mesh coord, maybe just make these spline gameObjects children of the main gameObject
         // See if there is too much deviation when scaling / rotating to use this hack
-        for (int i = 0; i < indices.Length - 1; i++)
-        {
-            if (string.Compare(indices[i], "") != 0)
-            {
-                domain.GetComponent<InitLines>().deformedLineTransformList.Insert(i,deformedTransformList[int.Parse(indices[i])-1]);
-                domain.GetComponent<InitLines>().deformedLine.points3.Add(deformedTransformList[int.Parse(indices[i]) - 1].position);
-            }
-            
-        }
 
-        domain.GetComponent<InitLines>().deformedLine.SetColor(Color.red);
+        //for(int i = 0; i < indices.Length - 1; i++)
+        //{
+        //    domain.GetComponent<InitLines>().deformedLineTransformList.Insert(i, deformedTransformList[int.Parse(indices[i]) - 1]);
+        //    domain.GetComponent<InitLines>().deformedLine.points3.Add(deformedTransformList[int.Parse(indices[i]) - 1].position);
+        //}
+
+        for (int i = 0; i < meshIndexStrings.Length - 1; i++)
+        {
+            VectorLine line = null;
+            GameObject vectorLineObj = null;
+            List<Vector3> splinePointList = null;
+            string[] currMeshIndices = meshIndexStrings[i].Split(' ');
+            splinePointList = new List<Vector3>();
+            for (int j = 0; j < currMeshIndices.Length; j++)
+            {
+                int index = int.Parse(currMeshIndices[j]) - 1;
+                splinePointList.Add(vectorList[index]);
+            }
+            line = new VectorLine("Spline", splinePointList, 10.0f, LineType.Continuous, Joins.Fill);
+            line.Draw3DAuto();
+            line.SetColor(Color.red);
+            vectorLineObj = GameObject.Find("Spline");
+            vectorLineObj.name = "Complete Spline";
+            domain.GetComponent<InitLines>().addDeformedLine(line, splinePointList);
+
+        }
     }
 
     private Vector3 getLocalCoords(string coordString)
