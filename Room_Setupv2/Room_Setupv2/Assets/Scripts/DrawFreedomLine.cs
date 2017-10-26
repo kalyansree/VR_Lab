@@ -319,11 +319,6 @@ public class DrawFreedomLine : MonoBehaviour
          * 
          * 3. Hide freedom line and freedom point after constraint is placed.
          * 
-         * 
-         * TODO:
-         * If constraint is deleted, or another connection is added to this point,
-         * get rid of everything (including the invisible freedom line / point.
-         * 
          * Modify delete tool to allow deleting spheres not on the grid
          * 
          */
@@ -331,6 +326,7 @@ public class DrawFreedomLine : MonoBehaviour
 
     private void switchToRegularUpdateMode(GameObject plane)
     {
+        LeftRadialMenu.SetActive(true);
         lightObj.SetActive(true);
         plane.SetActive(false);
         VectorLine.Destroy(ref dottedLine);
@@ -355,6 +351,12 @@ public class DrawFreedomLine : MonoBehaviour
         {
             return true;
         }
+    }
+
+    //TODO: get this done
+    private void removeDeformedPointsAndLines()
+    {
+
     }
 }
 

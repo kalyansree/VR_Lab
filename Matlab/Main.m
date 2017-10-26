@@ -14,13 +14,11 @@ nnode = size(node,1);
 elem = getElementArray(edgeString, nmesh);
 force = getForceArray(forceString);
 disp_scaling = 1;
-[ u ] = mat_unity( node, I, O, F, T, elem, force, disp_scaling);
-%u = u * disp_scaling + node;
-%Can comment out the line below once the returned u is working correctly%
-%Basically this is just testing code%
-%node(:,2:size(node,2)) = node(:,2:size(node,2)) + 0.1;%
+%the returned value u are the new deformed coordinates, as well as some
+%intermediate coordinates between each point
+[ u ] = mat_unity( node, I, O, F, T, elem, force, disp_scaling);;
 
-%Again, use u here instead of node once everything is working%
+
 retString = getDeformedCoordString(u, nnode);
 edgeString = getDeformedEdgeString(edgeString, nnode, nmesh); 
 fwrite(tcpip,retString);

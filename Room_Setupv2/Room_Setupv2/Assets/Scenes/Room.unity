@@ -2909,7 +2909,7 @@ MonoBehaviour:
   RightController: {fileID: 1687697853}
   Networking: {fileID: 2095464902}
   dottedTexture: {fileID: 2800000, guid: a521aaf285e4ed69ed48aa5ae833cd40, type: 3}
-  LeftRadialMenu: {fileID: 1559129025}
+  LeftRadialMenu: {fileID: 1509738522}
   myCamera: {fileID: 369225325}
   preview: {fileID: 1864835675}
   lightObj: {fileID: 1181706282}
@@ -6940,6 +6940,10 @@ CanvasRenderer:
 GameObject:
   m_PrefabParentObject: {fileID: 122840, guid: d5fe2f7f9d3e98a478d151422643620c, type: 2}
   m_PrefabInternal: {fileID: 1845157888}
+--- !u!1 &1509738522 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 128202, guid: d5fe2f7f9d3e98a478d151422643620c, type: 2}
+  m_PrefabInternal: {fileID: 432003752}
 --- !u!1 &1546037210 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 158226, guid: 84c8b8609f9bb434eaf5248f17ff1293, type: 2}
