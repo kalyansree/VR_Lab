@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 6}
-  m_MinSize: {x: 950, y: 542}
+  m_MinSize: {x: 950, y: 521}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -42,7 +42,7 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 583, y: 492}
+  m_MinSize: {x: 581, y: 471}
   m_MaxSize: {x: 14004, y: 14042}
   vertical: 0
   controlID: 9
@@ -89,8 +89,8 @@ MonoBehaviour:
     y: 0
     width: 401
     height: 676
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
@@ -143,7 +143,7 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 997
-  m_MinSize: {x: 950, y: 542}
+  m_MinSize: {x: 950, y: 521}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &7
 MonoBehaviour:
@@ -206,7 +206,7 @@ MonoBehaviour:
     y: 0
     width: 1643
     height: 947
-  m_MinSize: {x: 306, y: 492}
+  m_MinSize: {x: 304, y: 471}
   m_MaxSize: {x: 10002, y: 14042}
   vertical: 1
   controlID: 10
@@ -230,8 +230,8 @@ MonoBehaviour:
     y: 0
     width: 1643
     height: 676
-  m_MinSize: {x: 306, y: 221}
-  m_MaxSize: {x: 8006, y: 4021}
+  m_MinSize: {x: 304, y: 200}
+  m_MaxSize: {x: 8004, y: 4021}
   vertical: 0
   controlID: 11
 --- !u!114 &11
@@ -293,9 +293,9 @@ MonoBehaviour:
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -0.10211027, y: 1.6394775, z: 0.9532169}
+    m_Target: {x: -0.11968094, y: 1.5020847, z: 0.88629353}
     speed: 2
-    m_Value: {x: -0.10211027, y: 1.6394775, z: 0.9532169}
+    m_Value: {x: -0.11968094, y: 1.5020847, z: 0.88629353}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -318,13 +318,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: -0.112599425, y: 0.3101699, z: -0.03702543, w: -0.9432631}
+    m_Target: {x: -0.16757677, y: 0.32973647, z: -0.05959646, w: -0.9271679}
     speed: 2
-    m_Value: {x: -0.11259941, y: 0.31016988, z: -0.037025426, w: -0.943263}
+    m_Value: {x: -0.16757677, y: 0.32973647, z: -0.059596457, w: -0.9271679}
   m_Size:
-    m_Target: 0.8983056
+    m_Target: 1.1983056
     speed: 2
-    m_Value: 0.8983056
+    m_Value: 1.1983056
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -407,10 +407,10 @@ MonoBehaviour:
   m_LastProjectPath: C:\Users\kazuu\Documents\GitHub\KrishnanLab_VR\Room_Setupv2\Room_Setupv2
   m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
+    scrollPos: {x: 0, y: 87}
     m_SelectedIDs: ec290000
     m_LastClickedID: 10732
-    m_ExpandedIDs: 00000000b42700007a2800004829000062290000cc290000be2a0000c42a0000442b00005a2b0000762b0000a62b0000b22b0000f22b0000402c0000162d0000a02e0000402f00008e2f0000ba2f00001836000000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000b42700007a2800004829000062290000cc290000be2a0000c42a0000442b00005a2b0000762b0000a62b0000b22b0000f22b0000402c0000162d0000a02e0000402f00008e2f0000ba2f00001a36000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -438,7 +438,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000b42700007a2800004829000062290000cc290000be2a0000c42a0000442b00005a2b0000762b0000a62b0000b22b0000f22b0000402c0000162d0000a02e0000402f00008e2f0000ba2f000018360000
+    m_ExpandedIDs: 00000000b42700007a2800004829000062290000cc290000be2a0000c42a0000442b00005a2b0000762b0000a62b0000b22b0000f22b0000402c0000162d0000a02e0000402f00008e2f0000ba2f00001a360000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -465,7 +465,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000527f0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -554,9 +554,9 @@ MonoBehaviour:
     height: 655
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 9e320000
-    m_LastClickedID: 12958
-    m_ExpandedIDs: dafbffff000000001a3200005634000090340000b2340000
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: dafbffff000000001a320000283300007633000092340000b4340000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

@@ -3428,7 +3428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allowDrag: 1
-  restrictToBoundary: 1
+  restrictToBoundary: 0
   restrictToInside: 0
   domain: {fileID: 848136301}
   RightController: {fileID: 1687697853}

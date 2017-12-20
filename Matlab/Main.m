@@ -13,10 +13,10 @@ nmesh = 10;
 nnode = size(node,1);
 elem = getElementArray(edgeString, nmesh);
 force = getForceArray(forceString);
-disp_scaling = 1;
+disp_scaling = 0.001;
 %the returned value u are the new deformed coordinates, as well as some
 %intermediate coordinates between each point
-[ u ] = mat_unity( node, I, O, F, T, elem, force, disp_scaling);;
+[ u ] = mat_unity( node, I, O, F, T, elem, force, disp_scaling);
 
 
 retString = getDeformedCoordString(u, nnode);
