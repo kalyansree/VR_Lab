@@ -19,6 +19,10 @@ TagManager:
   - Output
   - Intermediate
   - Fixed
+  - Force
+  - Hemisphere
+  - Final
+  - Freedom
   layers:
   - Default
   - TransparentFX
@@ -29,9 +33,9 @@ TagManager:
   - 
   - 
   - grabbable
-  - 
-  - 
-  - 
+  - hemisphere
+  - final
+  - point
   - 
   - 
   - 

@@ -46,10 +46,14 @@ namespace VRTK
             public float maxAllowedPerFrameAngleDifference = 1.5f;
         }
 
-        [Header("General Renderer Settings")]
+        [Header("Renderer Supplement Settings")]
 
         [Tooltip("An optional Play Area Cursor generator to add to the destination position of the pointer tip.")]
         public VRTK_PlayAreaCursor playareaCursor;
+        [Tooltip("A custom VRTK_PointerDirectionIndicator to use to determine the rotation given to the destination set event.")]
+        public VRTK_PointerDirectionIndicator directionIndicator;
+
+        [Header("General Renderer Settings")]
 
         [Tooltip("A custom raycaster to use for the pointer's raycasts to ignore.")]
         public VRTK_CustomRaycast customRaycast;
@@ -76,6 +80,7 @@ namespace VRTK
         protected VRTK_Pointer controllingPointer;
         protected RaycastHit destinationHit = new RaycastHit();
         protected Material defaultMaterial;
+        protected Color previousColor;
         protected Color currentColor;
 
         protected VRTK_PolicyList invalidListPolicy;
@@ -115,11 +120,12 @@ namespace VRTK
             navMeshCheckDistance = givenNavMeshCheckDistance;
             headsetPositionCompensation = givenHeadsetPositionCompensation;
 
-            if (controllingPointer != null && controllingPointer.interactWithObjects && controllingPointer.controller && !objectInteractor)
+            if (controllingPointer != null && controllingPointer.interactWithObjects && controllingPointer.controller != null && objectInteractor == null)
             {
                 controllerGrabScript = controllingPointer.controller.GetComponent<VRTK_InteractGrab>();
                 CreateObjectInteractor();
             }
+            SetupDirectionIndicator();
         }
 
         /// <summary>
@@ -170,6 +176,11 @@ namespace VRTK
             {
                 playareaCursor.SetHeadsetPositionCompensation(headsetPositionCompensation);
                 playareaCursor.ToggleState(IsCursorVisible());
+            }
+
+            if (directionIndicator != null)
+            {
+                UpdateDirectionIndicator();
             }
         }
 
@@ -356,7 +367,7 @@ namespace VRTK
             {
                 validNavMeshLocation = true;
             }
-            return (validNavMeshLocation && destinationHit.transform && !(VRTK_PolicyList.Check(destinationHit.transform.gameObject, invalidListPolicy)));
+            return (validNavMeshLocation && destinationHit.collider != null && !(VRTK_PolicyList.Check(destinationHit.collider.gameObject, invalidListPolicy)));
         }
 
         protected virtual void ToggleElement(GameObject givenObject, bool pointerState, bool actualState, VisibilityStates givenVisibility, ref bool currentVisible)
@@ -429,6 +440,7 @@ namespace VRTK
 
         protected virtual void ChangeColor(Color givenColor)
         {
+            previousColor = currentColor;
             if ((playareaCursor != null && playareaCursor.IsActive() && playareaCursor.HasCollided()) || !ValidDestination() || (controllingPointer != null && !controllingPointer.CanSelect()))
             {
                 givenColor = invalidCollisionColor;
@@ -439,6 +451,26 @@ namespace VRTK
                 currentColor = givenColor;
                 ChangeMaterial(givenColor);
             }
+
+            if (previousColor != currentColor)
+            {
+                EmitStateEvent();
+            }
+        }
+
+        protected virtual void EmitStateEvent()
+        {
+            if (controllingPointer != null)
+            {
+                if (IsValidCollision())
+                {
+                    controllingPointer.OnPointerStateValid();
+                }
+                else
+                {
+                    controllingPointer.OnPointerStateInvalid();
+                }
+            }
         }
 
         protected virtual void ChangeMaterial(Color givenColor)
@@ -446,6 +478,11 @@ namespace VRTK
             if (playareaCursor != null)
             {
                 playareaCursor.SetMaterialColor(givenColor, IsValidCollision());
+            }
+
+            if (directionIndicator != null)
+            {
+                directionIndicator.SetMaterialColor(givenColor, IsValidCollision());
             }
         }
 
@@ -504,7 +541,7 @@ namespace VRTK
                 VRTK_PlayerObject.SetPlayerObject(objectInteractorAttachPoint, VRTK_PlayerObject.ObjectTypes.Pointer);
             }
 
-            ScaleObjectInteractor(Vector3.one * 0.025f);
+            ScaleObjectInteractor(Vector3.one);
             objectInteractor.SetActive(false);
         }
 
@@ -512,7 +549,7 @@ namespace VRTK
         {
             if (objectInteractor != null)
             {
-                objectInteractor.transform.localScale = scaleAmount;
+                VRTK_SharedMethods.SetGlobalScale(transform, scaleAmount);
             }
         }
 
@@ -545,6 +582,20 @@ namespace VRTK
             {
                 playareaCursor.SetPlayAreaCursorTransform(location);
             }
+        }
+
+        protected virtual void SetupDirectionIndicator()
+        {
+            if (directionIndicator != null && controllingPointer != null && controllingPointer.controller != null)
+            {
+                directionIndicator.Initialize(controllingPointer.controller);
+            }
+        }
+
+        protected virtual void UpdateDirectionIndicator()
+        {
+            RaycastHit destinationHit = GetDestinationHit();
+            directionIndicator.SetPosition((controllingPointer.IsPointerActive() && destinationHit.collider != null), destinationHit.point);
         }
     }
 }

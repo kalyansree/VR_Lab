@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Vectrosity;
+using UnityEngine.UI;
 /*
  * This script is applied to all of the different types of Sphere objects attached to the right controller.
  * It controls how and when the spheres are allowed to be placed.
  * Note that each type of sphere has its own instance of this class, so don't assume that all spheres are looking at the same instances of these variables/objects. 
  * Use static variables if all spheres need to see the same object or value. 
  */
-public class SpawnObject : MonoBehaviour { 
+public class SpawnObject : MonoBehaviour {
 
     //--- PRIVATE VARIABLES --//
 
@@ -66,25 +67,32 @@ public class SpawnObject : MonoBehaviour {
     [Tooltip("GameObject of Networking")]
     public GameObject Networking;
 
+    public Text coordText;
+
+
+    //Materials
+    public Material HemisphereMaterial1;
+    public Material truncatedHemisphereMaterial;
+    public Material planeMaterial;
     void Start()
     {
         preview.SetActive(false); //disable until we need it
         gridGranularity = (float)(1m / 20m);
         originSet = false;
         isColliding = false;
-        allowPlacing = false;        
+        allowPlacing = false;
     }
     void Update()
     {
         var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
-        
+
         if (distToCube < 0.1)
-        {            
+        {
             getClosestPoint();
             preview.transform.position = closestPoint;
             preview.transform.localScale = gameObject.transform.lossyScale;
             Vector3 pos = domain.transform.InverseTransformPoint(preview.transform.position);
-            double xPos = System.Math.Round(pos.x,3);
+            double xPos = System.Math.Round(pos.x, 3);
             double yPos = System.Math.Round(pos.y, 3);
             double zPos = System.Math.Round(pos.z, 3);
 
@@ -113,10 +121,10 @@ public class SpawnObject : MonoBehaviour {
             //print(dist);
             if (transform.position == closestPoint && distToCube < 0.1)
             {
-                preview.SetActive(false);
+                preview.SetActive(true);
                 isColliding = true;
                 currCollidingObj = transform.gameObject;
-                if(allowDrag)
+                if (allowDrag)
                 {
                     Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
                     color.a = 1;
@@ -154,6 +162,7 @@ public class SpawnObject : MonoBehaviour {
             else
             {
                 originSphere = createPoint();
+                return;
             }
         }
         if (OVRInput.Get(OVRInput.Button.One) && originSet && allowDrag)
@@ -175,13 +184,13 @@ public class SpawnObject : MonoBehaviour {
         {
             originSet = false;
             GameObject destSphere;
-            if (isColliding)
+            if (isColliding && origin != dest)
             {
                 destSphere = currCollidingObj;
             }
             else
             {
-                if (!allowPlacing) //if we aren't allowed to place, we shouldn't
+                if (!allowPlacing || origin == dest) //if we aren't allowed to place, we shouldn't
                 {
                     ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);
                     ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.points3.RemoveAt(--numPoints);
@@ -189,17 +198,40 @@ public class SpawnObject : MonoBehaviour {
                 }
                 else
                 {
-                    destSphere = createPoint();                    
+                    destSphere = createPoint();
                 }
             }
 
             //add to our list of line coordinates
             domain.GetComponent<InitLines>().lineTransformList.Add(originSphere.transform);
             domain.GetComponent<InitLines>().lineTransformList.Add(destSphere.transform);
+
+
+            //Inputs and Outputs
+            if(originSphere.CompareTag("Input") || originSphere.CompareTag("Output"))
+            {
+                originSphere.GetComponent<InputOutputInfo>().addConnection(destSphere);
+            }
+            if (destSphere.CompareTag("Input") || destSphere.CompareTag("Output"))
+            {
+                destSphere.GetComponent<InputOutputInfo>().addConnection(originSphere);
+            }
+
+            //Intermediate Points
+            if(originSphere.CompareTag("Intermediate"))
+            {
+                originSphere.GetComponent<IntermediateInfo>().addConnection(destSphere, true);
+            }
+            if (destSphere.CompareTag("Intermediate"))
+            {
+                destSphere.GetComponent<IntermediateInfo>().addConnection(originSphere, false);
+            }
+
+
         }
     }
 
-    void getClosestPoint()
+    private void getClosestPoint()
     {
         float tileSize = domain.transform.localScale.x * gridGranularity;
         Vector3 vectorToLoc = gameObject.transform.position - domain.transform.position;
@@ -217,7 +249,7 @@ public class SpawnObject : MonoBehaviour {
         }
     }
 
-    GameObject createPoint()
+    private GameObject createPoint()
     {
         GameObject newObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         newObj.transform.position = closestPoint;
@@ -228,10 +260,21 @@ public class SpawnObject : MonoBehaviour {
         {
             rend.material = gameObject.GetComponent<Renderer>().material;
         }
-        ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Add(newObj.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).addToList(newObj);
         newObj.transform.SetParent(domain.transform, true);
         //print(newObj.transform.localPosition);
         //print(newObj.transform.position);
+        if(newObj.CompareTag("Input") || newObj.CompareTag("Output"))
+        {
+            newObj.AddComponent<InputOutputInfo>();
+        } else if(newObj.CompareTag("Intermediate"))
+        {
+            newObj.AddComponent<IntermediateInfo>();
+            newObj.GetComponent<IntermediateInfo>().SetupMaterials(HemisphereMaterial1, truncatedHemisphereMaterial, planeMaterial);
+            newObj.GetComponent<IntermediateInfo>().SetObjs(newObj, domain);
+        }
+        newObj.name = newObj.tag;
+        newObj.layer = LayerMask.NameToLayer("point");
         return newObj;
     }
 }

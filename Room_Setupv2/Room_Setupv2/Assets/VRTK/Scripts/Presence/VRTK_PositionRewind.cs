@@ -4,6 +4,24 @@ namespace VRTK
     using UnityEngine;
 
     /// <summary>
+    /// Event Payload
+    /// </summary>
+    /// <param name="collidedPosition">The position of the play area when it collded.</param>
+    /// <param name="resetPosition">The position of the play area when it has been rewinded to a safe position.</param>
+    public struct PositionRewindEventArgs
+    {
+        public Vector3 collidedPosition;
+        public Vector3 resetPosition;
+    }
+
+    /// <summary>
+    /// Event Payload
+    /// </summary>
+    /// <param name="sender">this object</param>
+    /// <param name="e"><see cref="PositionRewindEventArgs"/></param>
+    public delegate void PositionRewindEventHandler(object sender, PositionRewindEventArgs e);
+
+    /// <summary>
     /// The Position Rewind script is used to reset the user back to a good known standing position upon receiving a headset collision event.
     /// </summary>
     /// <example>
@@ -29,6 +47,8 @@ namespace VRTK
 
         [Tooltip("The colliders to determine if a collision has occured for the rewind to be actioned.")]
         public CollisionDetectors collisionDetector = CollisionDetectors.HeadsetOnly;
+        [Tooltip("If this is checked then the collision detector will ignore colliders set to `Is Trigger = true`.")]
+        public bool ignoreTriggerColliders = false;
         [Tooltip("The amount of time from original headset collision until the rewind to the last good known position takes place.")]
         public float rewindDelay = 0.5f;
         [Tooltip("The additional distance to push the play area back upon rewind to prevent being right next to the wall again.")]
@@ -47,6 +67,11 @@ namespace VRTK
         [Tooltip("The VRTK Headset Collision script to use to determine if the headset is colliding. If this is left blank then the script will need to be applied to the same GameObject.")]
         public VRTK_HeadsetCollision headsetCollision;
 
+        /// <summary>
+        /// Emitted when the draggable item is successfully dropped.
+        /// </summary>
+        public event PositionRewindEventHandler PositionRewindToSafe;
+
         protected Transform headset;
         protected Transform playArea;
 
@@ -59,6 +84,14 @@ namespace VRTK
         protected bool isColliding = false;
         protected bool isRewinding = false;
         protected float collideTimer = 0f;
+
+        public virtual void OnPositionRewindToSafe(PositionRewindEventArgs e)
+        {
+            if (PositionRewindToSafe != null)
+            {
+                PositionRewindToSafe(this, e);
+            }
+        }
 
         /// <summary>
         /// The SetLastGoodPosition method stores the current valid play area and headset position.
@@ -78,8 +111,9 @@ namespace VRTK
         /// </summary>
         public virtual void RewindPosition()
         {
-            if (lastGoodStandingPosition != null && headset != null)
+            if (headset != null)
             {
+                Vector3 storedPosition = playArea.position;
                 Vector3 resetVector = lastGoodHeadsetPosition - headset.position;
                 Vector3 moveOffset = resetVector.normalized * pushbackDistance;
                 playArea.position += resetVector + moveOffset;
@@ -87,6 +121,7 @@ namespace VRTK
                 {
                     bodyPhysics.ResetVelocities();
                 }
+                OnPositionRewindToSafe(SetEventPayload(storedPosition));
             }
         }
 
@@ -137,6 +172,14 @@ namespace VRTK
             }
         }
 
+        protected virtual PositionRewindEventArgs SetEventPayload(Vector3 previousPosition)
+        {
+            PositionRewindEventArgs e;
+            e.collidedPosition = previousPosition;
+            e.resetPosition = playArea.position;
+            return e;
+        }
+
         protected virtual bool CrouchThresholdReached()
         {
             float floorVariant = 0.005f;
@@ -167,8 +210,13 @@ namespace VRTK
             }
         }
 
-        protected virtual void StartCollision(GameObject target)
+        protected virtual void StartCollision(GameObject target, Collider collider)
         {
+            if (ignoreTriggerColliders && collider.isTrigger)
+            {
+                return;
+            }
+
             if (!VRTK_PolicyList.Check(target, targetListPolicy))
             {
                 isColliding = true;
@@ -180,8 +228,13 @@ namespace VRTK
             }
         }
 
-        protected virtual void EndCollision()
+        protected virtual void EndCollision(Collider collider)
         {
+            if (ignoreTriggerColliders && collider != null && collider.isTrigger)
+            {
+                return;
+            }
+
             isColliding = false;
             hasCollided = false;
             isRewinding = false;
@@ -248,22 +301,22 @@ namespace VRTK
 
         private void StartColliding(object sender, BodyPhysicsEventArgs e)
         {
-            StartCollision(e.target);
+            StartCollision(e.target, e.collider);
         }
 
         private void StopColliding(object sender, BodyPhysicsEventArgs e)
         {
-            EndCollision();
+            EndCollision(e.collider);
         }
 
         protected virtual void HeadsetCollisionDetect(object sender, HeadsetCollisionEventArgs e)
         {
-            StartCollision(e.collider.gameObject);
+            StartCollision(e.collider.gameObject, e.collider);
         }
 
         protected virtual void HeadsetCollisionEnded(object sender, HeadsetCollisionEventArgs e)
         {
-            EndCollision();
+            EndCollision(e.collider);
         }
     }
 }

@@ -1,5 +1,10 @@
-function [ u ] = mat_unity( node, Inp, Oup, Fix, T, elem )
+function [ u ] = mat_unity( node, Inp, Oup, Fix, T, elem, force, disp_scaling)
+x_cors = [0 1 1 0   0 0   1 1 0   0   1 1 1 1 0   0];
+y_cors = [0 0   1 1 0 0   0   1 1 0   0   0   1 1 1 1];
+z_cors = [0 0   0   0   0 1 1 1 1 1 1 0   0   1 1 0];
 
+plot3(x_cors,y_cors,z_cors,'b');
+hold on
 %%%%%%%%%%%% Meshing %%%%%%%%%%%%%%%%%
 NNODE = length(node(:,1)); % Number of nodes
 nx = node(:,2); % X coordinates
@@ -110,7 +115,8 @@ count  = 1;
 %     count = count + 1;
 % end
 
-T = [ 1 2 3 4 5 6]; 
+% T = [ 1 2 3 4 5 6]; 
+T = 1:NNODE; 
 for i = [T] % symmetry plane is XY and z-disp and xtheta,ytheta must be zero
     temp_T(count,:) = [6*i-5 6*i-5+1 6*i-5+2 6*i-5+3 6*i-5+4 6*i-5+5]; 
     count = count + 1;
@@ -122,8 +128,8 @@ end
 % dispID_1 = [temp_T(1,:) temp_T(5,:) temp_T(6,:) temp_T(2,1) temp_T(2,3)];
 % dispVal_1 = [zeros(1,6) zeros(1,6) zeros(1,6) 1 0];
 
-dispID_1 = [reshape(temp_T(Fix,:),1,numel(temp_T(Fix,:))) temp_T(Inp,1)];
-dispVal_1 = [zeros(1,numel(temp_T(Fix,:))) 1];
+dispID_1 = [reshape(temp_T(Fix,:),1,numel(temp_T(Fix,:))) temp_T(force(1:end,1)',1)' temp_T(force(1:end,1)',2)' temp_T(force(1:end,1)',3)'];
+dispVal_1 = [zeros(1,numel(temp_T(Fix,:))) force(size(force,1)+1:end)];
 
 % dispID_1 = [temp_T(1,:) temp_T(5,:) temp_T(6,:) temp_T(9,:) temp_T(10,:) temp_T(2,1) temp_T(2,3)];
 % dispVal_1 = [zeros(1,6) zeros(1,6) zeros(1,6) zeros(1,6) zeros(1,6) 1 0];
@@ -145,36 +151,36 @@ BC1 = [ 0 0 0 0 0 0; 1 NaN 0 NaN NaN NaN; NaN NaN NaN NaN NaN NaN; NaN NaN NaN N
 
 [u1,R1,K1,SE1] = fem_3d(Be,He,Le,Y,t,ncon,NELEM,NNODE,F,dispID1,dispVal1);
 dim = 3; 
-[Cglobal1,Felem1]=LoadFlow_general(NNODE,NELEM,K1,BC1',R1,dim);
+% [Cglobal1,Felem1]=LoadFlow_general(NNODE,NELEM,K1,BC1',R1,dim);
 
-FT1 = Felem1(1:3,:); MT1 = Felem1(4:6,:); 
-
-for i = 1:NNODE
-    qu1(i) = FT1(1,i)/norm(FT1(:,i)); 
-    qv1(i) = FT1(2,i)/norm(FT1(:,i)); 
-    qw1(i) = FT1(3,i)/norm(FT1(:,i));    
-end
+% FT1 = Felem1(1:3,:); MT1 = Felem1(4:6,:); 
+% 
+% for i = 1:NNODE
+%     qu1(i) = FT1(1,i)/norm(FT1(:,i)); 
+%     qv1(i) = FT1(2,i)/norm(FT1(:,i)); 
+%     qw1(i) = FT1(3,i)/norm(FT1(:,i));    
+% end
 
 
 for j = 1
     figure(j)
     u = [u1];
-    qu = [qu1'];
-    qv = [qv1']; 
-    qw = [qw1']; 
+%     qu = [qu1'];
+%     qv = [qv1']; 
+%     qw = [qw1']; 
     for i = 1:NELEM,
         id1 = ncon(i,1);
         id2 = ncon(i,2);
         uid1 = 6*(id1-1) + 1;
         uid2 = 6*(id2-1) + 1;
-        disp_scaling = 0.3; 
+%         disp_scaling = 0.3; 
         plot3([nx(id1) nx(id2)], [ny(id1) ny(id2)], [nz(id1) nz(id2)], 'b','Linewidth',4);hold on
         plot3([nx(id1)+disp_scaling*u(uid1,j) nx(id2)+disp_scaling*u(uid2,j)], [ny(id1)+disp_scaling*u(uid1+1,j) ny(id2)+disp_scaling*u(uid2+1,j)],[nz(id1)+disp_scaling*u(uid1+2,j) nz(id2)+disp_scaling*u(uid2+2,j)],'-r'); hold on        
     end
     for i=1:NNODE,
         text(nx(i),ny(i),nz(i),num2str(i),'Color','red','FontSize',14);hold on;
     end
-    quiver3(nx,ny,nz,qu(:,j),qv(:,j),qw(:,j),'color','r','LineWidth',2,'MarkerSize',10,'MaxHeadSize',1.5,'AutoScale','on');hold on
+%     quiver3(nx,ny,nz,qu(:,j),qv(:,j),qw(:,j),'color','r','LineWidth',2,'MarkerSize',10,'MaxHeadSize',1.5,'AutoScale','on');hold on
     xlabel('x');
     ylabel('y');
     zlabel('z');
@@ -182,7 +188,10 @@ for j = 1
     grid
     hold off
 end
-
-
+utemp = reshape(u, 6, [])';
+utemp = utemp(:,1:3);
+utemp = utemp + [nx, ny, nz];
+a = [1:NNODE]';
+u = [a , utemp];
 end
 

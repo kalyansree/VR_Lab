@@ -8,7 +8,7 @@ function [nodes, I, O, F, T] = getNodeCoordArray(str)
     T = [];
     for i=1:(cellSize(2))
         tempString = strings{i};
-        nodes(i,1) = str2double(tempString(1));
+        nodes(i,1) = str2double(getIndex(tempString));
         typeString = tempString(length(tempString));
         if(strcmp(typeString, 'I'))
             I = [I i];
@@ -33,6 +33,17 @@ function [coordsCell] = getCoordsFromString(str)
             fin = i;
         end
     end
-    coordString = str([start+1:fin-1]);
+    coordString = str(start+1:fin-1);
     coordsCell = str2double(strsplit(coordString,','));
+end
+
+function indexString = getIndex(str)
+    endIndex = 0
+    for i=1:length(str)
+        if strcmp(str(i),'(') == 1
+            endIndex = i - 1
+            break
+        end
+    end
+    indexString = str(1:endIndex);
 end

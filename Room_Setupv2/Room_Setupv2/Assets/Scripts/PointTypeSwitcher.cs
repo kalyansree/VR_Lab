@@ -25,34 +25,41 @@ public class PointTypeSwitcher : MonoBehaviour {
         INTERMEDIATE,
         FIXED,
         DELETE,
-        FORCE
+        FORCE,
+        FREEDOM
     };
 
-    public GameObject RadialMenu;
+    public GameObject fixAxesRadialMenu;
+    public GameObject forceRadialMenu;
+    public GameObject forceCanvas;
     private void Start()
-    {
-        
-        int buttonNo = 0;
-        int i = 0;
+    { 
         activeSphere = 0;
-        foreach (Transform joint in transform)
-        {
-            if (i == buttonNo)
-                joint.gameObject.SetActive(true);
-            else
-                joint.gameObject.SetActive(false);
-            i++;
-        }
+        SwitchTo(0);
     }
     public void SwitchTo(int buttonNo)
     {        
         if(buttonNo == (int)Type.DELETE || buttonNo == (int)Type.INTERMEDIATE || buttonNo == (int)Type.FORCE) 
         {
-            RadialMenu.SetActive(false);
+            fixAxesRadialMenu.SetActive(false);
         }
         else
         {
-            RadialMenu.SetActive(true);
+            fixAxesRadialMenu.SetActive(true);
+        }
+
+        if(buttonNo == (int)Type.FORCE)
+        {
+            forceRadialMenu.SetActive(true);
+        }
+        else
+        {
+            forceRadialMenu.SetActive(false);
+
+        }
+        if(buttonNo != (int)Type.FORCE)
+        {
+            forceCanvas.SetActive(false);
         }
         int i = 0;
         foreach (Transform joint in transform)
@@ -60,7 +67,7 @@ public class PointTypeSwitcher : MonoBehaviour {
             if (i == buttonNo)
             {
                 joint.gameObject.SetActive(true);
-                if(!(i == (int)Type.DELETE || i == (int)Type.INTERMEDIATE || i == (int)Type.FORCE))
+                if(!(i == (int)Type.DELETE || i == (int)Type.INTERMEDIATE || i == (int)Type.FORCE || i == (int)Type.FREEDOM))
                 {
                     FixedDirections fd = joint.gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
                     if (i == (int)Type.FIXED)
@@ -84,6 +91,11 @@ public class PointTypeSwitcher : MonoBehaviour {
         FixedDirections fd = transform.GetChild(activeSphere).gameObject.GetComponent(typeof(FixedDirections)) as FixedDirections;
         fd.toggleDirection(dir);
 
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.GetChild(activeSphere).transform.position;
     }
 }
 

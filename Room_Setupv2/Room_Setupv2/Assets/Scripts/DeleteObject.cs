@@ -72,43 +72,10 @@ public class DeleteObject : MonoBehaviour
     void Update()
     {
         unHighlightLines();
-        var distToCube = Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(gameObject.transform.position), gameObject.transform.position);
         //We show the preview once the controller is close enough to the cube and we aren't colliding with an existing sphere
-        if (distToCube < 0.1)
-        {
-            getClosestPoint();
-            preview.transform.position = closestPoint;
-            preview.transform.localScale = gameObject.transform.lossyScale;
-            preview.SetActive(true);
-            allowPlacing = true;
-        }
-        else
-        {
-            preview.SetActive(false);
-            allowPlacing = false;
-            return;
-        }
-        isColliding = false;
-        //check if our preview is colliding with a placed sphere
-        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
-        {
-            //print(dist);
-            if (transform.position == closestPoint && distToCube < 0.1)
-            {
-                preview.SetActive(false);
-                isColliding = true;
-                currCollidingObj = transform.gameObject;
-                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
-                color.a = 1;
-                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
-            }
-            else
-            {
-                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
-                color.a = 0.353F;
-                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
-            }
-        }
+
+        //isColliding = checkColliding();
+        isColliding = checkCollidingVerTwo();
 
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
@@ -124,11 +91,7 @@ public class DeleteObject : MonoBehaviour
         if (OVRInput.Get(OVRInput.Button.One) && originSet)
         {
             origin = originSphere.transform.position;
-            //if we're not allowed to place, just show the line drawing towards the player's sphere, not the preview sphere
-            if (!allowPlacing)
-                dest = gameObject.transform.position;
-            else
-                dest = closestPoint;
+            dest = gameObject.transform.position;
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
                 delLine.points3[0] = origin;
@@ -137,27 +100,41 @@ public class DeleteObject : MonoBehaviour
             if(isColliding && origin != dest)
             {
                 highlightLine();
+                delLine.active = false;
             }
             else
             {
+
+                delLine.active = true;
                 unHighlightLines();
             }
         }
 
-        if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
+        if (OVRInput.GetUp(OVRInput.Button.One)&& originSet)
         {
-            
-            GameObject destSphere;
             delLine.points3.RemoveAt(0);
             delLine.points3.RemoveAt(0); //we do this twice to get rid of both points
             if (isColliding && currCollidingObj.transform.position != originSphere.transform.position)
             {
-                destSphere = currCollidingObj;
                 deleteLine();
             }
             else if(isColliding)
             {
-                deletePoint();
+                if(currCollidingObj.CompareTag("Force"))
+                {
+                    deleteForcePoint(originSphere);
+                }
+                else if(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output"))
+                {
+                    GameObject force = currCollidingObj.GetComponent<InputOutputInfo>().GetForcePoint();
+                    if(force != null)
+                        deleteForcePoint(force);
+                    deletePoint();
+                }
+                else
+                {
+                    deletePoint();
+                }
             }
             originSet = false;
         }
@@ -175,17 +152,12 @@ public class DeleteObject : MonoBehaviour
 
         relativePos = domain.transform.TransformDirection(relativePos);
         closestPoint = relativePos + domain.transform.position;
-        if (Vector3.Distance(domain.GetComponent<Collider>().ClosestPoint(closestPoint), closestPoint) > 0)
-        {
-            closestPoint = domain.GetComponent<Collider>().ClosestPoint(closestPoint);
-        }
     }
     void deletePoint()
     {
         if (originSet == false)
             return;
-        int index = ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.IndexOf(originSphere.transform);
-        ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList.Remove(originSphere.transform);
+        ((Networking)Networking.GetComponent(typeof(Networking))).removeFromList(originSphere);
 
         for (int i = 0; i < ((InitLines)domain.GetComponent(typeof(InitLines))).lineTransformList.Count; i++)
         {
@@ -214,7 +186,23 @@ public class DeleteObject : MonoBehaviour
                 }
             }
         }
-        Destroy(domain.transform.GetChild(index).gameObject);
+        foreach (Transform childTransform in domain.transform)
+        {
+            if(childTransform.position == originSphere.transform.position)
+            {
+                Destroy(childTransform.gameObject);
+            }
+
+            if (childTransform.gameObject.CompareTag("Input") || childTransform.gameObject.CompareTag("Output"))
+            {
+                childTransform.gameObject.GetComponent<InputOutputInfo>().removeConnection(originSphere);
+            }
+
+            if (childTransform.CompareTag("Intermediate"))
+            {
+                childTransform.GetComponent<IntermediateInfo>().removeConnection(originSphere);
+            }
+        }
 
     }
 
@@ -239,7 +227,23 @@ public class DeleteObject : MonoBehaviour
                 break;
             } 
         }
+        if(originSphere.CompareTag("Input") || originSphere.CompareTag("Output"))
+        {
+            originSphere.GetComponent<InputOutputInfo>().removeConnection(currCollidingObj);
+        }
+        if (currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output"))
+        {
+            currCollidingObj.GetComponent<InputOutputInfo>().removeConnection(originSphere);
+        }
 
+        if (originSphere.CompareTag("Intermediate"))
+        {
+            originSphere.GetComponent<IntermediateInfo>().removeConnection(currCollidingObj);
+        }
+        if (currCollidingObj.CompareTag("Intermediate"))
+        {
+            currCollidingObj.GetComponent<IntermediateInfo>().removeConnection(originSphere);
+        }
     }
 
     void highlightLine()
@@ -266,5 +270,134 @@ public class DeleteObject : MonoBehaviour
     {
         ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.SetColor(Color.white);
 
+    }
+
+    void deleteForcePoint(GameObject forcePoint)
+    {
+        if (originSet == false)
+            return;
+        ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList.Remove(forcePoint.transform);
+        VectorLine vline = forcePoint.GetComponent<ForcePointInfo>().GetLine();
+        VectorLine.Destroy(ref vline);
+        GameObject origin = forcePoint.GetComponent<ForcePointInfo>().GetConnectedPoint();
+        origin.GetComponent<InputOutputInfo>().DeleteForcePoint();
+        Destroy(forcePoint);
+    }
+
+    private bool checkColliding()
+    {
+        getClosestPoint();
+        preview.transform.position = closestPoint;
+        preview.transform.localScale = gameObject.transform.lossyScale;
+        preview.SetActive(true);
+        allowPlacing = true;
+        bool colliding = false;
+        //check if our preview is colliding with a placed sphere
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
+        {
+            //print(dist);
+            if (transform.position == closestPoint)
+            {
+                preview.SetActive(false);
+                colliding = true;
+                currCollidingObj = transform.gameObject;
+                Color color = transform.gameObject.GetComponent<Renderer>().material.color;
+                color.a = 1;
+                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+            }
+            else
+            {
+                Color color = transform.gameObject.GetComponent<Renderer>().material.color;
+                color.a = 0.353F;
+                transform.gameObject.GetComponent<Renderer>().material.color = color;
+            }
+        }
+
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList)
+        {
+            //print(dist);
+            if (transform.position == closestPoint)
+            {
+                preview.SetActive(false);
+                colliding = true;
+                currCollidingObj = transform.gameObject;
+                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
+                color.a = 1;
+                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+            }
+            else
+            {
+                Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
+                color.a = 0.353F;
+                ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+            }
+        }
+        return colliding;
+    }
+
+    private bool checkCollidingVerTwo()
+    {
+        unHighlightAll();
+        preview.transform.position = transform.position;
+        allowPlacing = true;
+        int layerMask = 1 << LayerMask.NameToLayer("point");
+        Collider[] colliderList = Physics.OverlapSphere(transform.position, transform.lossyScale.x / 2, layerMask);
+        if (colliderList.Length == 0)
+        {
+            return false;
+        }
+        else if(colliderList.Length == 1) //means we are colliding with multiple points, which can happen
+        {
+            currCollidingObj = colliderList[0].gameObject;  
+            Color color = currCollidingObj.GetComponent<Renderer>().material.color;
+            color.a = 1;
+            currCollidingObj.GetComponent<Renderer>().material.color = color;
+            return true;
+        }
+        else if (colliderList.Length > 1)
+        {
+            currCollidingObj = FindClosestPoint(colliderList, transform.gameObject);
+            Color color = currCollidingObj.GetComponent<Renderer>().material.color;
+            color.a = 1;
+            currCollidingObj.GetComponent<Renderer>().material.color = color;
+            return true;
+        }
+
+        return false;
+    }
+
+    private GameObject FindClosestPoint(Collider[] colliderList, GameObject obj)
+    {
+        float closestDistance = 100;
+        GameObject closestObj = null;
+
+        foreach(Collider col in colliderList)
+        {
+            float currDistance = Vector3.Distance(obj.transform.position, col.transform.position);
+            if (currDistance < closestDistance)
+            {
+                closestDistance = currDistance;
+                closestObj = col.gameObject;
+            }
+        }
+        return closestObj;
+
+    }
+
+    private void unHighlightAll()
+    {
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).allTransformList)
+        {
+            Color color = transform.gameObject.GetComponent<Renderer>().material.color;
+            color.a = 0.353F;
+            transform.gameObject.GetComponent<Renderer>().material.color = color;
+        }
+
+        foreach (Transform transform in ((Networking)Networking.GetComponent(typeof(Networking))).forceTransformList)
+        {
+            Color color = ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color;
+            color.a = 0.353F;
+            ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
+        }
     }
 }
