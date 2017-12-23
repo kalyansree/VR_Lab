@@ -11,12 +11,8 @@ public class RotateCanvas : MonoBehaviour {
 
     private Vector3 offset;
     // Update is called once per frame
-
-    void Start()
-    {
-        offset = new Vector3(xOffset, yOffset, zOffset);
-    }
     void Update () {
+        offset = new Vector3(xOffset, yOffset, zOffset);
         Vector3 v = myCamera.transform.position - transform.position;
 
         v.x = v.z = 0.0f;
@@ -25,6 +21,7 @@ public class RotateCanvas : MonoBehaviour {
 
         transform.rotation = (myCamera.transform.rotation); // Take care about camera rotation
 
-        transform.position = Controller.transform.position + offset * Controller.transform.localScale.x;
+        if(Controller != null)
+            transform.position = Controller.transform.position + offset * Controller.transform.localScale.x;
     }
 }

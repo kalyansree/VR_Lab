@@ -22,7 +22,7 @@ public class InitLines : MonoBehaviour {
     [Tooltip("List of Transforms that are in identical order as mainLine in order to keep the points updated")]
     public List<Transform> lineTransformList;
 
-    public List<Transform> deformedLineTransformList;
+    //public List<Transform> deformedLineTransformList;
 
     public List<Vector3> forceVectorList;
     public Texture2D frontTex;
@@ -56,7 +56,7 @@ public class InitLines : MonoBehaviour {
         deformedLine.Draw3DAuto();
 
         lineTransformList = new List<Transform>();
-        deformedLineTransformList = new List<Transform>();
+        //deformedLineTransformList = new List<Transform>();
 
         //Force Line
         forceVectorList = new List<Vector3>();
@@ -73,16 +73,16 @@ public class InitLines : MonoBehaviour {
 
     void LateUpdate()
     {
+        //int i = 0;
+        //foreach (Transform transform in deformedLineTransformList)
+        //{
+        //    if(transform.CompareTag("Input") || transform.CompareTag("Output") || transform.CompareTag("Intermediate") || transform.CompareTag("Fixed"))
+        //    {
+        //        deformedLine.points3[i] = transform.position;
+        //        i++;
+        //    }
+        //}
         int i = 0;
-        foreach (Transform transform in deformedLineTransformList)
-        {
-            if(transform.CompareTag("Input") || transform.CompareTag("Output") || transform.CompareTag("Intermediate") || transform.CompareTag("Fixed"))
-            {
-                deformedLine.points3[i] = transform.position;
-                i++;
-            }
-        }
-        i = 0;
         foreach (Transform transform in lineTransformList)
         {
             if (transform.CompareTag("Input") || transform.CompareTag("Output") || transform.CompareTag("Intermediate") || transform.CompareTag("Fixed"))
@@ -107,5 +107,11 @@ public class InitLines : MonoBehaviour {
     {
         deformedLineList.Add(vectorLine);
         pointLists.Add(pointList);
+    }
+
+    public void stopDrawingDeformedLine()
+    {
+        deformedLineList = new List<VectorLine>();
+        pointLists = new List<List<Vector3>>();
     }
 }

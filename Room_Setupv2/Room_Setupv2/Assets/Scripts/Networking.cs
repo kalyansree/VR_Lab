@@ -27,6 +27,8 @@ public class Networking : MonoBehaviour {
     public List<Transform> allTransformList;
     public List<Transform> forceTransformList;
     public List<Transform> deformedTransformList;
+    public GameObject leftRadialMenu;
+    public GameObject resetCanvas;
 
     public Camera myCamera;
     public GameObject domain;
@@ -37,11 +39,14 @@ public class Networking : MonoBehaviour {
     private int inputCount;
     private int outputCount;
 
+    private List<VectorLine> lineObjList;
+
     // Use this for initialization
     void Start () {
         allTransformList = new List<Transform>();
         forceTransformList = new List<Transform>();
         deformedTransformList = new List<Transform>();
+        lineObjList = new List<VectorLine>();
     }
 	
 	// Update is called once per frame
@@ -62,9 +67,22 @@ public class Networking : MonoBehaviour {
         {
             String retMsg = theReader.ReadToEnd();
             plotDeformedCoords(retMsg);
+            enableResetCanvas();
             readyToReceive = false;
 
         }
+    }
+
+    private void enableResetCanvas()
+    {
+        resetCanvas.SetActive(true);
+        leftRadialMenu.SetActive(false);
+    }
+
+    private void disableResetCanvas()
+    {
+        resetCanvas.SetActive(false);
+        leftRadialMenu.SetActive(true);
     }
 
     public void Submit()
@@ -271,17 +289,6 @@ public class Networking : MonoBehaviour {
             //Vector3 worldPosNewCoords = domain.transform.TransformPoint(getLocalCoords(meshCoords[i]));
             vectorList.Add(getLocalCoords(meshCoords[i]));
         }
-        //--------------------------------------TODO----------------------------------------------
-        //Modify lineTransformList
-        //Need to construct a new spline between each node
-        //instead of updating every intermediate mesh coord, maybe just make these spline gameObjects children of the main gameObject
-        // See if there is too much deviation when scaling / rotating to use this hack
-
-        //for(int i = 0; i < indices.Length - 1; i++)
-        //{
-        //    domain.GetComponent<InitLines>().deformedLineTransformList.Insert(i, deformedTransformList[int.Parse(indices[i]) - 1]);
-        //    domain.GetComponent<InitLines>().deformedLine.points3.Add(deformedTransformList[int.Parse(indices[i]) - 1].position);
-        //}
 
         for (int i = 0; i < meshIndexStrings.Length - 1; i++)
         {
@@ -300,9 +307,28 @@ public class Networking : MonoBehaviour {
             line.SetColor(Color.red);
             vectorLineObj = GameObject.Find("Spline");
             vectorLineObj.name = "Complete Spline";
+            lineObjList.Add(line);
             domain.GetComponent<InitLines>().addDeformedLine(line, splinePointList);
 
         }
+    }
+
+    public void deleteDeformedCoords()
+    {
+        for(int i = 0; i < deformedTransformList.Count; i++)
+        {
+            Destroy(deformedTransformList[i].gameObject);
+        }
+
+        for(int i = 0; i < lineObjList.Count; i++)
+        {
+            VectorLine line = lineObjList[i];
+            VectorLine.Destroy(ref line);
+        }
+        deformedTransformList = new List<Transform>();
+        lineObjList = new List<VectorLine>();
+        domain.GetComponent<InitLines>().stopDrawingDeformedLine();
+        disableResetCanvas();
     }
 
     private Vector3 getLocalCoords(string coordString)
