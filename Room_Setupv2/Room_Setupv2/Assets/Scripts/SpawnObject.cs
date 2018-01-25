@@ -69,6 +69,10 @@ public class SpawnObject : MonoBehaviour {
 
     public Text coordText;
 
+    public GameObject testingPlane;
+
+    public bool checkIfValidDirection;
+
 
     //Materials
     public Material HemisphereMaterial1;
@@ -143,6 +147,21 @@ public class SpawnObject : MonoBehaviour {
                 ((Renderer)transform.gameObject.GetComponent<Renderer>()).material.color = color;
             }
         }
+
+        if(originSet && checkIfValidDirection && originSphere.GetComponent<IntermediateInfo>() != null && testingPlane != null)
+        {
+           
+            Vector3 dir = originSphere.transform.position - preview.transform.position;
+     
+            if(isLineValid(dir))
+            {
+                testingPlane.GetComponent<MeshRenderer>().enabled = true;
+            }
+            else
+            {
+                testingPlane.GetComponent<MeshRenderer>().enabled = false;
+            }
+        } 
 
         if (OVRInput.GetDown(OVRInput.Button.One) && allowPlacing) //Places the initial sphere
         {
@@ -276,5 +295,25 @@ public class SpawnObject : MonoBehaviour {
         newObj.name = newObj.tag;
         newObj.layer = LayerMask.NameToLayer("point");
         return newObj;
+    }
+    /**
+ * This function returns true if the line has a perpendicular line that is a valid freedom line for the intermediate point
+ */
+    private bool isLineValid(Vector3 line)
+    {
+        /*
+         * 1. Move testing plane to have normal = line
+         * 2. Move testing plane to origin position
+         * 3. Use the testing plane's orientation/size and use Physics.OverlapBox to see if we are overlapping with all (invisible) hemispheres for this intermediate point
+        */
+        testingPlane.transform.position = originSphere.transform.position;
+        testingPlane.transform.rotation = Quaternion.LookRotation(line);
+        int layerMask = 1 << LayerMask.NameToLayer("hemisphere");
+        Collider[] list = Physics.OverlapBox(testingPlane.transform.position, testingPlane.transform.lossyScale / 2, testingPlane.transform.rotation, layerMask);
+        List<GameObject> hemisphereList = originSphere.GetComponent<IntermediateInfo>().GetHemispheres();
+        if (list.Length == hemisphereList.Count)
+            return true;
+        else
+            return false;
     }
 }

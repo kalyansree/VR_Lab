@@ -30,7 +30,7 @@ public class DrawFreedomLine : MonoBehaviour
 
     public Material fixedMaterial;
 
-
+    
     //--- PRIVATE VARIABLES --//
 
     //Reference to where the first sphere was placed in a drag movement
@@ -94,6 +94,8 @@ public class DrawFreedomLine : MonoBehaviour
         testSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         Destroy(testSphere.GetComponent<MeshRenderer>());
         Destroy(testSphere.GetComponent<Collider>());
+
+        
     }
    
     void Update()
@@ -145,12 +147,37 @@ public class DrawFreedomLine : MonoBehaviour
                 }
             }
         }
-
+        if(originSet)
+        { 
+            Vector3 localPoint = domain.transform.InverseTransformPoint(transform.position);
+            Vector3 localOriginPoint = domain.transform.InverseTransformPoint(origin);
+            Vector3 localDistance = localPoint - localOriginPoint;
+            float max = Mathf.Max(Mathf.Abs(localDistance.x), Mathf.Abs(localDistance.y), Mathf.Abs(localDistance.z));
+            if (max == Mathf.Abs(localDistance.x))
+            {
+                localPoint.y = localOriginPoint.y;
+                localPoint.z = localOriginPoint.z;
+            }
+            else if (max == Mathf.Abs(localDistance.y))
+            {
+                localPoint.x = localOriginPoint.x;
+                localPoint.z = localOriginPoint.z;
+            }
+            else if (max == Mathf.Abs(localDistance.z))
+            {
+                localPoint.x = localOriginPoint.x;
+                localPoint.y = localOriginPoint.y;
+            }
+            preview.SetActive(true);
+            preview.transform.localScale = transform.lossyScale;
+            preview.transform.position = domain.transform.TransformPoint(localPoint);
+        }
         if (OVRInput.GetDown(OVRInput.Button.One)) //Places the initial sphere
         {
             if (isColliding)
             {
                 originSphere = currCollidingObj;
+                origin = originSphere.transform.position;
                 originSet = true;
                 dottedLine = new VectorLine("NewFreedomLine", new List<Vector3>(), dottedTexture, 8.0f);
                 dottedLine.points3.Add(originSphere.transform.position);
@@ -172,7 +199,7 @@ public class DrawFreedomLine : MonoBehaviour
         if (OVRInput.Get(OVRInput.Button.One) && originSet)
         {
             origin = originSphere.transform.position;
-            dest = transform.position;
+            dest = preview.transform.position;
             originSphere.GetComponent<IntermediateInfo>().HighlightPoint(true);
             if (origin != Vector3.zero && dest != Vector3.zero)
             {
@@ -184,7 +211,7 @@ public class DrawFreedomLine : MonoBehaviour
             }
             
 
-            if(!InTruncation(originSphere, gameObject))
+            if(!InTruncation(originSphere, preview))
             {
                 freedomLineObj.SetActive(false);
                 failLineObj.SetActive(true);
@@ -200,7 +227,7 @@ public class DrawFreedomLine : MonoBehaviour
         if (OVRInput.GetUp(OVRInput.Button.One) && originSet)
         {
             originSet = false;
-            if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null || !InTruncation(originSphere, gameObject))
+            if (originSphere.GetComponent<IntermediateInfo>().GetFreedomLine() != null || !InTruncation(originSphere, preview))
             {
                 VectorLine.Destroy(ref dottedLine);
                 VectorLine.Destroy(ref failLine);
@@ -213,7 +240,7 @@ public class DrawFreedomLine : MonoBehaviour
 
             originSphere.GetComponent<IntermediateInfo>().SetFreedomLine(dottedLine, finalLineObj);
             originSphere.GetComponent<IntermediateInfo>().HighlightPoint(false);
-            SwitchToConstraintMode(originSphere, gameObject);
+            SwitchToConstraintMode(originSphere, preview);
         }
     }
 
@@ -247,7 +274,7 @@ public class DrawFreedomLine : MonoBehaviour
         lightObj.SetActive(false);
         Vector3 size = domain.transform.lossyScale * 2;
         size.z = size.z / 10000;
-        intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size);
+        intermediatePoint.GetComponent<IntermediateInfo>().SpawnPlane(target, size, domain.transform.up);
         dottedLine = new VectorLine("NewLine", new List<Vector3>(), dottedTexture, 8.0f);
         dottedLine.points3.Add(intermediatePoint.transform.position);
         dottedLine.points3.Add(intermediatePoint.transform.position);
@@ -265,27 +292,51 @@ public class DrawFreedomLine : MonoBehaviour
         preview.transform.localScale = gameObject.transform.lossyScale;
         preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(gameObject.transform.position);
 
+        //lock the preview positions to the axes
+        Vector3 localPoint = domain.transform.InverseTransformPoint(preview.transform.position);
+        Vector3 localOriginPoint = domain.transform.InverseTransformPoint(originSphere.transform.position);
+        Vector3 localDistance = localPoint - localOriginPoint;
+        float max = Mathf.Max(Mathf.Abs(localDistance.x), Mathf.Abs(localDistance.y), Mathf.Abs(localDistance.z));
+        if (max == Mathf.Abs(localDistance.x))
+        {
+            if (localPoint.x < 0)
+                localPoint.x = -0.5F;
+            else
+                localPoint.x = 0.5F;
+            localPoint.y = localOriginPoint.y;
+            localPoint.z = localOriginPoint.z;
+        }
+        else if (max == Mathf.Abs(localDistance.y))
+        {
+            if (localPoint.y < 0)
+                localPoint.y = -0.5F;
+            else
+                localPoint.y = 0.5F;
+            localPoint.x = localOriginPoint.x;
+            localPoint.z = localOriginPoint.z;
+        }
+        else if (max == Mathf.Abs(localDistance.z))
+        {
+            if (localPoint.z < 0)
+                localPoint.z = -0.5F;
+            else
+                localPoint.z = 0.5F;
+            localPoint.x = localOriginPoint.x;
+            localPoint.y = localOriginPoint.y;
+        }
+        preview.transform.localScale = transform.lossyScale;
+        preview.transform.position = domain.transform.TransformPoint(localPoint);
+
         Vector3 localCoord = domain.transform.InverseTransformPoint(preview.transform.position);
         localCoord.x += 0.5F;
         localCoord.y += 0.5F;
         localCoord.z += 0.5F;
-        if(checkCoords(localCoord) == true)
-        {
-            freedomLineObj.SetActive(true);
-            failLineObj.SetActive(false);
-        }
-        else
-        {
-            freedomLineObj.SetActive(false);
-            failLineObj.SetActive(true);
-        }
-       // preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(preview.transform.position);
+        freedomLineObj.SetActive(true);
+        // preview.transform.position = plane.GetComponent<Collider>().ClosestPoint(preview.transform.position);
         dottedLine.textureScale = 1.00f;
         dottedLine.points3[0] = originSphere.transform.position;
         dottedLine.points3[1] = preview.transform.position;
-
-        failLine.points3[0] = originSphere.transform.position;
-        failLine.points3[1] = preview.transform.position;
+       
 
 
         if (OVRInput.GetDown(OVRInput.Button.One) && checkCoords(localCoord))
@@ -353,10 +404,6 @@ public class DrawFreedomLine : MonoBehaviour
         }
     }
 
-    //TODO: get this done
-    private void removeDeformedPointsAndLines()
-    {
 
-    }
 }
 

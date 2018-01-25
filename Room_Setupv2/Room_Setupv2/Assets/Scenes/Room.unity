@@ -2063,6 +2063,14 @@ Prefab:
       propertyPath: m_Name
       value: pyramid (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6fab026189c48cc41b20f1881ff529e5, type: 2}
+    - target: {fileID: 2300000, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6fab026189c48cc41b20f1881ff529e5, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
   m_IsPrefabParent: 0
@@ -2914,6 +2922,7 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   lightObj: {fileID: 1181706282}
   fixedMaterial: {fileID: 2100000, guid: 76510b17356f01e4a90aa24ab7476bfc, type: 2}
+  testingPlane: {fileID: 988074862}
 --- !u!23 &505824680
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3016,6 +3025,14 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6fab026189c48cc41b20f1881ff529e5, type: 2}
+    - target: {fileID: 2300002, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6fab026189c48cc41b20f1881ff529e5, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
   m_IsPrefabParent: 0
@@ -3235,7 +3252,7 @@ RectTransform:
   m_Children:
   - {fileID: 322021288}
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3435,6 +3452,8 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
+  testingPlane: {fileID: 988074862}
+  checkIfValidDirection: 1
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
@@ -3546,7 +3565,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &671152333
 MonoBehaviour:
@@ -3799,7 +3818,7 @@ RectTransform:
   - {fileID: 160472121}
   - {fileID: 2123527074}
   m_Father: {fileID: 0}
-  m_RootOrder: 20
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4022,6 +4041,8 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
+  testingPlane: {fileID: 0}
+  checkIfValidDirection: 0
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
@@ -4847,6 +4868,14 @@ Prefab:
       propertyPath: m_Name
       value: pyramid (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6fab026189c48cc41b20f1881ff529e5, type: 2}
+    - target: {fileID: 2300000, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6fab026189c48cc41b20f1881ff529e5, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a258b08b096d8774db33d4ad4edc09d3, type: 3}
   m_IsPrefabParent: 0
@@ -5027,6 +5056,75 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &988074862
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 988074866}
+  - component: {fileID: 988074865}
+  - component: {fileID: 988074863}
+  m_Layer: 0
+  m_Name: TestingPlane
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &988074863
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 988074862}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &988074865
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 988074862}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &988074866
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 988074862}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.0622, z: -2.192}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.001}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1004564985
 GameObject:
   m_ObjectHideFlags: 0
@@ -5104,7 +5202,7 @@ RectTransform:
   m_LocalScale: {x: 0.0050000018, y: 0.005, z: 0.0050000018}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5563,6 +5661,8 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
+  testingPlane: {fileID: 0}
+  checkIfValidDirection: 0
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}
@@ -8007,7 +8107,7 @@ GameObject:
   - component: {fileID: 1707457643}
   - component: {fileID: 1707457642}
   m_Layer: 0
-  m_Name: Y-Fixed (2)
+  m_Name: Z-Fixed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9459,7 +9559,7 @@ GameObject:
   - component: {fileID: 2024453900}
   - component: {fileID: 2024453899}
   m_Layer: 0
-  m_Name: Y-Fixed (1)
+  m_Name: X-Fixed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9634,6 +9734,8 @@ MonoBehaviour:
   preview: {fileID: 1864835675}
   Networking: {fileID: 2095464902}
   coordText: {fileID: 322021289}
+  testingPlane: {fileID: 0}
+  checkIfValidDirection: 0
   HemisphereMaterial1: {fileID: 2100000, guid: 43e11e0f4fabf3546bf160079cf8d290, type: 2}
   truncatedHemisphereMaterial: {fileID: 2100000, guid: 025857cc02a5b64418fd96f033b165e3,
     type: 2}

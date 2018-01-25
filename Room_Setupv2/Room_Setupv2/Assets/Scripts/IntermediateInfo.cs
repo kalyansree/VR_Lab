@@ -273,12 +273,12 @@ public class IntermediateInfo : MonoBehaviour {
 
     }
 
-    public void SpawnPlane(GameObject target, Vector3 size)
+    public void SpawnPlane(GameObject target, Vector3 size, Vector3 upDirection)
     {
         plane = GameObject.CreatePrimitive(PrimitiveType.Cube);
         //new Vector3(10, 10, 0.001F)
         plane.transform.localScale = size;
-        plane.transform.rotation = Quaternion.LookRotation(target.transform.position - intermediatePoint.transform.position);
+        plane.transform.rotation = Quaternion.LookRotation(target.transform.position - intermediatePoint.transform.position, upDirection);
         plane.transform.position = intermediatePoint.transform.position;
         plane.GetComponent<MeshRenderer>().sharedMaterial = planeMaterial;
         plane.transform.parent = intermediatePoint.transform;
