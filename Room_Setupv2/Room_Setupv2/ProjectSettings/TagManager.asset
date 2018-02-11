@@ -23,6 +23,7 @@ TagManager:
   - Hemisphere
   - Final
   - Freedom
+  - PicCam
   layers:
   - Default
   - TransparentFX
