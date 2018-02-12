@@ -72,6 +72,10 @@ public class DrawForceVector : MonoBehaviour {
     private Texture2D backTex;
 
     private VectorLine currLine;
+
+    private VectorLine revLine;
+
+
     // Use this for initialization
     void Start () {
         forceText = forceCanvas.transform.Find("ForceText").GetComponent<Text>();
@@ -129,12 +133,17 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             originSet = true;
-            currLine = new VectorLine("NewForceLine", new List<Vector3>(), 30.0f);
+            currLine = new VectorLine("NewForceLine", new List<Vector3>(), 90.0f);
             currLine.endCap = "Arrow";
             currLine.Draw3DAuto();
             currLine.points3.Add(originSphere.transform.position);
             currLine.points3.Add(originSphere.transform.position);
-            currLine.SetColor(Color.blue);
+
+            /*else if(!isColliding)
+            {
+                
+            }
+            */
 
         }
 
@@ -168,6 +177,18 @@ public class DrawForceVector : MonoBehaviour {
             GameObject destSphere;
             GameObject InputOutputPoint;
             GameObject forcePoint;
+
+            //Setting different force colors to input and output
+
+            if (currCollidingObj != null && currCollidingObj.CompareTag("Input"))
+            {
+                currLine.SetColor(Color.blue);
+            }
+
+            else if (currCollidingObj != null && currCollidingObj.CompareTag("Output"))
+            {
+                currLine.SetColor(Color.red);
+            }
             if (createdOrigin && (!isColliding || (isColliding && !(currCollidingObj.CompareTag("Input") || currCollidingObj.CompareTag("Output")))))
             {
                 VectorLine.Destroy(ref currLine);

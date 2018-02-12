@@ -190,6 +190,7 @@ for j = 1
 end
 utemp = reshape(u, 6, [])';
 utemp = utemp(:,1:3);
+utemp = disp_scaling*utemp; 
 utemp = utemp + [nx, ny, nz];
 a = [1:NNODE]';
 u = [a , utemp];
