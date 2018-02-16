@@ -32,6 +32,8 @@ public class InitLines : MonoBehaviour {
     public List<List<Vector3>> pointLists;
     public List<VectorLine> deformedLineList;
 
+    public Color mainColor = Color.black;
+
     void Awake()
     {
         VectorLine.SetEndCap("Arrow", EndCap.Both, -1.0F, lineTex, frontTex, backTex);
@@ -50,6 +52,7 @@ public class InitLines : MonoBehaviour {
         line.Draw3DAuto();
 
         mainLine = new VectorLine("MainLine", new List<Vector3>(), 10.0f);
+        mainLine.SetColor(mainColor);
         mainLine.Draw3DAuto();
 
         deformedLine = new VectorLine("deformedLine", new List<Vector3>(), 10.0f);
@@ -65,12 +68,10 @@ public class InitLines : MonoBehaviour {
         //forceLine.endCap = "Arrow";
         //forceLine.Draw3DAuto();
     }
-
     void Update()
     {
-        
+        mainLine.SetColor(mainColor);    
     }
-
     void LateUpdate()
     {
         int i = 0;

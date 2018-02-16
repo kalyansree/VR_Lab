@@ -3,8 +3,8 @@ using System.Collections;
 
 public class HiResScreenShots : MonoBehaviour
 {
-    int resWidth = 1920;
-    int resHeight = 1080;
+    int resWidth = 2160;
+    int resHeight = 1200;
 
     public GameObject XPlane;
     public GameObject YPlane;

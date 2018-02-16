@@ -268,7 +268,8 @@ public class DeleteObject : MonoBehaviour
 
     void unHighlightLines()
     {
-        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.SetColor(Color.white);
+        Color mainColor = ((InitLines)domain.GetComponent(typeof(InitLines))).mainColor;
+        ((InitLines)domain.GetComponent(typeof(InitLines))).mainLine.SetColor(mainColor);
 
     }
 
