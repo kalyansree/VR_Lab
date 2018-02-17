@@ -133,7 +133,7 @@ public class DrawForceVector : MonoBehaviour {
             }
 
             originSet = true;
-            currLine = new VectorLine("NewForceLine", new List<Vector3>(), 90.0f);
+            currLine = new VectorLine("NewForceLine", new List<Vector3>(), 30.0f);
             currLine.endCap = "Arrow";
             currLine.Draw3DAuto();
             currLine.points3.Add(originSphere.transform.position);
