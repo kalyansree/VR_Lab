@@ -3469,6 +3469,7 @@ GameObject:
   - component: {fileID: 576194646}
   - component: {fileID: 576194645}
   - component: {fileID: 576194644}
+  - component: {fileID: 576194647}
   m_Layer: 0
   m_Name: Canvas (2)
   m_TagString: Untagged
@@ -3552,6 +3553,22 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &576194647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 576194642}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bc306579ed6824a92e8b4ee17addf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCamera: {fileID: 369225325}
+  Controller: {fileID: 0}
+  xOffset: 0
+  yOffset: 0
+  zOffset: 0
 --- !u!1 &587388145
 GameObject:
   m_ObjectHideFlags: 0
@@ -7757,6 +7774,7 @@ GameObject:
   - component: {fileID: 1471092740}
   - component: {fileID: 1471092739}
   - component: {fileID: 1471092738}
+  - component: {fileID: 1471092741}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -7840,6 +7858,22 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1471092741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1471092736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bc306579ed6824a92e8b4ee17addf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCamera: {fileID: 369225325}
+  Controller: {fileID: 0}
+  xOffset: 0
+  yOffset: 0
+  zOffset: 0
 --- !u!1 &1493249390
 GameObject:
   m_ObjectHideFlags: 0
@@ -9121,6 +9155,7 @@ GameObject:
   - component: {fileID: 1732584408}
   - component: {fileID: 1732584407}
   - component: {fileID: 1732584406}
+  - component: {fileID: 1732584409}
   m_Layer: 0
   m_Name: Canvas (1)
   m_TagString: Untagged
@@ -9204,6 +9239,22 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1732584409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1732584404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bc306579ed6824a92e8b4ee17addf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myCamera: {fileID: 369225325}
+  Controller: {fileID: 0}
+  xOffset: 0
+  yOffset: 0
+  zOffset: 0
 --- !u!1 &1745835540 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 157742, guid: 84c8b8609f9bb434eaf5248f17ff1293, type: 2}

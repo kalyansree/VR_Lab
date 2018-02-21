@@ -25,6 +25,7 @@ public class RotateCanvas : MonoBehaviour {
 
         transform.rotation = (myCamera.transform.rotation); // Take care about camera rotation
 
-        transform.position = Controller.transform.position + offset * Controller.transform.localScale.x;
+        if(Controller != null)
+            transform.position = Controller.transform.position + offset * Controller.transform.localScale.x;
     }
 }
