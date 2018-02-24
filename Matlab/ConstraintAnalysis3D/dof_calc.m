@@ -8,7 +8,13 @@ function [ temp_T, temp_D, temp_F, temp_B, temp_R, temp_L ] = dof_calc( T,D,F,B,
 % dof of each node
 
 count  = 1;
-
+%initialize all return values in case the inputs are empty 
+temp_T = [];
+temp_D = [];
+temp_F = [];
+temp_B = [];
+temp_R = [];
+temp_L = [];
 for i = [T] % symmetry plane is XY and z-disp and xtheta,ytheta must be zero
     temp_T(count,:) = [6*i-5 6*i-5+1 6*i-5+2 6*i-5+3 6*i-5+4 6*i-5+5]; 
     count = count + 1;
